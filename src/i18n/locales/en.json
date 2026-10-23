@@ -1,0 +1,376 @@
+{
+  "app": {
+    "name": "Trainee booklet",
+    "tagline": "SPV / JSP — Team 6",
+    "offline": "Offline mode: your changes will sync once the network is back.",
+    "footer": "Volunteer Firefighters & Young Firefighters"
+  },
+  "common": {
+    "all": "All",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "language": "Language",
+    "loading": "Loading…",
+    "none": "None",
+    "remove": "Remove",
+    "save": "Save",
+    "searchByName": "Search a name…"
+  },
+  "nav": {
+    "mainNavigation": "Main navigation",
+    "openMenu": "Open menu",
+    "administration": "Administration",
+    "dashboard": "Dashboard",
+    "myBooklet": "My booklet",
+    "calendar": "Calendar",
+    "trainees": "Trainees",
+    "resources": "Resources",
+    "users": "Users",
+    "groups": "Groups & referents",
+    "modules": "Modules & grids"
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "signInHint": "Sign in to access your booklet.",
+    "email": "Email address",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "forgotPassword": "Forgot your password?",
+    "enterEmailFirst": "Please enter your email address first.",
+    "resetEmailSent": "A password reset email has been sent.",
+    "accountNotConfigured": "Access unavailable",
+    "accountNotConfiguredHint": "Your account is not configured or has been deactivated. Please contact the administrator."
+  },
+  "roles": {
+    "admin": "Administrator",
+    "trainer": "Trainer",
+    "trainee": "Trainee"
+  },
+  "apprenticeTypes": {
+    "short": {
+      "SPV": "SPV",
+      "JSP_N3": "JSP 3",
+      "JSP_N4": "JSP 4"
+    },
+    "long": {
+      "SPV": "SPV in initial training",
+      "JSP_N3": "JSP level 3",
+      "JSP_N4": "JSP level 4"
+    }
+  },
+  "sessionTypes": {
+    "course": "Course",
+    "sport": "Sport",
+    "opening": "Opening"
+  },
+  "attendanceStatuses": {
+    "present": "Present",
+    "absent": "Absent",
+    "excused": "Excused",
+    "unrecorded": "Not recorded"
+  },
+  "skillStatuses": {
+    "IN_PROGRESS": "In progress",
+    "ACQUIRED": "Acquired",
+    "TO_REVIEW": "To review",
+    "none": "Not assessed"
+  },
+  "targetTypes": {
+    "ALL": "All trainees",
+    "SPV_ONLY": "SPV only",
+    "JSP_ONLY": "JSP only"
+  },
+  "evaluationScales": {
+    "levels": "Levels N1 / N2 / N3",
+    "status": "In progress / Acquired / To review"
+  },
+  "internships": {
+    "PS": "Prompt Secours (first aid)",
+    "SEE": "Team rescue",
+    "OD": "Miscellaneous operations",
+    "PROTEC": "Fire protection",
+    "INC": "Firefighting"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "permission-denied": "You are not allowed to perform this action.",
+    "unavailable": "Service unavailable. Check your connection.",
+    "auth/invalid-credential": "Incorrect email address or password.",
+    "auth/too-many-requests": "Too many attempts. Try again in a few minutes.",
+    "auth/network-request-failed": "Network connection problem.",
+    "auth/email-already-in-use": "This email address is already in use.",
+    "auth/invalid-email": "Invalid email address.",
+    "auth/weak-password": "Password is too weak (8 characters minimum)."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The requested page does not exist or has been moved.",
+    "backHome": "Back to home"
+  },
+  "dashboard": {
+    "greeting": "Hello {{name}} 👋",
+    "staffSubtitle": "Here is an overview of the ongoing training.",
+    "traineeSubtitle": "Track your progress and upcoming sessions.",
+    "upcomingSessions": "Upcoming sessions",
+    "seeCalendar": "See calendar",
+    "noUpcomingSessions": "No upcoming session.",
+    "skillsProgress": "Validated skills",
+    "attendanceRate": "Attendance rate",
+    "myBooklet": "My booklet",
+    "activeTrainees": "Active trainees",
+    "groups": "Active groups",
+    "remainingSessions": "Upcoming sessions",
+    "traineesWithoutGroup_one": "{{count}} trainee is not assigned to any group.",
+    "traineesWithoutGroup_other": "{{count}} trainees are not assigned to any group.",
+    "assignGroups": "Assign"
+  },
+  "calendar": {
+    "title": "Session calendar",
+    "description": "Weekly training sessions and related revision documents.",
+    "showPast": "Show past sessions",
+    "empty": "No session to display.",
+    "emptyAdminHint": "Create a session with the “New session” button.",
+    "rollCall": "Roll call"
+  },
+  "sessions": {
+    "create": "New session",
+    "createTitle": "New session",
+    "editTitle": "Edit session",
+    "created": "Session created.",
+    "updated": "Session updated.",
+    "deleteTitle": "Delete session",
+    "deleteMessage": "The session “{{title}}”, its attendance records and documents will be permanently deleted.",
+    "documents": "Course / revision documents",
+    "documentsHint": "Links to session sheets and revision PDFs available to trainees.",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "E.g. Session 12",
+      "type": "Type",
+      "date": "Date",
+      "startTime": "Start",
+      "endTime": "End",
+      "theme": "Theme",
+      "themePlaceholder": "E.g. Primary assessment XABCDE",
+      "module": "Related module"
+    },
+    "addDocument": "Add"
+  },
+  "rollCall": {
+    "title": "Roll call — {{title}}",
+    "sessionNotFound": "Session not found.",
+    "allGroups": "All groups",
+    "markAllPresent": "All present",
+    "allMarkedPresent_one": "{{count}} trainee marked present.",
+    "allMarkedPresent_other": "{{count}} trainees marked present.",
+    "noTrainees": "No matching trainee.",
+    "statusFor": "Attendance of {{name}}",
+    "addNote": "Add a note",
+    "notePlaceholder": "Note (late, outfit…)",
+    "jspNotePlaceholder": "JSP activity follow-up / note"
+  },
+  "trainees": {
+    "title": "Trainees",
+    "description_one": "{{count}} trainee across all groups.",
+    "description_other": "{{count}} trainees across all groups.",
+    "searchPlaceholder": "Search a trainee, a fire station…",
+    "filterGroup": "Filter by group",
+    "filterType": "Filter by status",
+    "allGroups": "All groups",
+    "allTypes": "All statuses",
+    "empty": "No trainee matches your filters.",
+    "notFound": "Trainee not found."
+  },
+  "booklet": {
+    "referent": "Referent trainer",
+    "noReferent": "No referent assigned.",
+    "entryStatus": "Entry status",
+    "tabs": {
+      "skills": "Skill grids",
+      "jspSheet": "JSP sheet",
+      "attendance": "Attendance",
+      "interviews": "Interviews",
+      "wishes": "Internship wishes"
+    }
+  },
+  "skills": {
+    "empty": "No grid applies to this profile.",
+    "noCompetencies": "No competency in this module.",
+    "criteria": "Criterion",
+    "staffHint": "Click a level to validate it; click again to withdraw your validation.",
+    "validatedBy": "Validated by {{name}} on {{date}}",
+    "notValidated": "Not validated"
+  },
+  "jspSheet": {
+    "empty": "No complementary sheet configured.",
+    "description": "National JSP Certificate 3 & 4 follow-up",
+    "visa": "Signed: {{name}} — {{date}}"
+  },
+  "attendance": {
+    "empty": "No past session yet.",
+    "rate": "Attendance rate"
+  },
+  "interviews": {
+    "counter_one": "{{count}} interview out of {{max}} in {{year}}",
+    "counter_other": "{{count}} interviews out of {{max}} in {{year}}",
+    "create": "New interview",
+    "createTitle": "New follow-up interview",
+    "editTitle": "Edit interview",
+    "editWarning": "Editing will cancel the existing signatures.",
+    "created": "Interview saved.",
+    "empty": "No interview yet.",
+    "title": "Interview #{{occurrence}}",
+    "trainerVisa": "Trainer signature",
+    "traineeVisa": "Trainee signature",
+    "signedBy": "Signed by {{name}} on {{date}}",
+    "notSigned": "Awaiting signature",
+    "sign": "Sign",
+    "deleteTitle": "Delete interview",
+    "deleteMessage": "This interview will be permanently deleted.",
+    "fields": {
+      "date": "Date",
+      "strengths": "Strengths",
+      "improvements": "Areas for improvement",
+      "objectives": "Objectives for the period"
+    }
+  },
+  "wishes": {
+    "hint": "Enter up to 3 preferred dates for each internship.",
+    "readOnlyHint": "Wishes entered by the trainee.",
+    "lastUpdate": "Last updated: {{date}}",
+    "wishNumber": "Wish {{number}}",
+    "wishPlaceholder": "E.g. March 12-16",
+    "exempted": "Exempted",
+    "exemptedLabel": "Module validated / exempted (JSP certificate)",
+    "exemptedHint": "No wish needed for this internship.",
+    "constraints": "Your availability or constraints",
+    "save": "Save my wishes",
+    "saved": "Wishes saved."
+  },
+  "resources": {
+    "title": "Learning resources",
+    "description": "Session sheets, official PDFs and revision documents (Drive, SharePoint links…).",
+    "searchPlaceholder": "Search a document…",
+    "allModules": "All modules",
+    "empty": "No resource available.",
+    "deleteTitle": "Delete resource",
+    "deleteMessage": "“{{title}}” will be permanently deleted.",
+    "fields": {
+      "title": "Title",
+      "module": "Module",
+      "session": "Related session",
+      "url": "Link"
+    },
+    "add": "Add a link",
+    "addTitle": "Add a resource",
+    "addHint": "Upload the document to your sharing space, then paste its link here.",
+    "added": "Resource added.",
+    "invalidUrl": "The link must start with http:// or https://",
+    "urlHint": "Make sure the document is shared with trainees.",
+    "open": "Open"
+  },
+  "users": {
+    "title": "Users",
+    "description": "Create administrator, trainer and trainee accounts.",
+    "create": "New user",
+    "createTitle": "New user",
+    "editTitle": "Edit user",
+    "created": "User created.",
+    "updated": "User updated.",
+    "searchPlaceholder": "Name, email, fire station…",
+    "empty": "No user.",
+    "inactive": "Inactive",
+    "passwordHint_one": "At least {{count}} character.",
+    "passwordHint_other": "At least {{count}} characters.",
+    "activeHint": "An inactive account can no longer sign in.",
+    "deleteTitle": "Delete user",
+    "deleteMessage": "{{name}}'s profile will be deleted and their access removed. The sign-in identifier remains visible in the Firebase console.",
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "password": "Password",
+      "role": "Role",
+      "phone": "Phone",
+      "fireStation": "Fire station (CIS)",
+      "fireStationPlaceholder": "Fire and rescue station",
+      "apprenticeType": "Entry status",
+      "group": "Group",
+      "active": "Active account"
+    },
+    "emailLockedHint": "The sign-in address cannot be changed.",
+    "sendPasswordReset": "Send a password reset email",
+    "resetEmailSent": "Password reset email sent to {{email}}."
+  },
+  "groups": {
+    "title": "Groups & referents",
+    "description": "Assign trainees and designate the referent trainer of each group.",
+    "create": "New group",
+    "createTitle": "New group",
+    "editTitle": "Edit group",
+    "created": "Group created.",
+    "updated": "Group updated.",
+    "empty": "No group yet.",
+    "noGroup": "No group",
+    "noGroupDescription_one": "{{count}} trainee to assign",
+    "noGroupDescription_other": "{{count}} trainees to assign",
+    "noReferent": "No referent",
+    "referentHint": "Only “Trainer” accounts can be referents.",
+    "noMembers": "No trainee in this group.",
+    "memberCount_one": "{{count}} trainee",
+    "memberCount_other": "{{count}} trainees",
+    "promo": "Class of {{year}}",
+    "inactive": "Inactive",
+    "addMember": "+ Add a trainee without group…",
+    "removeMember": "Remove from group",
+    "deleteTitle": "Delete group",
+    "deleteMessage": "The group “{{label}}” will be deleted and its trainees moved to “No group”.",
+    "fields": {
+      "label": "Group name",
+      "labelPlaceholder": "E.g. Team 6",
+      "promoYear": "Class year",
+      "referent": "Referent",
+      "active": "Active group"
+    }
+  },
+  "modules": {
+    "title": "Modules & grids",
+    "description": "Configure internships, workshops and assessment boxes of the grids.",
+    "create": "New module",
+    "createTitle": "New module",
+    "editTitle": "Edit module",
+    "created": "Module created.",
+    "updated": "Module updated.",
+    "empty": "No module configured.",
+    "noCompetencies": "No assessment box in this module.",
+    "addCompetency": "Add a box",
+    "createCompetencyTitle": "New assessment box",
+    "editCompetencyTitle": "Edit assessment box",
+    "competencyCreated": "Box added.",
+    "competencyUpdated": "Box updated.",
+    "criteriaHint": "Optional — displayed under the label in the grid.",
+    "activeHint": "A hidden box no longer appears in the grids; history is kept.",
+    "hidden": "Hidden",
+    "hide": "Hide",
+    "show": "Show",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "deleteTitle": "Delete module",
+    "deleteMessage": "The module “{{label}}” and all its boxes will be deleted. Prefer hiding boxes to keep the history.",
+    "deleteCompetencyTitle": "Delete box",
+    "deleteCompetencyMessage": "The box “{{code}}” will be deleted. Prefer hiding it to keep the validation history.",
+    "fields": {
+      "code": "Code",
+      "label": "Label",
+      "order": "Display order",
+      "targetType": "Target audience",
+      "evaluationScale": "Assessment scale",
+      "competencyCode": "Code (OS, C, Workshop…)",
+      "competencyLabel": "Competency label",
+      "criteria": "Validation criterion",
+      "active": "Box visible in grids"
+    }
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "app": {
+    "name": "Livret de l'apprenant",
+    "tagline": "SPV / JSP — Équipe 6",
+    "offline": "Mode hors ligne : vos saisies seront synchronisées au retour du réseau.",
+    "footer": "Sapeurs-Pompiers Volontaires & Jeunes Sapeurs-Pompiers"
+  },
+  "common": {
+    "all": "Tous",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "language": "Langue",
+    "loading": "Chargement…",
+    "none": "Aucun",
+    "remove": "Retirer",
+    "save": "Enregistrer",
+    "searchByName": "Rechercher un nom…"
+  },
+  "nav": {
+    "mainNavigation": "Navigation principale",
+    "openMenu": "Ouvrir le menu",
+    "administration": "Administration",
+    "dashboard": "Tableau de bord",
+    "myBooklet": "Mon livret",
+    "calendar": "Calendrier",
+    "trainees": "Apprenants",
+    "resources": "Ressources",
+    "users": "Utilisateurs",
+    "groups": "Groupes & référents",
+    "modules": "Modules & grilles"
+  },
+  "auth": {
+    "welcome": "Bienvenue",
+    "signInHint": "Connectez-vous pour accéder à votre livret.",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "signOut": "Déconnexion",
+    "forgotPassword": "Mot de passe oublié ?",
+    "enterEmailFirst": "Saisissez d'abord votre adresse e-mail.",
+    "resetEmailSent": "Un e-mail de réinitialisation vous a été envoyé.",
+    "accountNotConfigured": "Accès indisponible",
+    "accountNotConfiguredHint": "Votre compte n'est pas configuré ou a été désactivé. Contactez l'administrateur."
+  },
+  "roles": {
+    "admin": "Administrateur",
+    "trainer": "Formateur",
+    "trainee": "Stagiaire"
+  },
+  "apprenticeTypes": {
+    "short": {
+      "SPV": "SPV",
+      "JSP_N3": "JSP 3",
+      "JSP_N4": "JSP 4"
+    },
+    "long": {
+      "SPV": "SPV en formation initiale",
+      "JSP_N3": "JSP niveau 3",
+      "JSP_N4": "JSP niveau 4"
+    }
+  },
+  "sessionTypes": {
+    "course": "Cours",
+    "sport": "Sport",
+    "opening": "Ouverture"
+  },
+  "attendanceStatuses": {
+    "present": "Présent",
+    "absent": "Absent",
+    "excused": "Excusé",
+    "unrecorded": "Non saisi"
+  },
+  "skillStatuses": {
+    "IN_PROGRESS": "En cours",
+    "ACQUIRED": "Acquis",
+    "TO_REVIEW": "À revoir",
+    "none": "Non évalué"
+  },
+  "targetTypes": {
+    "ALL": "Tous les apprenants",
+    "SPV_ONLY": "SPV uniquement",
+    "JSP_ONLY": "JSP uniquement"
+  },
+  "evaluationScales": {
+    "levels": "Niveaux N1 / N2 / N3",
+    "status": "En cours / Acquis / À revoir"
+  },
+  "internships": {
+    "PS": "Prompt Secours",
+    "SEE": "Secours en Équipe",
+    "OD": "Opérations Diverses",
+    "PROTEC": "Protection Incendie",
+    "INC": "Incendie"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Veuillez réessayer.",
+    "permission-denied": "Vous n'avez pas les droits pour effectuer cette action.",
+    "unavailable": "Service indisponible. Vérifiez votre connexion.",
+    "auth/invalid-credential": "Adresse e-mail ou mot de passe incorrect.",
+    "auth/too-many-requests": "Trop de tentatives. Réessayez dans quelques minutes.",
+    "auth/network-request-failed": "Problème de connexion réseau.",
+    "auth/email-already-in-use": "Cette adresse e-mail est déjà utilisée.",
+    "auth/invalid-email": "L'adresse e-mail est invalide.",
+    "auth/weak-password": "Le mot de passe est trop faible (8 caractères minimum)."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page demandée n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
+  },
+  "dashboard": {
+    "greeting": "Bonjour {{name}} 👋",
+    "staffSubtitle": "Voici un aperçu de la formation en cours.",
+    "traineeSubtitle": "Retrouvez votre progression et vos prochaines séances.",
+    "upcomingSessions": "Prochaines séances",
+    "seeCalendar": "Voir le calendrier",
+    "noUpcomingSessions": "Aucune séance à venir.",
+    "skillsProgress": "Compétences validées",
+    "attendanceRate": "Taux de présence",
+    "myBooklet": "Mon livret",
+    "activeTrainees": "Apprenants actifs",
+    "groups": "Groupes actifs",
+    "remainingSessions": "Séances à venir",
+    "traineesWithoutGroup_one": "{{count}} apprenant n'est affecté à aucun groupe.",
+    "traineesWithoutGroup_other": "{{count}} apprenants ne sont affectés à aucun groupe.",
+    "assignGroups": "Affecter"
+  },
+  "calendar": {
+    "title": "Calendrier des séances",
+    "description": "Séances d'entraînement hebdomadaires et documents de révision associés.",
+    "showPast": "Afficher les séances passées",
+    "empty": "Aucune séance à afficher.",
+    "emptyAdminHint": "Créez une séance avec le bouton « Nouvelle séance ».",
+    "rollCall": "Appel"
+  },
+  "sessions": {
+    "create": "Nouvelle séance",
+    "createTitle": "Nouvelle séance",
+    "editTitle": "Modifier la séance",
+    "created": "Séance créée.",
+    "updated": "Séance mise à jour.",
+    "deleteTitle": "Supprimer la séance",
+    "deleteMessage": "La séance « {{title}} », ses présences et ses documents seront définitivement supprimés.",
+    "documents": "Documents de cours / révision",
+    "documentsHint": "Liens vers les fiches de séance et PDF de révision consultables par les apprenants.",
+    "fields": {
+      "title": "Titre",
+      "titlePlaceholder": "Ex : Séance 12",
+      "type": "Type",
+      "date": "Date",
+      "startTime": "Début",
+      "endTime": "Fin",
+      "theme": "Thématique",
+      "themePlaceholder": "Ex : Bilan primaire XABCDE",
+      "module": "Module associé"
+    },
+    "addDocument": "Ajouter"
+  },
+  "rollCall": {
+    "title": "Appel — {{title}}",
+    "sessionNotFound": "Séance introuvable.",
+    "allGroups": "Tous les groupes",
+    "markAllPresent": "Tous présents",
+    "allMarkedPresent_one": "{{count}} apprenant marqué présent.",
+    "allMarkedPresent_other": "{{count}} apprenants marqués présents.",
+    "noTrainees": "Aucun apprenant ne correspond.",
+    "statusFor": "Présence de {{name}}",
+    "addNote": "Ajouter une remarque",
+    "notePlaceholder": "Remarque (retard, tenue…)",
+    "jspNotePlaceholder": "Suivi de l'activité JSP / remarque"
+  },
+  "trainees": {
+    "title": "Apprenants",
+    "description_one": "{{count}} apprenant, tous groupes confondus.",
+    "description_other": "{{count}} apprenants, tous groupes confondus.",
+    "searchPlaceholder": "Rechercher un apprenant, un CIS…",
+    "filterGroup": "Filtrer par groupe",
+    "filterType": "Filtrer par statut",
+    "allGroups": "Tous les groupes",
+    "allTypes": "Tous les statuts",
+    "empty": "Aucun apprenant ne correspond à vos filtres.",
+    "notFound": "Apprenant introuvable."
+  },
+  "booklet": {
+    "referent": "Formateur référent",
+    "noReferent": "Aucun référent désigné.",
+    "entryStatus": "Statut d'entrée",
+    "tabs": {
+      "skills": "Grilles de compétences",
+      "jspSheet": "Fiche JSP",
+      "attendance": "Présences",
+      "interviews": "Entretiens",
+      "wishes": "Vœux de stage"
+    }
+  },
+  "skills": {
+    "empty": "Aucune grille ne s'applique à ce profil.",
+    "noCompetencies": "Aucune compétence dans ce module.",
+    "criteria": "Critère",
+    "staffHint": "Cliquez sur un niveau pour le valider ; cliquez à nouveau pour retirer votre validation.",
+    "validatedBy": "Validé par {{name}} le {{date}}",
+    "notValidated": "Non validé"
+  },
+  "jspSheet": {
+    "empty": "Aucune fiche complémentaire configurée.",
+    "description": "Suivi du Brevet National JSP 3 & 4",
+    "visa": "Visa : {{name}} — {{date}}"
+  },
+  "attendance": {
+    "empty": "Aucune séance passée pour le moment.",
+    "rate": "Taux de présence"
+  },
+  "interviews": {
+    "counter_one": "{{count}} entretien sur {{max}} en {{year}}",
+    "counter_other": "{{count}} entretiens sur {{max}} en {{year}}",
+    "create": "Nouvel entretien",
+    "createTitle": "Nouvel entretien de suivi",
+    "editTitle": "Modifier l'entretien",
+    "editWarning": "La modification annulera les visas déjà apposés.",
+    "created": "Entretien enregistré.",
+    "empty": "Aucun entretien pour le moment.",
+    "title": "Entretien n°{{occurrence}}",
+    "trainerVisa": "Visa formateur",
+    "traineeVisa": "Visa apprenant",
+    "signedBy": "Signé par {{name}} le {{date}}",
+    "notSigned": "En attente de signature",
+    "sign": "Signer",
+    "deleteTitle": "Supprimer l'entretien",
+    "deleteMessage": "Cet entretien sera définitivement supprimé.",
+    "fields": {
+      "date": "Date",
+      "strengths": "Points forts",
+      "improvements": "Axes de progrès",
+      "objectives": "Objectifs pour la période"
+    }
+  },
+  "wishes": {
+    "hint": "Indiquez jusqu'à 3 vœux de dates pour chaque stage.",
+    "readOnlyHint": "Vœux saisis par l'apprenant.",
+    "lastUpdate": "Dernière mise à jour : {{date}}",
+    "wishNumber": "Vœu {{number}}",
+    "wishPlaceholder": "Ex : 12-16 mars",
+    "exempted": "Dispensé",
+    "exemptedLabel": "Module validé / dispensé (Brevet JSP)",
+    "exemptedHint": "Aucun vœu à saisir pour ce stage.",
+    "constraints": "Vos disponibilités ou contraintes à signaler",
+    "save": "Enregistrer mes vœux",
+    "saved": "Vœux enregistrés."
+  },
+  "resources": {
+    "title": "Ressources pédagogiques",
+    "description": "Fiches de séances, PDF officiels et documents de révision (liens Drive, SharePoint…).",
+    "searchPlaceholder": "Rechercher un document…",
+    "allModules": "Tous les modules",
+    "empty": "Aucune ressource disponible.",
+    "deleteTitle": "Supprimer la ressource",
+    "deleteMessage": "« {{title}} » sera définitivement supprimé.",
+    "fields": {
+      "title": "Titre",
+      "module": "Module",
+      "session": "Séance associée",
+      "url": "Lien"
+    },
+    "add": "Ajouter un lien",
+    "addTitle": "Ajouter une ressource",
+    "addHint": "Déposez le document sur votre espace de partage puis collez son lien ici.",
+    "added": "Ressource ajoutée.",
+    "invalidUrl": "Le lien doit commencer par http:// ou https://",
+    "urlHint": "Vérifiez que le partage est ouvert aux apprenants.",
+    "open": "Ouvrir"
+  },
+  "users": {
+    "title": "Utilisateurs",
+    "description": "Création des comptes administrateurs, formateurs et stagiaires.",
+    "create": "Nouvel utilisateur",
+    "createTitle": "Nouvel utilisateur",
+    "editTitle": "Modifier l'utilisateur",
+    "created": "Utilisateur créé.",
+    "updated": "Utilisateur mis à jour.",
+    "searchPlaceholder": "Nom, e-mail, CIS…",
+    "empty": "Aucun utilisateur.",
+    "inactive": "Inactif",
+    "passwordHint_one": "{{count}} caractère minimum.",
+    "passwordHint_other": "{{count}} caractères minimum.",
+    "activeHint": "Un compte inactif ne peut plus se connecter.",
+    "deleteTitle": "Supprimer l'utilisateur",
+    "deleteMessage": "Le profil de {{name}} sera supprimé et son accès retiré. L'identifiant de connexion reste visible dans la console Firebase.",
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "role": "Rôle",
+      "phone": "Téléphone",
+      "fireStation": "CIS",
+      "fireStationPlaceholder": "Centre d'incendie et de secours",
+      "apprenticeType": "Statut d'entrée",
+      "group": "Groupe",
+      "active": "Compte actif"
+    },
+    "emailLockedHint": "L'adresse de connexion ne peut pas être modifiée.",
+    "sendPasswordReset": "Envoyer un e-mail de réinitialisation",
+    "resetEmailSent": "E-mail de réinitialisation envoyé à {{email}}."
+  },
+  "groups": {
+    "title": "Groupes & référents",
+    "description": "Affectez les apprenants et désignez le formateur référent de chaque groupe.",
+    "create": "Nouveau groupe",
+    "createTitle": "Nouveau groupe",
+    "editTitle": "Modifier le groupe",
+    "created": "Groupe créé.",
+    "updated": "Groupe mis à jour.",
+    "empty": "Aucun groupe pour le moment.",
+    "noGroup": "Sans groupe",
+    "noGroupDescription_one": "{{count}} apprenant à affecter",
+    "noGroupDescription_other": "{{count}} apprenants à affecter",
+    "noReferent": "Aucun référent",
+    "referentHint": "Seuls les comptes « Formateur » peuvent être référents.",
+    "noMembers": "Aucun apprenant dans ce groupe.",
+    "memberCount_one": "{{count}} apprenant",
+    "memberCount_other": "{{count}} apprenants",
+    "promo": "Promo {{year}}",
+    "inactive": "Inactif",
+    "addMember": "+ Ajouter un apprenant sans groupe…",
+    "removeMember": "Retirer du groupe",
+    "deleteTitle": "Supprimer le groupe",
+    "deleteMessage": "Le groupe « {{label}} » sera supprimé et ses apprenants passeront « Sans groupe ».",
+    "fields": {
+      "label": "Nom du groupe",
+      "labelPlaceholder": "Ex : Équipe 6",
+      "promoYear": "Année de promotion",
+      "referent": "Référent",
+      "active": "Groupe actif"
+    }
+  },
+  "modules": {
+    "title": "Modules & grilles",
+    "description": "Paramétrez les stages, sous-ateliers et cases d'évaluation des grilles.",
+    "create": "Nouveau module",
+    "createTitle": "Nouveau module",
+    "editTitle": "Modifier le module",
+    "created": "Module créé.",
+    "updated": "Module mis à jour.",
+    "empty": "Aucun module configuré.",
+    "noCompetencies": "Aucune case d'évaluation dans ce module.",
+    "addCompetency": "Ajouter une case",
+    "createCompetencyTitle": "Nouvelle case d'évaluation",
+    "editCompetencyTitle": "Modifier la case d'évaluation",
+    "competencyCreated": "Case ajoutée.",
+    "competencyUpdated": "Case mise à jour.",
+    "criteriaHint": "Optionnel — affiché sous l'intitulé dans la grille.",
+    "activeHint": "Une case masquée n'apparaît plus dans les grilles, l'historique est conservé.",
+    "hidden": "Masquée",
+    "hide": "Masquer",
+    "show": "Afficher",
+    "moveUp": "Monter",
+    "moveDown": "Descendre",
+    "deleteTitle": "Supprimer le module",
+    "deleteMessage": "Le module « {{label}} » et toutes ses cases seront supprimés. Préférez masquer les cases pour conserver l'historique.",
+    "deleteCompetencyTitle": "Supprimer la case",
+    "deleteCompetencyMessage": "La case « {{code}} » sera supprimée. Préférez la masquer pour conserver l'historique des validations.",
+    "fields": {
+      "code": "Code",
+      "label": "Intitulé",
+      "order": "Ordre d'affichage",
+      "targetType": "Public concerné",
+      "evaluationScale": "Échelle d'évaluation",
+      "competencyCode": "Code (OS, C, Atelier…)",
+      "competencyLabel": "Intitulé de la compétence",
+      "criteria": "Critère de validation",
+      "active": "Case visible dans les grilles"
+    }
+  }
+}

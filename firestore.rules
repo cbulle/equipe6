@@ -1,0 +1,116 @@
+rules_version = '2';
+
+// Roles are read from the `users/{uid}` profile ('admin' | 'trainer' | 'trainee').
+// Only an administrator can write profiles, so users cannot grant themselves a role.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function ownProfilePath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function hasRole(roles) {
+      return isSignedIn()
+        && exists(ownProfilePath())
+        && get(ownProfilePath()).data.active == true
+        && get(ownProfilePath()).data.role in roles;
+    }
+
+    function isAdmin() {
+      return hasRole(['admin']);
+    }
+
+    function isStaff() {
+      return hasRole(['admin', 'trainer']);
+    }
+
+    function isMember() {
+      return hasRole(['admin', 'trainer', 'trainee']);
+    }
+
+    function isSelf(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // A trainee may read the profile of the referent trainer of their group.
+    function isOwnReferent(userId) {
+      let groupId = get(ownProfilePath()).data.groupId;
+      return groupId != null
+        && get(/databases/$(database)/documents/groups/$(groupId)).data.referentId == userId;
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    function isValidLink() {
+      return request.resource.data.url is string && request.resource.data.url.matches('^https?://.+');
+    }
+
+    match /users/{userId} {
+      allow read: if isSelf(userId) || isStaff() || (isMember() && isOwnReferent(userId));
+      allow create: if isAdmin();
+      // An administrator cannot remove their own access by mistake.
+      allow update: if isAdmin() && !(isSelf(userId) && changedKeys().hasAny(['role', 'active']));
+      allow delete: if isAdmin() && !isSelf(userId);
+    }
+
+    match /groups/{groupId} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /modules/{moduleId} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /competencies/{competencyId} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /sessions/{sessionId} {
+      allow read: if isMember();
+      allow write: if isAdmin();
+    }
+
+    match /resources/{resourceId} {
+      allow read: if isMember();
+      allow create: if isStaff() && isValidLink() && request.resource.data.uploadedBy == request.auth.uid;
+      allow update: if isAdmin() && isValidLink();
+      allow delete: if isAdmin() || (isStaff() && resource.data.uploadedBy == request.auth.uid);
+    }
+
+    match /attendances/{attendanceId} {
+      allow read: if isStaff() || (isMember() && resource.data.userId == request.auth.uid);
+      allow write: if isStaff();
+    }
+
+    match /evaluations/{evaluationId} {
+      allow read: if isStaff() || (isMember() && resource.data.userId == request.auth.uid);
+      allow create, update: if isStaff() && request.resource.data.validatedBy == request.auth.uid;
+      // Trainers may only withdraw their own validations; the admin may correct anything.
+      allow delete: if isAdmin() || (isStaff() && resource.data.validatedBy == request.auth.uid);
+    }
+
+    match /interviews/{interviewId} {
+      allow read: if isStaff() || (isMember() && resource.data.userId == request.auth.uid);
+      allow create, delete: if isStaff();
+      allow update: if isStaff()
+        || (isMember()
+          && resource.data.userId == request.auth.uid
+          && changedKeys().hasOnly(['traineeVisa'])
+          && request.resource.data.traineeVisa.userId == request.auth.uid);
+    }
+
+    match /internshipWishes/{userId} {
+      allow read: if isStaff() || (isMember() && isSelf(userId));
+      allow write: if isAdmin() || (isMember() && isSelf(userId));
+    }
+  }
+}
