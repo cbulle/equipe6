@@ -111,7 +111,7 @@
     "backHome": "Retour à l'accueil"
   },
   "dashboard": {
-    "greeting": "Bonjour {{name}} 👋",
+    "greeting": "Bonjour {{name}}",
     "staffSubtitle": "Voici un aperçu de la formation en cours.",
     "traineeSubtitle": "Retrouvez votre progression et vos prochaines séances.",
     "upcomingSessions": "Prochaines séances",

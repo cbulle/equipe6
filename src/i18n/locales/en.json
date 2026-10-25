@@ -111,7 +111,7 @@
     "backHome": "Back to home"
   },
   "dashboard": {
-    "greeting": "Hello {{name}} 👋",
+    "greeting": "Hello {{name}}",
     "staffSubtitle": "Here is an overview of the ongoing training.",
     "traineeSubtitle": "Track your progress and upcoming sessions.",
     "upcomingSessions": "Upcoming sessions",
