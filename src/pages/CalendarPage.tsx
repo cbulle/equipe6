@@ -174,10 +174,10 @@ export function CalendarPage() {
             type="button"
             onClick={() => setTypeFilter(type)}
             className={clsx(
-              'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+              'rounded-sm px-3 py-1.5 text-sm font-medium transition-colors',
               typeFilter === type
                 ? 'bg-brand-800 text-white'
-                : 'bg-white text-slate-600 ring-1 ring-brand-100 hover:bg-brand-50',
+                : 'bg-white text-slate-600 ring-1 ring-brand-200 hover:bg-brand-50',
             )}
           >
             {type === 'all' ? t('common.all') : t(`sessionTypes.${type}`)}
@@ -185,7 +185,7 @@ export function CalendarPage() {
         ))}
       </div>
 
-      <section className="rounded-2xl bg-white p-3 ring-1 ring-brand-100 sm:p-4">
+      <section className="rounded-2xl bg-white p-3 ring-1 ring-brand-200 sm:p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-brand-800 capitalize">{formatMonth(`${monthKey}-01`)}</h2>
           <div className="flex items-center gap-2">
@@ -229,7 +229,7 @@ export function CalendarPage() {
                 >
                   <span
                     className={clsx(
-                      'flex size-6 items-center justify-center rounded-full text-xs font-semibold',
+                      'flex size-6 items-center justify-center rounded-sm text-xs font-semibold',
                       isToday ? 'bg-brand-800 text-white' : day.inMonth ? 'text-slate-700' : 'text-slate-400',
                     )}
                   >
@@ -239,7 +239,7 @@ export function CalendarPage() {
                     {daySessions.slice(0, 4).map((session) => (
                       <span
                         key={session.id}
-                        className={clsx('size-2 rounded-full', DOT_STYLES[session.type] ?? 'bg-slate-400')}
+                        className={clsx('size-2 rounded-sm', DOT_STYLES[session.type] ?? 'bg-slate-400')}
                       />
                     ))}
                   </span>

@@ -12,6 +12,10 @@ export const groupDocRef = (groupId: string) => doc(db, COLLECTIONS.groups, grou
 
 export const groupsQuery = () => query(groupsCollection, orderBy('label'));
 
+/** Ids of the groups the user is referent of. */
+export const referentGroupIdsOf = (userId: string, groups: Group[]) =>
+  groups.filter((group) => group.referentId === userId).map((group) => group.id);
+
 export async function createGroup(input: GroupInput): Promise<void> {
   await addDoc(groupsCollection, input);
 }

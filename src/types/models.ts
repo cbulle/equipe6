@@ -5,6 +5,8 @@ export const EVALUATION_SCALES = ['levels', 'status'] as const;
 export const SESSION_TYPES = ['course', 'sport', 'opening'] as const;
 export const SKILL_LEVELS = ['N1', 'N2', 'N3'] as const;
 export const SKILL_STATUSES = ['IN_PROGRESS', 'ACQUIRED', 'TO_REVIEW'] as const;
+/** `level` of the evaluation that declares a whole module finished, whether or not every box was ticked. */
+export const MODULE_COMPLETED = 'MODULE_COMPLETED';
 export const ATTENDANCE_STATUSES = ['present', 'absent', 'excused'] as const;
 export const INTERNSHIP_CODES = ['PS', 'SEE', 'OD', 'PROTEC', 'INC'] as const;
 
@@ -27,7 +29,6 @@ export interface UserProfile {
   apprenticeType: ApprenticeType | null;
   groupId: string | null;
   fireStation: string;
-  phone: string;
   active: boolean;
 }
 
@@ -98,9 +99,10 @@ export interface Attendance {
 export interface Evaluation {
   id: string;
   userId: string;
+  /** Empty for a module completion. */
   competencyId: string;
   moduleId: string;
-  level: SkillLevel | SkillStatus;
+  level: SkillLevel | SkillStatus | typeof MODULE_COMPLETED;
   validatedBy: string;
   validatedByName: string;
   validatedAt: number;

@@ -18,7 +18,7 @@ export function Avatar({ person, size = 'md', tone = 'brand' }: AvatarProps) {
     <span
       aria-hidden
       className={clsx(
-        'inline-flex shrink-0 items-center justify-center rounded-full font-semibold',
+        'inline-flex shrink-0 items-center justify-center rounded-sm font-semibold',
         tone === 'fire' ? 'bg-fire-100 text-fire-700' : 'bg-brand-100 text-brand-800',
         SIZE_CLASSES[size],
       )}

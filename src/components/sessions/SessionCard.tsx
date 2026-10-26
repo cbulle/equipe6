@@ -22,16 +22,16 @@ export function SessionCard({ session, trainingModule, documents = [], status, a
   return (
     <article
       className={clsx(
-        'flex flex-col gap-3 rounded-xl bg-white p-3 shadow-sm ring-1 sm:flex-row sm:items-center sm:p-4',
-        isToday ? 'ring-2 ring-fire-500' : 'ring-brand-100',
+        'flex flex-col gap-3 rounded-sm bg-white p-3 ring-1 sm:flex-row sm:items-center sm:p-4',
+        isToday ? 'ring-2 ring-brand-600' : 'ring-brand-200',
         isPast && 'opacity-75',
       )}
     >
       <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
         <div
           className={clsx(
-            'flex w-14 shrink-0 flex-col items-center rounded-lg py-1.5',
-            isToday ? 'bg-fire-600 text-white' : 'bg-brand-50 text-brand-900',
+            'flex w-14 shrink-0 flex-col items-center rounded-sm border py-1.5',
+            isToday ? 'border-brand-700 bg-brand-700 text-white' : 'border-brand-200 bg-brand-50 text-brand-900',
           )}
         >
           <span className="text-[11px] font-medium uppercase">{formatDate(session.date, { weekday: 'short' })}</span>

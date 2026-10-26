@@ -1,16 +1,23 @@
 import clsx from 'clsx';
-import { Check, Mail, MapPin, Phone, ShieldCheck, UsersRound } from 'lucide-react';
+import { Check, Mail, MapPin, Pencil, ShieldCheck, UsersRound } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGroup, useUser } from '@/hooks/useAppData';
+import { useGroup, useGroups, useUser } from '@/hooks/useAppData';
+import { useAuth } from '@/hooks/useAuth';
 import { APPRENTICE_TYPES, type UserProfile } from '@/types/models';
 import { fullName } from '@/utils/names';
 import { Avatar } from '../ui/Avatar';
+import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { UserFormModal } from '../users/UserFormModal';
 
 export function BookletHeader({ trainee }: { trainee: UserProfile }) {
   const { t } = useTranslation();
   const { data: group } = useGroup(trainee.groupId);
   const { data: referent } = useUser(group?.referentId);
+  const { isAdmin } = useAuth();
+  const { data: groups } = useGroups();
+  const [editing, setEditing] = useState(false);
 
   return (
     <Card className="overflow-hidden">
@@ -18,7 +25,14 @@ export function BookletHeader({ trainee }: { trainee: UserProfile }) {
         <div className="flex flex-1 items-start gap-4">
           <Avatar person={trainee} size="lg" />
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold text-brand-900">{fullName(trainee)}</h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl font-bold text-brand-900">{fullName(trainee)}</h1>
+              {isAdmin && (
+                <Button variant="secondary" size="sm" icon={<Pencil className="size-4" />} onClick={() => setEditing(true)}>
+                  {t('booklet.editProfile')}
+                </Button>
+              )}
+            </div>
             <div className="mt-1 flex flex-col gap-1 text-sm text-slate-600 sm:flex-row sm:flex-wrap sm:gap-x-4">
               {trainee.fireStation && (
                 <span className="inline-flex items-center gap-1.5">
@@ -50,12 +64,6 @@ export function BookletHeader({ trainee }: { trainee: UserProfile }) {
                 <Mail className="size-3.5" />
                 {referent.email}
               </a>
-              {referent.phone && (
-                <a href={`tel:${referent.phone}`} className="mt-1 flex items-center gap-1.5 text-brand-700 hover:underline">
-                  <Phone className="size-3.5" />
-                  {referent.phone}
-                </a>
-              )}
             </div>
           ) : (
             <p className="mt-2 text-sm text-slate-500">{t('booklet.noReferent')}</p>
@@ -87,6 +95,8 @@ export function BookletHeader({ trainee }: { trainee: UserProfile }) {
           })}
         </div>
       </div>
+
+      {editing && <UserFormModal user={trainee} groups={groups} onClose={() => setEditing(false)} />}
     </Card>
   );
 }

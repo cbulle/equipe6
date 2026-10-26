@@ -1,4 +1,5 @@
 import { Award, CalendarCheck, CalendarHeart, ListChecks, MessagesSquare } from 'lucide-react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -12,6 +13,7 @@ import {
 } from '@/hooks/useAppData';
 import { useAuth, useCurrentUser } from '@/hooks/useAuth';
 import type { UserProfile } from '@/types/models';
+import { getModuleCompletions } from '@/services/evaluationService';
 import { isJspApprentice } from '@/utils/training';
 import { PageLoader } from '../ui/Feedback';
 import { Tabs, type TabItem } from '../ui/Tabs';
@@ -33,6 +35,7 @@ export function BookletView({ trainee }: { trainee: UserProfile }) {
   const { data: modules, loading: modulesLoading } = useModules();
   const { data: competencies, loading: competenciesLoading } = useCompetencies();
   const { data: evaluations } = useUserEvaluations(trainee.id);
+  const completions = useMemo(() => getModuleCompletions(evaluations), [evaluations]);
   const { data: sessions } = useSessions();
   const { data: attendances } = useUserAttendances(trainee.id);
   const { data: interviews } = useUserInterviews(trainee.id);
@@ -55,7 +58,15 @@ export function BookletView({ trainee }: { trainee: UserProfile }) {
   const renderTab = () => {
     switch (activeTab) {
       case 'jspSheet':
-        return <JspSheetTab trainee={trainee} modules={modules} competencies={competencies} evaluations={evaluations} />;
+        return (
+          <JspSheetTab
+            trainee={trainee}
+            modules={modules}
+            competencies={competencies}
+            evaluations={evaluations}
+            completions={completions}
+          />
+        );
       case 'attendance':
         return <AttendanceTab sessions={sessions} attendances={attendances} />;
       case 'interviews':
@@ -72,7 +83,15 @@ export function BookletView({ trainee }: { trainee: UserProfile }) {
           />
         );
       default:
-        return <SkillsTab trainee={trainee} modules={modules} competencies={competencies} evaluations={evaluations} />;
+        return (
+          <SkillsTab
+            trainee={trainee}
+            modules={modules}
+            competencies={competencies}
+            evaluations={evaluations}
+            completions={completions}
+          />
+        );
     }
   };
 

@@ -9,7 +9,7 @@ const TONE_CLASSES: Record<BadgeTone, string> = {
   fire: 'bg-fire-50 text-fire-700 ring-fire-200',
   success: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
   warning: 'bg-amber-50 text-amber-800 ring-amber-200',
-  info: 'bg-sky-50 text-sky-700 ring-sky-200',
+  info: 'bg-teal-50 text-teal-800 ring-teal-200',
 };
 
 interface BadgeProps {
@@ -23,7 +23,7 @@ export function Badge({ tone = 'neutral', icon, children, className }: BadgeProp
   return (
     <span
       className={clsx(
-        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-inset',
+        'inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs font-semibold whitespace-nowrap ring-1 ring-inset',
         TONE_CLASSES[tone],
         className,
       )}

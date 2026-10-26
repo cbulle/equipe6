@@ -54,14 +54,50 @@ export function toProgress(done: number, total: number): Progress {
   return { done, total, percent: total === 0 ? 0 : Math.round((done / total) * 100) };
 }
 
-/** Progress over every N1 / N2 / N3 box of the given competencies. */
-export function computeLevelProgress(competencies: Competency[], evaluations: Evaluation[]): Progress {
-  const competencyIds = new Set(competencies.map((competency) => competency.id));
-  const done = evaluations.filter(
+/**
+ * Progress over every N1 / N2 / N3 box of the given competencies. Every box of a module
+ * marked as finished counts as validated, ticked or not.
+ */
+export function computeLevelProgress(
+  competencies: Competency[],
+  evaluations: Evaluation[],
+  completedModuleIds: ReadonlySet<string> = new Set(),
+): Progress {
+  const openCompetencies = competencies.filter((competency) => !completedModuleIds.has(competency.moduleId));
+  const openCompetencyIds = new Set(openCompetencies.map((competency) => competency.id));
+  const ticked = evaluations.filter(
     (evaluation) =>
-      competencyIds.has(evaluation.competencyId) && (SKILL_LEVELS as readonly string[]).includes(evaluation.level),
+      openCompetencyIds.has(evaluation.competencyId) && (SKILL_LEVELS as readonly string[]).includes(evaluation.level),
   ).length;
-  return toProgress(done, competencies.length * SKILL_LEVELS.length);
+  const completedBoxes = (competencies.length - openCompetencies.length) * SKILL_LEVELS.length;
+  return toProgress(ticked + completedBoxes, competencies.length * SKILL_LEVELS.length);
+}
+
+export interface AttendanceStats extends Progress {
+  absent: number;
+  excused: number;
+  /** Past sessions for which nothing was recorded. */
+  unrecorded: number;
+}
+
+/** Attendance of one trainee over the sessions held so far; `done` is the number of presences. */
+export function computeAttendanceStats(sessions: TrainingSession[], attendances: Attendance[]): AttendanceStats {
+  const today = todayIsoDate();
+  const pastSessionIds = new Set(sessions.filter((session) => session.date <= today).map((session) => session.id));
+  const counts: Record<string, number> = { present: 0, absent: 0, excused: 0 };
+  attendances.forEach((attendance) => {
+    // A record holding only a note has no status yet.
+    if (pastSessionIds.has(attendance.sessionId) && attendance.status in counts) {
+      counts[attendance.status] += 1;
+    }
+  });
+  const recorded = counts.present + counts.absent + counts.excused;
+  return {
+    ...toProgress(counts.present, pastSessionIds.size),
+    absent: counts.absent,
+    excused: counts.excused,
+    unrecorded: pastSessionIds.size - recorded,
+  };
 }
 
 export function computeAttendanceProgress(sessions: TrainingSession[], attendances: Attendance[]): Progress {

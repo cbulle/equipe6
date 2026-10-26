@@ -1,19 +1,33 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-  --color-brand-50: #f1f5fa;
-  --color-brand-100: #dde6f2;
-  --color-brand-200: #bccde3;
-  --color-brand-300: #8eaacd;
-  --color-brand-400: #5b80b0;
-  --color-brand-500: #3b6194;
-  --color-brand-600: #2c4c7a;
-  --color-brand-700: #243f66;
-  --color-brand-800: #1f3657;
-  --color-brand-900: #1b2f4b;
-  --color-brand-950: #111e31;
+  /* Dark green institutional palette (brand-50 is the page background). */
+  --color-brand-50: #f2f4f2;
+  --color-brand-100: #e2e8e3;
+  --color-brand-200: #c5d1c7;
+  --color-brand-300: #9cb2a0;
+  --color-brand-400: #6d8f73;
+  --color-brand-500: #4a7051;
+  --color-brand-600: #34583b;
+  --color-brand-700: #27492e;
+  --color-brand-800: #1d3c24;
+  --color-brand-900: #16301c;
+  --color-brand-950: #0d1f11;
+
+  /* Neutral greys instead of Tailwind's blue-tinted slate. */
+  --color-slate-50: #f8f8f7;
+  --color-slate-100: #f0f0ee;
+  --color-slate-200: #e2e2df;
+  --color-slate-300: #cfcfcb;
+  --color-slate-400: #a1a19c;
+  --color-slate-500: #71716c;
+  --color-slate-600: #52524e;
+  --color-slate-700: #3f3f3c;
+  --color-slate-800: #282826;
+  --color-slate-900: #191918;
+  --color-slate-950: #0c0c0b;
 
   --color-fire-50: #fef2f3;
   --color-fire-100: #fde3e6;
@@ -21,6 +35,22 @@
   --color-fire-500: #d6223d;
   --color-fire-600: #c8102e;
   --color-fire-700: #a50d26;
+
+  /* Square look: corners are barely softened, whatever utility a component uses. */
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 3px;
+  --radius-2xl: 3px;
+  --radius-3xl: 3px;
+
+  /* Flat surfaces: borders separate the blocks, shadows only lift overlays. */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 2px 8px rgb(0 0 0 / 0.15);
+  --shadow-xl: 0 6px 20px rgb(0 0 0 / 0.2);
 }
 
 @layer base {
@@ -33,6 +63,6 @@
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brand-500;
+    @apply outline-2 outline-offset-2 outline-brand-600;
   }
 }

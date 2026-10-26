@@ -91,6 +91,7 @@ service cloud.firestore {
       allow write: if isStaff();
     }
 
+    // One ticked box, or `{userId}_{moduleId}_module` for a module declared finished.
     match /evaluations/{evaluationId} {
       allow read: if isStaff() || (isMember() && resource.data.userId == request.auth.uid);
       allow create, update: if isStaff() && request.resource.data.validatedBy == request.auth.uid;

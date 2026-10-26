@@ -1,1 +1,0 @@
-const S=["admin","trainer","trainee"],E=["SPV","JSP_N3","JSP_N4"],s=["ALL","SPV_ONLY","JSP_ONLY"],t=["levels","status"],N=["course","sport","opening"],P=["N1","N2","N3"],a=["PS","SEE","OD","PROTEC","INC"];export{E as A,t as E,a as I,s as M,N as S,S as U,P as a};

@@ -61,8 +61,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           onClick={onNavigate}
           className={({ isActive }) =>
             clsx(
-              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-              isActive ? 'bg-white/10 text-white' : 'text-brand-200 hover:bg-white/5 hover:text-white',
+              'flex items-center gap-3 rounded-sm border-l-4 px-3 py-2 text-sm font-medium transition-colors',
+              isActive
+                ? 'border-fire-600 bg-white font-semibold text-brand-900'
+                : 'border-transparent text-brand-100 hover:bg-white/10 hover:text-white',
             )
           }
         >
@@ -72,22 +74,22 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       ));
 
   return (
-    <div className="flex h-full flex-col bg-brand-900 px-3 py-4">
-      <div className="px-2 pb-6">
+    <div className="flex h-full flex-col bg-brand-800 px-3 py-4">
+      <div className="-mx-3 -mt-4 mb-4 border-b border-white/10 bg-brand-900 px-5 py-4">
         <AppLogo inverted />
       </div>
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto" aria-label={t('nav.mainNavigation')}>
         {renderItems('main')}
         {role === 'admin' && (
           <>
-            <p className="mt-6 mb-1 px-3 text-xs font-semibold tracking-wider text-brand-400 uppercase">
+            <p className="mt-6 mb-1 border-b border-white/10 px-3 pb-1 text-xs font-bold tracking-wider text-brand-300 uppercase">
               {t('nav.administration')}
             </p>
             {renderItems('admin')}
           </>
         )}
       </nav>
-      <div className="mt-4 rounded-xl bg-white/5 p-3">
+      <div className="-mx-3 -mb-4 mt-4 border-t border-white/10 bg-brand-900 px-5 py-3">
         <div className="flex items-center gap-3">
           <Avatar person={profile} size="sm" tone="fire" />
           <div className="min-w-0 flex-1">
@@ -96,11 +98,11 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between">
-          <LanguageSwitcher />
+          <LanguageSwitcher className="text-brand-100" />
           <button
             type="button"
             onClick={() => void signOut()}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium text-brand-200 hover:bg-white/10 hover:text-white"
+            className="inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs font-medium text-brand-100 hover:bg-white/10 hover:text-white"
           >
             <LogOut className="size-4" />
             {t('auth.signOut')}
@@ -124,7 +126,7 @@ export function AppLayout() {
 
       {isMenuOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-brand-950/50" onClick={() => setIsMenuOpen(false)} aria-hidden />
+          <div className="absolute inset-0 bg-black/40" onClick={() => setIsMenuOpen(false)} aria-hidden />
           <aside className="relative h-full w-72 max-w-[85vw] shadow-xl">
             <button
               type="button"
@@ -139,7 +141,7 @@ export function AppLayout() {
         </div>
       )}
 
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-brand-100 bg-white/90 px-4 py-2.5 backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b-2 border-brand-700 bg-white px-4 py-2.5 lg:hidden">
         <button
           type="button"
           onClick={() => setIsMenuOpen(true)}

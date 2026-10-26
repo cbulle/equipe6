@@ -39,10 +39,14 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "forgotPassword": "Forgot your password?",
-    "enterEmailFirst": "Please enter your email address first.",
-    "resetEmailSent": "A password reset email has been sent.",
+    "resetEmailSent": "If an account exists for {{email}}, an email with a reset link has just been sent. Remember to check your spam folder.",
     "accountNotConfigured": "Access unavailable",
-    "accountNotConfiguredHint": "Your account is not configured or has been deactivated. Please contact the administrator."
+    "accountNotConfiguredHint": "Your account is not configured or has been deactivated. Please contact the administrator.",
+    "resetTitle": "Forgot password",
+    "resetHint": "Enter your email address: you will receive a link to choose a new password.",
+    "sendResetLink": "Send me the link",
+    "resetEmailSentTitle": "Check your inbox",
+    "backToSignIn": "Back to sign in"
   },
   "roles": {
     "admin": "Administrator",
@@ -103,7 +107,9 @@
     "auth/network-request-failed": "Network connection problem.",
     "auth/email-already-in-use": "This email address is already in use.",
     "auth/invalid-email": "Invalid email address.",
-    "auth/weak-password": "Password is too weak (8 characters minimum)."
+    "auth/weak-password": "Password is too weak (8 characters minimum).",
+    "auth/missing-email": "Enter your email address.",
+    "auth/user-disabled": "This account has been disabled. Contact the administrator."
   },
   "notFound": {
     "title": "Page not found",
@@ -112,20 +118,23 @@
   },
   "dashboard": {
     "greeting": "Hello {{name}}",
-    "staffSubtitle": "Here is an overview of the ongoing training.",
-    "traineeSubtitle": "Track your progress and upcoming sessions.",
+    "staffSubtitle": "Upcoming sessions and attendance follow-up.",
+    "traineeSubtitle": "Your progress and your next sessions.",
     "upcomingSessions": "Upcoming sessions",
     "seeCalendar": "See calendar",
     "noUpcomingSessions": "No upcoming session.",
     "skillsProgress": "Validated skills",
     "attendanceRate": "Attendance rate",
-    "myBooklet": "My booklet",
-    "activeTrainees": "Active trainees",
-    "groups": "Active groups",
-    "remainingSessions": "Upcoming sessions",
-    "traineesWithoutGroup_one": "{{count}} trainee is not assigned to any group.",
-    "traineesWithoutGroup_other": "{{count}} trainees are not assigned to any group.",
-    "assignGroups": "Assign"
+    "activeTrainees": "Trainees",
+    "today": "Today",
+    "attendanceDetail": "Attendance at past sessions",
+    "traineeStats": "Statistics per trainee",
+    "traineeStatsHint": "Attendance at past sessions. Click a name to open the details.",
+    "noTrainees": "No trainee in this selection.",
+    "columns": {
+      "trainee": "Trainee",
+      "group": "Group"
+    }
   },
   "calendar": {
     "title": "Session calendar",
@@ -184,7 +193,7 @@
     "notFound": "Trainee not found."
   },
   "booklet": {
-    "referent": "Referent trainer",
+    "referent": "Referent",
     "noReferent": "No referent assigned.",
     "entryStatus": "Entry status",
     "tabs": {
@@ -193,13 +202,14 @@
       "attendance": "Attendance",
       "interviews": "Interviews",
       "wishes": "Internship wishes"
-    }
+    },
+    "editProfile": "Edit profile"
   },
   "skills": {
     "empty": "No grid applies to this profile.",
     "noCompetencies": "No competency in this module.",
     "criteria": "Criterion",
-    "staffHint": "Click a level to validate it; click again to withdraw your validation.",
+    "staffHint": "Click a level to validate it, click again to withdraw your validation. A module can also be marked as finished without ticking every box.",
     "validatedBy": "Validated by {{name}} on {{date}}",
     "notValidated": "Not validated"
   },
@@ -293,16 +303,22 @@
       "email": "Email address",
       "password": "Password",
       "role": "Role",
-      "phone": "Phone",
       "fireStation": "Fire station (CIS)",
       "fireStationPlaceholder": "Fire and rescue station",
       "apprenticeType": "Entry status",
       "group": "Group",
       "active": "Active account"
     },
-    "emailLockedHint": "The sign-in address cannot be changed.",
+    "emailLockedHint": "The sign-in address cannot be changed here (Firebase console > Authentication).",
     "sendPasswordReset": "Send a password reset email",
-    "resetEmailSent": "Password reset email sent to {{email}}."
+    "resetEmailSent": "Password reset email sent to {{email}}.",
+    "editTitleNamed": "Edit {{name}}'s profile",
+    "ownRoleLockedHint": "You cannot change your own role.",
+    "sections": {
+      "identity": "Identity",
+      "account": "Account and access",
+      "training": "Training"
+    }
   },
   "groups": {
     "title": "Groups & referents",
@@ -317,7 +333,7 @@
     "noGroupDescription_one": "{{count}} trainee to assign",
     "noGroupDescription_other": "{{count}} trainees to assign",
     "noReferent": "No referent",
-    "referentHint": "Only “Trainer” accounts can be referents.",
+    "referentHint": "A trainer or an administrator can be the referent.",
     "noMembers": "No trainee in this group.",
     "memberCount_one": "{{count}} trainee",
     "memberCount_other": "{{count}} trainees",
@@ -355,8 +371,6 @@
     "hidden": "Hidden",
     "hide": "Hide",
     "show": "Show",
-    "moveUp": "Move up",
-    "moveDown": "Move down",
     "deleteTitle": "Delete module",
     "deleteMessage": "The module “{{label}}” and all its boxes will be deleted. Prefer hiding boxes to keep the history.",
     "deleteCompetencyTitle": "Delete box",
@@ -364,13 +378,24 @@
     "fields": {
       "code": "Code",
       "label": "Label",
-      "order": "Display order",
       "targetType": "Target audience",
       "evaluationScale": "Assessment scale",
       "competencyCode": "Code (OS, C, Workshop…)",
       "competencyLabel": "Competency label",
       "criteria": "Validation criterion",
       "active": "Box visible in grids"
-    }
+    },
+    "dragHint": "Drag the ⋮⋮ handle to reorder.",
+    "dragModule": "Move module {{code}} (drag, or keyboard arrows)",
+    "dragCompetency": "Move box {{code}} (drag, or keyboard arrows)"
+  },
+  "moduleCompletion": {
+    "badge": "Finished",
+    "hint": "Module acquired? You can mark it as finished without ticking every box.",
+    "markCompleted": "Mark module as finished",
+    "reopen": "Reopen module",
+    "visa": "Module finished — validated by {{name}} on {{date}}",
+    "completed": "Module {{code}} marked as finished.",
+    "reopened": "Module {{code}} reopened."
   }
 }

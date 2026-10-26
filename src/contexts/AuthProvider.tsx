@@ -1,6 +1,5 @@
 import {
   onAuthStateChanged,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   type User,
@@ -8,6 +7,7 @@ import {
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { auth } from '@/config/firebase';
 import { useUser } from '@/hooks/useAppData';
+import { sendUserPasswordReset } from '@/services/userService';
 import { AuthContext, type AuthContextValue } from './AuthContext';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -33,8 +33,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(() => firebaseSignOut(auth), []);
 
-  const sendPasswordReset = useCallback((email: string) => sendPasswordResetEmail(auth, email.trim()), []);
-
   const value = useMemo<AuthContextValue>(
     () => ({
       firebaseUser,
@@ -45,9 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading: authLoading || (firebaseUser !== null && profileLoading),
       signIn,
       signOut,
-      sendPasswordReset,
+      sendPasswordReset: sendUserPasswordReset,
     }),
-    [firebaseUser, profile, role, authLoading, profileLoading, signIn, signOut, sendPasswordReset],
+    [firebaseUser, profile, role, authLoading, profileLoading, signIn, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

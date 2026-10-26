@@ -80,7 +80,7 @@ export function TraineesPage() {
             <Link
               key={trainee.id}
               to={`/trainees/${trainee.id}`}
-              className="group flex items-center gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-brand-100 transition hover:shadow-md hover:ring-brand-300"
+              className="group flex items-center gap-3 rounded-sm bg-white p-4 ring-1 ring-brand-200 transition-colors hover:bg-brand-50 hover:ring-brand-500"
             >
               <Avatar person={trainee} />
               <div className="min-w-0 flex-1">

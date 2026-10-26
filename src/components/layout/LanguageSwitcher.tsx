@@ -8,7 +8,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     <div
       role="group"
       aria-label={t('common.language')}
-      className={clsx('inline-flex rounded-lg bg-brand-100/60 p-0.5 text-xs font-semibold', className)}
+      className={clsx('inline-flex overflow-hidden rounded-sm text-xs font-semibold ring-1 ring-current/30', className)}
     >
       {SUPPORTED_LANGUAGES.map((language) => (
         <button
@@ -17,8 +17,8 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           onClick={() => void i18n.changeLanguage(language)}
           aria-pressed={i18n.resolvedLanguage === language}
           className={clsx(
-            'rounded-md px-2 py-1 uppercase transition-colors',
-            i18n.resolvedLanguage === language ? 'bg-white text-brand-900 shadow-sm' : 'text-brand-600 hover:text-brand-900',
+            'px-2 py-1 uppercase transition-colors',
+            i18n.resolvedLanguage === language ? 'bg-white text-brand-900' : 'text-current opacity-70 hover:opacity-100',
           )}
         >
           {language}

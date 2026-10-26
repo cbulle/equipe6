@@ -14,7 +14,7 @@ import { inputClassName } from '@/components/ui/styles';
 import { IconButton } from '@/components/ui/IconButton';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { useGroups, useTrainees, useTrainers } from '@/hooks/useAppData';
+import { useGroups, useReferentCandidates, useTrainees } from '@/hooks/useAppData';
 import { createGroup, deleteGroup, updateGroup, type GroupInput } from '@/services/groupService';
 import { assignUserToGroup } from '@/services/userService';
 import type { Group, UserProfile } from '@/types/models';
@@ -23,11 +23,26 @@ import { fullName } from '@/utils/names';
 
 interface GroupFormModalProps {
   group: Group | null;
-  trainers: UserProfile[];
+  referentCandidates: UserProfile[];
   onClose: () => void;
 }
 
-function GroupFormModal({ group, trainers, onClose }: GroupFormModalProps) {
+/** Referent options, labelled with the role so that administrators stand out from trainers. */
+function ReferentOptions({ candidates }: { candidates: UserProfile[] }) {
+  const { t } = useTranslation();
+  return (
+    <>
+      <option value="">{t('groups.noReferent')}</option>
+      {candidates.map((candidate) => (
+        <option key={candidate.id} value={candidate.id}>
+          {fullName(candidate)} — {t(`roles.${candidate.role}`)}
+        </option>
+      ))}
+    </>
+  );
+}
+
+function GroupFormModal({ group, referentCandidates, onClose }: GroupFormModalProps) {
   const { t } = useTranslation();
   const [form, setForm] = useState<GroupInput>({
     label: group?.label ?? '',
@@ -94,12 +109,7 @@ function GroupFormModal({ group, trainers, onClose }: GroupFormModalProps) {
           value={form.referentId ?? ''}
           onChange={(event) => setForm((previous) => ({ ...previous, referentId: event.target.value || null }))}
         >
-          <option value="">{t('groups.noReferent')}</option>
-          {trainers.map((trainer) => (
-            <option key={trainer.id} value={trainer.id}>
-              {fullName(trainer)}
-            </option>
-          ))}
+          <ReferentOptions candidates={referentCandidates} />
         </SelectField>
         <CheckboxField
           label={t('groups.fields.active')}
@@ -146,7 +156,7 @@ export function GroupsPage() {
   const { t } = useTranslation();
   const { data: groups, loading } = useGroups();
   const { data: trainees } = useTrainees();
-  const { data: trainers } = useTrainers();
+  const { data: referentCandidates } = useReferentCandidates();
   const [editedGroup, setEditedGroup] = useState<Group | null | undefined>(undefined);
   const [groupToDelete, setGroupToDelete] = useState<Group | null>(null);
 
@@ -219,12 +229,7 @@ export function GroupsPage() {
                   value={group.referentId ?? ''}
                   onChange={(event) => handleReferentChange(group, event.target.value)}
                 >
-                  <option value="">{t('groups.noReferent')}</option>
-                  {trainers.map((trainer) => (
-                    <option key={trainer.id} value={trainer.id}>
-                      {fullName(trainer)}
-                    </option>
-                  ))}
+                  <ReferentOptions candidates={referentCandidates} />
                 </select>
               </div>
               <div className="flex-1">
@@ -265,7 +270,7 @@ export function GroupsPage() {
         <GroupFormModal
           key={editedGroup?.id ?? 'new'}
           group={editedGroup}
-          trainers={trainers}
+          referentCandidates={referentCandidates}
           onClose={() => setEditedGroup(undefined)}
         />
       )}

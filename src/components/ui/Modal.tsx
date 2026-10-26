@@ -51,7 +51,7 @@ export function Modal({ open, title, description, onClose, children, footer, siz
     <>
       <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
       {footer && (
-        <div className="flex flex-col-reverse gap-2 border-t border-brand-100 px-5 py-3 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-2 border-t border-brand-200 bg-brand-50 px-5 py-3 sm:flex-row sm:justify-end">
           {footer}
         </div>
       )}
@@ -60,19 +60,19 @@ export function Modal({ open, title, description, onClose, children, footer, siz
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
-      <div className="absolute inset-0 bg-brand-950/50 backdrop-blur-[2px]" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         className={clsx(
-          'relative flex max-h-[92dvh] w-full flex-col rounded-t-2xl bg-white shadow-xl sm:rounded-2xl',
+          'relative flex max-h-[92dvh] w-full flex-col rounded-t-sm bg-white shadow-xl ring-1 ring-brand-300 sm:rounded-sm',
           size === 'lg' ? 'sm:max-w-3xl' : 'sm:max-w-lg',
         )}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-brand-100 px-5 py-4">
+        <div className="flex items-start justify-between gap-4 border-b-2 border-brand-700 bg-brand-100/60 px-5 py-3">
           <div>
-            <h2 id={titleId} className="text-lg font-semibold text-brand-900">
+            <h2 id={titleId} className="text-base font-bold text-brand-900">
               {title}
             </h2>
             {description && <p className="mt-0.5 text-sm text-slate-500">{description}</p>}

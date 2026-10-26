@@ -22,11 +22,11 @@ interface SegmentedControlProps<T extends string> {
 }
 
 const ACTIVE_TONE_CLASSES: Record<SegmentTone, string> = {
-  brand: 'bg-brand-800 text-white',
+  brand: 'bg-brand-700 text-white',
   success: 'bg-emerald-600 text-white',
   danger: 'bg-fire-600 text-white',
   warning: 'bg-amber-500 text-white',
-  info: 'bg-sky-600 text-white',
+  info: 'bg-teal-700 text-white',
 };
 
 export function SegmentedControl<T extends string>({
@@ -39,7 +39,7 @@ export function SegmentedControl<T extends string>({
   ariaLabel,
 }: SegmentedControlProps<T>) {
   return (
-    <div role="radiogroup" aria-label={ariaLabel} className="inline-flex rounded-lg bg-slate-100 p-0.5">
+    <div role="radiogroup" aria-label={ariaLabel} className="inline-flex divide-x divide-slate-300 overflow-hidden rounded-sm ring-1 ring-slate-300">
       {options.map((option) => {
         const isActive = option.value === value;
         return (
@@ -52,11 +52,11 @@ export function SegmentedControl<T extends string>({
             disabled={disabled}
             onClick={() => onChange(isActive && allowClear ? null : option.value)}
             className={clsx(
-              'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors',
+              'inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold transition-colors',
               'disabled:cursor-not-allowed',
               isActive
                 ? ACTIVE_TONE_CLASSES[option.tone ?? 'brand']
-                : 'text-slate-600 enabled:hover:bg-white enabled:hover:text-slate-900',
+                : 'bg-white text-slate-600 enabled:hover:bg-brand-50 enabled:hover:text-slate-900',
             )}
           >
             {option.icon}

@@ -8,6 +8,8 @@ const KNOWN_ERROR_CODES = [
   'auth/invalid-email',
   'auth/weak-password',
   'auth/invalid-credential',
+  'auth/missing-email',
+  'auth/user-disabled',
   'auth/too-many-requests',
   'auth/network-request-failed',
 ] as const;

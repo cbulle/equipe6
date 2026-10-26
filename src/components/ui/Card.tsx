@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import type { HTMLAttributes, ReactNode } from 'react';
 
 export function Card({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={clsx('rounded-xl bg-white shadow-sm ring-1 ring-brand-100', className)} {...rest} />;
+  return <div className={clsx('rounded-sm bg-white ring-1 ring-brand-200', className)} {...rest} />;
 }
 
 interface CardHeaderProps {
@@ -14,11 +14,15 @@ interface CardHeaderProps {
 
 export function CardHeader({ title, description, icon, actions }: CardHeaderProps) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-brand-100 px-4 py-3 sm:px-5">
-      <div className="flex min-w-0 items-start gap-3">
-        {icon && <div className="mt-0.5 text-brand-500">{icon}</div>}
+    <div className="flex items-center justify-between gap-3 border-b border-brand-200 bg-brand-100/60 px-4 py-2.5 sm:px-5">
+      <div className="flex min-w-0 items-center gap-3">
+        {icon && (
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-sm bg-brand-700 text-white [&_svg]:size-4">
+            {icon}
+          </div>
+        )}
         <div className="min-w-0">
-          <h2 className="font-semibold text-brand-900">{title}</h2>
+          <h2 className="font-bold text-brand-900">{title}</h2>
           {description && <p className="text-sm text-slate-500">{description}</p>}
         </div>
       </div>

@@ -39,10 +39,14 @@
     "signIn": "Se connecter",
     "signOut": "Déconnexion",
     "forgotPassword": "Mot de passe oublié ?",
-    "enterEmailFirst": "Saisissez d'abord votre adresse e-mail.",
-    "resetEmailSent": "Un e-mail de réinitialisation vous a été envoyé.",
+    "resetEmailSent": "Si un compte existe pour {{email}}, un e-mail contenant un lien de réinitialisation vient d'être envoyé. Pensez à regarder dans les courriers indésirables.",
     "accountNotConfigured": "Accès indisponible",
-    "accountNotConfiguredHint": "Votre compte n'est pas configuré ou a été désactivé. Contactez l'administrateur."
+    "accountNotConfiguredHint": "Votre compte n'est pas configuré ou a été désactivé. Contactez l'administrateur.",
+    "resetTitle": "Mot de passe oublié",
+    "resetHint": "Saisissez votre adresse e-mail : vous recevrez un lien pour choisir un nouveau mot de passe.",
+    "sendResetLink": "Recevoir le lien",
+    "resetEmailSentTitle": "Vérifiez votre boîte mail",
+    "backToSignIn": "Retour à la connexion"
   },
   "roles": {
     "admin": "Administrateur",
@@ -103,7 +107,9 @@
     "auth/network-request-failed": "Problème de connexion réseau.",
     "auth/email-already-in-use": "Cette adresse e-mail est déjà utilisée.",
     "auth/invalid-email": "L'adresse e-mail est invalide.",
-    "auth/weak-password": "Le mot de passe est trop faible (8 caractères minimum)."
+    "auth/weak-password": "Le mot de passe est trop faible (8 caractères minimum).",
+    "auth/missing-email": "Saisissez votre adresse e-mail.",
+    "auth/user-disabled": "Ce compte a été désactivé. Contactez l'administrateur."
   },
   "notFound": {
     "title": "Page introuvable",
@@ -112,20 +118,23 @@
   },
   "dashboard": {
     "greeting": "Bonjour {{name}}",
-    "staffSubtitle": "Voici un aperçu de la formation en cours.",
-    "traineeSubtitle": "Retrouvez votre progression et vos prochaines séances.",
+    "staffSubtitle": "Séances à venir et suivi des présences.",
+    "traineeSubtitle": "Votre progression et vos prochaines séances.",
     "upcomingSessions": "Prochaines séances",
     "seeCalendar": "Voir le calendrier",
     "noUpcomingSessions": "Aucune séance à venir.",
     "skillsProgress": "Compétences validées",
     "attendanceRate": "Taux de présence",
-    "myBooklet": "Mon livret",
-    "activeTrainees": "Apprenants actifs",
-    "groups": "Groupes actifs",
-    "remainingSessions": "Séances à venir",
-    "traineesWithoutGroup_one": "{{count}} apprenant n'est affecté à aucun groupe.",
-    "traineesWithoutGroup_other": "{{count}} apprenants ne sont affectés à aucun groupe.",
-    "assignGroups": "Affecter"
+    "activeTrainees": "Apprenants",
+    "today": "Aujourd'hui",
+    "attendanceDetail": "Présences aux séances passées",
+    "traineeStats": "Statistiques par apprenant",
+    "traineeStatsHint": "Présences sur les séances passées. Cliquez sur un nom pour ouvrir le détail.",
+    "noTrainees": "Aucun apprenant dans cette sélection.",
+    "columns": {
+      "trainee": "Apprenant",
+      "group": "Groupe"
+    }
   },
   "calendar": {
     "title": "Calendrier des séances",
@@ -184,7 +193,7 @@
     "notFound": "Apprenant introuvable."
   },
   "booklet": {
-    "referent": "Formateur référent",
+    "referent": "Référent",
     "noReferent": "Aucun référent désigné.",
     "entryStatus": "Statut d'entrée",
     "tabs": {
@@ -193,13 +202,14 @@
       "attendance": "Présences",
       "interviews": "Entretiens",
       "wishes": "Vœux de stage"
-    }
+    },
+    "editProfile": "Modifier la fiche"
   },
   "skills": {
     "empty": "Aucune grille ne s'applique à ce profil.",
     "noCompetencies": "Aucune compétence dans ce module.",
     "criteria": "Critère",
-    "staffHint": "Cliquez sur un niveau pour le valider ; cliquez à nouveau pour retirer votre validation.",
+    "staffHint": "Cliquez sur un niveau pour le valider, cliquez à nouveau pour retirer votre validation. Un module peut aussi être marqué terminé sans que toutes les cases soient cochées.",
     "validatedBy": "Validé par {{name}} le {{date}}",
     "notValidated": "Non validé"
   },
@@ -293,16 +303,22 @@
       "email": "Adresse e-mail",
       "password": "Mot de passe",
       "role": "Rôle",
-      "phone": "Téléphone",
       "fireStation": "CIS",
       "fireStationPlaceholder": "Centre d'incendie et de secours",
       "apprenticeType": "Statut d'entrée",
       "group": "Groupe",
       "active": "Compte actif"
     },
-    "emailLockedHint": "L'adresse de connexion ne peut pas être modifiée.",
+    "emailLockedHint": "L'adresse de connexion ne peut pas être modifiée ici (console Firebase > Authentication).",
     "sendPasswordReset": "Envoyer un e-mail de réinitialisation",
-    "resetEmailSent": "E-mail de réinitialisation envoyé à {{email}}."
+    "resetEmailSent": "E-mail de réinitialisation envoyé à {{email}}.",
+    "editTitleNamed": "Modifier la fiche de {{name}}",
+    "ownRoleLockedHint": "Vous ne pouvez pas changer votre propre rôle.",
+    "sections": {
+      "identity": "Identité",
+      "account": "Compte et accès",
+      "training": "Formation"
+    }
   },
   "groups": {
     "title": "Groupes & référents",
@@ -317,7 +333,7 @@
     "noGroupDescription_one": "{{count}} apprenant à affecter",
     "noGroupDescription_other": "{{count}} apprenants à affecter",
     "noReferent": "Aucun référent",
-    "referentHint": "Seuls les comptes « Formateur » peuvent être référents.",
+    "referentHint": "Un formateur ou un administrateur peut être référent.",
     "noMembers": "Aucun apprenant dans ce groupe.",
     "memberCount_one": "{{count}} apprenant",
     "memberCount_other": "{{count}} apprenants",
@@ -355,8 +371,6 @@
     "hidden": "Masquée",
     "hide": "Masquer",
     "show": "Afficher",
-    "moveUp": "Monter",
-    "moveDown": "Descendre",
     "deleteTitle": "Supprimer le module",
     "deleteMessage": "Le module « {{label}} » et toutes ses cases seront supprimés. Préférez masquer les cases pour conserver l'historique.",
     "deleteCompetencyTitle": "Supprimer la case",
@@ -364,13 +378,24 @@
     "fields": {
       "code": "Code",
       "label": "Intitulé",
-      "order": "Ordre d'affichage",
       "targetType": "Public concerné",
       "evaluationScale": "Échelle d'évaluation",
       "competencyCode": "Code (OS, C, Atelier…)",
       "competencyLabel": "Intitulé de la compétence",
       "criteria": "Critère de validation",
       "active": "Case visible dans les grilles"
-    }
+    },
+    "dragHint": "Glissez la poignée ⋮⋮ pour réordonner.",
+    "dragModule": "Déplacer le module {{code}} (glisser, ou flèches du clavier)",
+    "dragCompetency": "Déplacer la case {{code}} (glisser, ou flèches du clavier)"
+  },
+  "moduleCompletion": {
+    "badge": "Terminé",
+    "hint": "Module acquis ? Vous pouvez le marquer terminé sans cocher toutes les cases.",
+    "markCompleted": "Marquer le module terminé",
+    "reopen": "Rouvrir le module",
+    "visa": "Module terminé — validé par {{name}} le {{date}}",
+    "completed": "Module {{code}} marqué terminé.",
+    "reopened": "Module {{code}} rouvert."
   }
 }

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ArrowDown, ArrowUp, Eye, EyeOff, ListChecks, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, ListChecks, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -7,18 +7,21 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { DragHandle } from '@/components/ui/DragHandle';
 import { EmptyState, PageLoader } from '@/components/ui/Feedback';
 import { CheckboxField, SelectField, TextField } from '@/components/ui/FormFields';
 import { IconButton } from '@/components/ui/IconButton';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useCompetencies, useModules } from '@/hooks/useAppData';
+import { useSortableList } from '@/hooks/useSortableList';
 import {
   createCompetency,
   createModule,
   deleteCompetency,
   deleteModule,
-  swapCompetencyOrder,
+  reorderCompetencies,
+  reorderModules,
   updateCompetency,
   updateModule,
   type CompetencyInput,
@@ -97,17 +100,8 @@ function ModuleFormModal({ trainingModule, nextOrder, onSaved, onClose }: Module
           onChange={(event) => setForm((previous) => ({ ...previous, code: event.target.value }))}
         />
         <TextField
-          label={t('modules.fields.order')}
-          type="number"
-          required
-          min={1}
-          value={form.order}
-          onChange={(event) => setForm((previous) => ({ ...previous, order: Number(event.target.value) }))}
-        />
-        <TextField
           label={t('modules.fields.label')}
           required
-          className="sm:col-span-2"
           value={form.label}
           onChange={(event) => setForm((previous) => ({ ...previous, label: event.target.value }))}
         />
@@ -245,12 +239,10 @@ export function ModulesPage() {
     : [];
   const nextCompetencyOrder = Math.max(0, ...moduleCompetencies.map((competency) => competency.order)) + 1;
 
-  const handleMove = (index: number, direction: -1 | 1) => {
-    const target = moduleCompetencies[index + direction];
-    if (target) {
-      swapCompetencyOrder(moduleCompetencies[index], target).catch(notifyError);
-    }
-  };
+  const moduleSortable = useSortableList(modules, (orderedIds) => reorderModules(orderedIds).catch(notifyError));
+  const competencySortable = useSortableList(moduleCompetencies, (orderedIds) =>
+    reorderCompetencies(orderedIds).catch(notifyError),
+  );
 
   const handleToggleActive = (competency: Competency) => {
     updateCompetency(competency.id, { active: !competency.active }).catch(notifyError);
@@ -278,29 +270,45 @@ export function ModulesPage() {
         </Card>
       ) : (
         <div className="grid gap-6 lg:grid-cols-[18rem_1fr]">
-          <nav className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible" aria-label={t('modules.title')}>
-            {modules.map((trainingModule) => (
-              <button
-                key={trainingModule.id}
-                type="button"
-                onClick={() => setSelectedModuleId(trainingModule.id)}
-                className={clsx(
-                  'flex min-w-56 items-center gap-3 rounded-xl px-3 py-2.5 text-left ring-1 transition lg:min-w-0',
-                  trainingModule.id === selectedModule?.id
-                    ? 'bg-brand-800 text-white ring-brand-800'
-                    : 'bg-white text-slate-700 ring-brand-100 hover:ring-brand-300',
-                )}
-              >
-                <span className="min-w-0 flex-1">
-                  <span className="block text-xs font-bold opacity-70">{trainingModule.code}</span>
-                  <span className="block truncate text-sm font-medium">{trainingModule.label}</span>
-                </span>
-                <span className="rounded-full bg-black/10 px-2 py-0.5 text-xs font-semibold">
-                  {competencyCountByModule.get(trainingModule.id) ?? 0}
-                </span>
-              </button>
-            ))}
-          </nav>
+          <div>
+            <p className="mb-2 hidden text-xs text-slate-500 lg:block">{t('modules.dragHint')}</p>
+            <nav className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible" aria-label={t('modules.title')}>
+              {moduleSortable.orderedItems.map((trainingModule) => {
+                const isSelected = trainingModule.id === selectedModule?.id;
+                return (
+                  <div
+                    key={trainingModule.id}
+                    ref={moduleSortable.itemRef(trainingModule.id)}
+                    className={clsx(
+                      'relative flex min-w-56 items-center rounded-xl pl-1 ring-1 transition-shadow lg:min-w-0',
+                      isSelected ? 'bg-brand-800 text-white ring-brand-800' : 'bg-white text-slate-700 ring-brand-200 hover:ring-brand-300',
+                      moduleSortable.draggedId === trainingModule.id && 'z-10 shadow-lg ring-2 ring-fire-400',
+                    )}
+                  >
+                    <DragHandle
+                      label={t('modules.dragModule', { code: trainingModule.code })}
+                      tone={isSelected ? 'inverted' : 'default'}
+                      {...moduleSortable.handleProps(trainingModule.id)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setSelectedModuleId(trainingModule.id)}
+                      aria-current={isSelected}
+                      className="flex min-w-0 flex-1 items-center gap-3 py-2.5 pr-3 pl-1 text-left"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-xs font-bold opacity-70">{trainingModule.code}</span>
+                        <span className="block truncate text-sm font-medium">{trainingModule.label}</span>
+                      </span>
+                      <span className="rounded-sm bg-black/10 px-2 py-0.5 text-xs font-semibold">
+                        {competencyCountByModule.get(trainingModule.id) ?? 0}
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
+            </nav>
+          </div>
 
           {selectedModule && (
             <Card>
@@ -337,27 +345,20 @@ export function ModulesPage() {
                 <EmptyState title={t('modules.noCompetencies')} />
               ) : (
                 <ul className="divide-y divide-brand-50">
-                  {moduleCompetencies.map((competency, index) => (
+                  {competencySortable.orderedItems.map((competency) => (
                     <li
                       key={competency.id}
-                      className={clsx('flex items-start gap-3 px-4 py-3 sm:px-5', !competency.active && 'bg-slate-50')}
+                      ref={competencySortable.itemRef(competency.id)}
+                      className={clsx(
+                        'relative flex items-start gap-2 py-3 pr-4 pl-2 sm:pr-5',
+                        competency.active ? 'bg-white' : 'bg-slate-50',
+                        competencySortable.draggedId === competency.id && 'z-10 rounded-lg shadow-lg ring-2 ring-fire-400',
+                      )}
                     >
-                      <div className="flex flex-col">
-                        <IconButton
-                          label={t('modules.moveUp')}
-                          icon={<ArrowUp className="size-3.5" />}
-                          disabled={index === 0}
-                          className="size-6"
-                          onClick={() => handleMove(index, -1)}
-                        />
-                        <IconButton
-                          label={t('modules.moveDown')}
-                          icon={<ArrowDown className="size-3.5" />}
-                          disabled={index === moduleCompetencies.length - 1}
-                          className="size-6"
-                          onClick={() => handleMove(index, 1)}
-                        />
-                      </div>
+                      <DragHandle
+                        label={t('modules.dragCompetency', { code: competency.code })}
+                        {...competencySortable.handleProps(competency.id)}
+                      />
                       <div className={clsx('min-w-0 flex-1', !competency.active && 'opacity-50')}>
                         <p className="text-sm">
                           <span className="mr-2 font-bold text-fire-700">{competency.code}</span>

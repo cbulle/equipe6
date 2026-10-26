@@ -1,4 +1,14 @@
-import { addDoc, collection, deleteDoc, doc, orderBy, query, updateDoc, writeBatch } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  orderBy,
+  query,
+  updateDoc,
+  writeBatch,
+  type DocumentReference,
+} from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import type { Competency, TrainingModule } from '@/types/models';
 import { COLLECTIONS } from './collections';
@@ -44,10 +54,18 @@ export function deleteCompetency(competencyId: string): Promise<void> {
   return deleteDoc(competencyDocRef(competencyId));
 }
 
-/** Swaps the display order of two competencies of the same module. */
-export async function swapCompetencyOrder(first: Competency, second: Competency): Promise<void> {
+/** Saves the display order of the modules, given every module id in its new order. */
+export function reorderModules(orderedIds: string[]): Promise<void> {
+  return saveOrder(orderedIds, moduleDocRef);
+}
+
+/** Saves the display order of the competencies of one module, given their ids in the new order. */
+export function reorderCompetencies(orderedIds: string[]): Promise<void> {
+  return saveOrder(orderedIds, competencyDocRef);
+}
+
+async function saveOrder(orderedIds: string[], docRef: (id: string) => DocumentReference): Promise<void> {
   const batch = writeBatch(db);
-  batch.update(competencyDocRef(first.id), { order: second.order });
-  batch.update(competencyDocRef(second.id), { order: first.order });
+  orderedIds.forEach((id, index) => batch.update(docRef(id), { order: index + 1 }));
   await batch.commit();
 }

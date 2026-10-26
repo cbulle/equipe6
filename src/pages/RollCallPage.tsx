@@ -200,7 +200,7 @@ export function RollCallPage() {
             ['unrecorded', 'text-slate-700 bg-white'],
           ] as const
         ).map(([status, className]) => (
-          <div key={status} className={clsx('rounded-xl px-4 py-3 ring-1 ring-brand-100', className)}>
+          <div key={status} className={clsx('rounded-xl px-4 py-3 ring-1 ring-brand-200', className)}>
             <p className="text-2xl font-bold">{counts[status]}</p>
             <p className="text-xs font-medium">{t(`attendanceStatuses.${status}`)}</p>
           </div>
@@ -216,7 +216,7 @@ export function RollCallPage() {
                 type="button"
                 onClick={() => setGroupFilter(option.id)}
                 className={clsx(
-                  'rounded-full px-3 py-1 text-sm font-medium transition-colors',
+                  'rounded-sm px-3 py-1 text-sm font-medium transition-colors',
                   groupFilter === option.id ? 'bg-brand-800 text-white' : 'bg-brand-50 text-slate-600 hover:bg-brand-100',
                 )}
               >

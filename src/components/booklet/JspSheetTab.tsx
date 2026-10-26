@@ -1,4 +1,4 @@
-import { Award, Check, Clock, RotateCcw } from 'lucide-react';
+import { Award, Check, CircleCheckBig, Clock, RotateCcw } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth, useCurrentUser } from '@/hooks/useAuth';
@@ -9,18 +9,22 @@ import { notifyError } from '@/utils/errors';
 import { fullName } from '@/utils/names';
 import { getApplicableModules, groupCompetenciesByModule } from '@/utils/training';
 import { SkillStatusBadge } from '../shared/DomainBadges';
+import { Badge } from '../ui/Badge';
 import { Card, CardHeader } from '../ui/Card';
 import { EmptyState } from '../ui/Feedback';
 import { SegmentedControl, type SegmentOption } from '../ui/SegmentedControl';
+import { ModuleCompletionBar } from './ModuleCompletionBar';
 
 interface JspSheetTabProps {
   trainee: UserProfile;
   modules: TrainingModule[];
   competencies: Competency[];
   evaluations: Evaluation[];
+  /** Evaluations declaring a module finished. */
+  completions: Evaluation[];
 }
 
-export function JspSheetTab({ trainee, modules, competencies, evaluations }: JspSheetTabProps) {
+export function JspSheetTab({ trainee, modules, competencies, evaluations, completions }: JspSheetTabProps) {
   const { t } = useTranslation();
   const { isAdmin, isStaff } = useAuth();
   const { uid, profile } = useCurrentUser();
@@ -53,48 +57,59 @@ export function JspSheetTab({ trainee, modules, competencies, evaluations }: Jsp
 
   return (
     <div className="space-y-4">
-      {sheetModules.map((trainingModule) => (
-        <Card key={trainingModule.id}>
-          <CardHeader
-            icon={<Award className="size-5" />}
-            title={trainingModule.label}
-            description={t('jspSheet.description')}
-          />
-          <ul className="divide-y divide-brand-50">
-            {(competenciesByModule.get(trainingModule.id) ?? []).map((competency) => {
-              const evaluation = evaluationsById.get(statusEvaluationId(trainee.id, competency.id));
-              const status = (evaluation?.level as SkillStatus | undefined) ?? null;
-              const canClear = !evaluation || isAdmin || evaluation.validatedBy === uid;
-              return (
-                <li key={competency.id} className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:px-5">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-brand-900">{competency.label}</p>
-                    {evaluation && (
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        {t('jspSheet.visa', {
-                          name: evaluation.validatedByName,
-                          date: formatTimestamp(evaluation.validatedAt),
-                        })}
-                      </p>
+      {sheetModules.map((trainingModule) => {
+        const completion = completions.find((current) => current.moduleId === trainingModule.id);
+        return (
+          <Card key={trainingModule.id} className="overflow-hidden">
+            <CardHeader
+              icon={<Award className="size-5" />}
+              title={trainingModule.label}
+              description={t('jspSheet.description')}
+              actions={
+                completion && (
+                  <Badge tone="success" icon={<CircleCheckBig className="size-3.5" />}>
+                    {t('moduleCompletion.badge')}
+                  </Badge>
+                )
+              }
+            />
+            <ModuleCompletionBar trainee={trainee} trainingModule={trainingModule} completion={completion} />
+            <ul className="divide-y divide-brand-50">
+              {(competenciesByModule.get(trainingModule.id) ?? []).map((competency) => {
+                const evaluation = evaluationsById.get(statusEvaluationId(trainee.id, competency.id));
+                const status = (evaluation?.level as SkillStatus | undefined) ?? null;
+                const canClear = !evaluation || isAdmin || evaluation.validatedBy === uid;
+                return (
+                  <li key={competency.id} className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:px-5">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-brand-900">{competency.label}</p>
+                      {evaluation && (
+                        <p className="mt-0.5 text-xs text-slate-500">
+                          {t('jspSheet.visa', {
+                            name: evaluation.validatedByName,
+                            date: formatTimestamp(evaluation.validatedAt),
+                          })}
+                        </p>
+                      )}
+                    </div>
+                    {isStaff ? (
+                      <SegmentedControl
+                        ariaLabel={competency.label}
+                        options={statusOptions}
+                        value={status}
+                        onChange={(value) => handleChange(competency, evaluation, value)}
+                        allowClear={canClear}
+                      />
+                    ) : (
+                      <SkillStatusBadge status={status} />
                     )}
-                  </div>
-                  {isStaff ? (
-                    <SegmentedControl
-                      ariaLabel={competency.label}
-                      options={statusOptions}
-                      value={status}
-                      onChange={(value) => handleChange(competency, evaluation, value)}
-                      allowClear={canClear}
-                    />
-                  ) : (
-                    <SkillStatusBadge status={status} />
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
-      ))}
+                  </li>
+                );
+              })}
+            </ul>
+          </Card>
+        );
+      })}
     </div>
   );
 }

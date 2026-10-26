@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
-import { collection, doc, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { collection, deleteField, doc, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { accountCreationAuth, auth, db } from '@/config/firebase';
+import i18n from '@/i18n';
 import type { UserProfile } from '@/types/models';
 import { COLLECTIONS } from './collections';
 
@@ -14,7 +15,8 @@ export const usersQuery = () => query(usersCollection);
 
 export const traineesQuery = () => query(usersCollection, where('role', '==', 'trainee'));
 
-export const trainersQuery = () => query(usersCollection, where('role', '==', 'trainer'));
+/** Trainers and administrators: the accounts that can be the referent of a group. */
+export const staffQuery = () => query(usersCollection, where('role', 'in', ['admin', 'trainer']));
 
 /**
  * Creates the Firebase Auth account through a secondary Auth instance (the administrator
@@ -28,7 +30,7 @@ export async function createUserAccount(input: UserProfileInput, password: strin
 }
 
 /**
- * Updates a profile. When the user stops being a trainer, they are removed as referent
+ * Updates a profile. When the user becomes a trainee, they are removed as referent
  * of the given groups. The login email cannot be changed from the client.
  */
 export async function updateUserProfile(
@@ -37,8 +39,9 @@ export async function updateUserProfile(
   referentGroupIds: string[],
 ): Promise<void> {
   const batch = writeBatch(db);
-  batch.update(userDocRef(userId), { ...input, updatedAt: Date.now() });
-  if (input.role !== 'trainer') {
+  // `phone` is no longer collected: drop it from older profiles.
+  batch.update(userDocRef(userId), { ...input, phone: deleteField(), updatedAt: Date.now() });
+  if (input.role === 'trainee') {
     referentGroupIds.forEach((groupId) => batch.update(doc(db, COLLECTIONS.groups, groupId), { referentId: null }));
   }
   await batch.commit();
@@ -55,8 +58,24 @@ export async function deleteUserProfile(userId: string, referentGroupIds: string
   await batch.commit();
 }
 
-export function sendUserPasswordReset(email: string): Promise<void> {
-  return sendPasswordResetEmail(auth, email);
+const UNUSABLE_CONTINUE_URL_CODES = ['auth/unauthorized-continue-uri', 'auth/invalid-continue-uri'];
+
+/**
+ * Sends the Firebase password reset email in the interface language. The link brings the
+ * user back to the login page once the new password is set, when this domain is authorized
+ * in Firebase Authentication; otherwise the email is sent without the return link.
+ */
+export async function sendUserPasswordReset(email: string): Promise<void> {
+  auth.languageCode = i18n.resolvedLanguage ?? i18n.language;
+  const trimmedEmail = email.trim();
+  try {
+    await sendPasswordResetEmail(auth, trimmedEmail, { url: `${window.location.origin}/login` });
+  } catch (error) {
+    if (!UNUSABLE_CONTINUE_URL_CODES.includes((error as { code?: string }).code ?? '')) {
+      throw error;
+    }
+    await sendPasswordResetEmail(auth, trimmedEmail);
+  }
 }
 
 export function assignUserToGroup(userId: string, groupId: string | null): Promise<void> {

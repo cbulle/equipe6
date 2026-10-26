@@ -196,7 +196,6 @@ async function upsertAccount({ email, password, firstName, lastName, role, appre
       apprenticeType,
       groupId,
       fireStation: 'CIS Centre',
-      phone: '',
       active: true,
       createdAt: Date.now(),
     },

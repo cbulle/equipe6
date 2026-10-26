@@ -11,6 +11,9 @@ const attendanceDocRef = (sessionId: string, userId: string) =>
 export const sessionAttendancesQuery = (sessionId: string) =>
   query(attendancesCollection, where('sessionId', '==', sessionId));
 
+/** Every attendance record (staff only), used for the attendance statistics. */
+export const attendancesQuery = () => query(attendancesCollection);
+
 export const userAttendancesQuery = (userId: string) => query(attendancesCollection, where('userId', '==', userId));
 
 interface AttendanceRecordInput {

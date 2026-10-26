@@ -47,7 +47,7 @@ Quotas gratuits Firestore : 50 000 lectures et 20 000 écritures par jour, 1 Go 
 
 - **Rôles** : ils sont stockés dans le profil `users/{uid}` (`role`, `active`) et vérifiés par [firestore.rules](firestore.rules). Seul un administrateur peut écrire un profil, et il ne peut ni changer son propre rôle ni se désactiver.
 - **Création de compte** : l'admin crée le compte depuis l'application, via une instance Auth secondaire, sans être déconnecté. Il écrit ensuite le profil.
-- **Mot de passe** : l'admin envoie un e-mail de réinitialisation. L'adresse de connexion n'est pas modifiable depuis l'app.
+- **Mot de passe** : chacun peut demander un lien depuis « Mot de passe oublié ? » sur l'écran de connexion, et l'admin peut l'envoyer depuis la fiche utilisateur. Avec les émulateurs, aucun e-mail n'est envoyé : le lien apparaît dans la console de l'émulateur Auth. L'adresse de connexion n'est pas modifiable depuis l'app.
 - **Suppression / désactivation** : supprimer le profil ou décocher « Compte actif » retire immédiatement tout accès. L'identifiant de connexion reste listé dans la console Firebase (*Authentication*), d'où on peut le supprimer définitivement.
 - **Documents** : les PDF et fiches sont hébergés sur votre espace de partage (Google Drive, SharePoint, site officiel…). L'application ne stocke que les liens. L'accès aux fichiers dépend donc des droits de partage de cet espace.
 
@@ -76,20 +76,20 @@ scripts/seed.mjs référentiel des grilles du livret, planning 2026-2027, groupe
 | Collection | Contenu |
 |---|---|
 | `users` | profil, `role`, `active`, `apprenticeType` (`SPV` / `JSP_N3` / `JSP_N4`), `groupId` (null = sans groupe), `fireStation` (CIS) |
-| `groups` | `label`, `referentId` (formateur référent), `promoYear`, `active` |
+| `groups` | `label`, `referentId` (formateur ou administrateur référent), `promoYear`, `active` |
 | `modules` | `code`, `label`, `targetType` (`ALL` / `SPV_ONLY` / `JSP_ONLY`), `evaluationScale` (`levels` = N1/N2/N3, `status` = En cours/Acquis/À revoir) |
 | `competencies` | cases des grilles : `moduleId`, `code` (OS 2, C1…), `label`, `criteria`, `order`, `active` |
 | `sessions` | séances créées par l'admin : `date`, horaires, `title`, `theme`, `moduleId`, `type` (`course` / `sport` / `opening`) |
 | `resources` | liens vers les documents (`title`, `url`), éventuellement liés à une séance et/ou un module |
 | `attendances` | `{sessionId}_{userId}` : `status` (`present` / `absent` / `excused`), `note` |
-| `evaluations` | une case cochée = un document avec le visa (`validatedBy`, `validatedByName`, `validatedAt`) |
+| `evaluations` | une case cochée = un document avec le visa (`validatedBy`, `validatedByName`, `validatedAt`) ; `{userId}_{moduleId}_module` (niveau `MODULE_COMPLETED`) = module déclaré terminé sans que toutes les cases soient cochées |
 | `interviews` | 3 entretiens par année scolaire, visas formateur / apprenant |
 | `internshipWishes` | `{userId}` : 3 vœux par stage, dispense (JSP), contraintes |
 
 ### Droits (RBAC)
 
-- **Admin** : super-CRUD (profils, groupes et référents, séances et documents, modules et cases), correction de toute validation.
-- **Formateur** : accès transversal à tous les groupes. Il fait l'appel, valide les grilles et ajoute des liens de ressources. Il ne peut retirer que ses propres validations.
+- **Admin** : super-CRUD (profils, groupes et référents, séances et documents, modules et cases), correction de toute validation. Il peut lui-même être référent d'un groupe et modifier la fiche d'un apprenant depuis son livret.
+- **Formateur** : accès transversal à tous les groupes. Il fait l'appel, valide les grilles, marque un module terminé et ajoute des liens de ressources. Il ne peut retirer que ses propres validations.
 - **Stagiaire** : lecture de son livret, de son référent et des ressources. Il signe ses entretiens et saisit ses vœux.
 
 ## Traductions
