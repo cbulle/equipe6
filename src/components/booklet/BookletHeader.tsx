@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Check, Mail, MapPin, Pencil, ShieldCheck, UsersRound } from 'lucide-react';
+import { Check, Mail, Pencil, ShieldCheck, UsersRound } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGroup, useGroups, useUser } from '@/hooks/useAppData';
@@ -34,12 +34,6 @@ export function BookletHeader({ trainee }: { trainee: UserProfile }) {
               )}
             </div>
             <div className="mt-1 flex flex-col gap-1 text-sm text-slate-600 sm:flex-row sm:flex-wrap sm:gap-x-4">
-              {trainee.fireStation && (
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="size-4 text-slate-400" />
-                  {trainee.fireStation}
-                </span>
-              )}
               <span className="inline-flex items-center gap-1.5">
                 <UsersRound className="size-4 text-slate-400" />
                 {group?.label ?? t('groups.noGroup')}

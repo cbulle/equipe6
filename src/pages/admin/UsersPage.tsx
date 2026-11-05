@@ -37,7 +37,7 @@ export function UsersPage() {
   const visibleUsers = users.filter(
     (user) =>
       (roleFilter === 'all' || user.role === roleFilter) &&
-      matchesSearch(search, user.firstName, user.lastName, user.email, user.fireStation),
+      matchesSearch(search, user.firstName, user.lastName, user.email),
   );
 
   const handleGroupChange = (user: UserProfile, groupId: string) => {
@@ -98,10 +98,7 @@ export function UsersPage() {
                       <ApprenticeTypeBadge type={user.apprenticeType} />
                       {user.active === false && <Badge tone="fire">{t('users.inactive')}</Badge>}
                     </p>
-                    <p className="truncate text-xs text-slate-500">
-                      {user.email}
-                      {user.fireStation && ` · ${user.fireStation}`}
-                    </p>
+                    <p className="truncate text-xs text-slate-500">{user.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

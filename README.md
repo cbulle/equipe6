@@ -45,8 +45,8 @@ Quotas gratuits Firestore : 50 000 lectures et 20 000 écritures par jour, 1 Go 
 
 ## Fonctionnement sans Cloud Functions
 
-- **Rôles** : ils sont stockés dans le profil `users/{uid}` (`role`, `active`) et vérifiés par [firestore.rules](firestore.rules). Seul un administrateur peut écrire un profil, et il ne peut ni changer son propre rôle ni se désactiver.
-- **Création de compte** : l'admin crée le compte depuis l'application, via une instance Auth secondaire, sans être déconnecté. Il écrit ensuite le profil.
+- **Rôles** : ils sont stockés dans le profil `users/{uid}` (`role`, `active`) et vérifiés par [firestore.rules](firestore.rules). Seul un administrateur peut gérer les profils; un utilisateur peut uniquement créer son propre profil stagiaire. Un admin ne peut ni changer son propre rôle ni se désactiver.
+- **Création de compte** : l'inscription est ouverte avec le nom, le prénom, un rôle stagiaire ou formateur et une adresse e-mail personnelle (les adresses `@sdis01.fr` sont refusées). Les stagiaires commencent en SPV sans groupe. Les rôles administrateur sont attribués séparément. L'admin peut aussi créer d'autres comptes depuis l'application, via une instance Auth secondaire, sans être déconnecté.
 - **Mot de passe** : chacun peut demander un lien depuis « Mot de passe oublié ? » sur l'écran de connexion, et l'admin peut l'envoyer depuis la fiche utilisateur. Avec les émulateurs, aucun e-mail n'est envoyé : le lien apparaît dans la console de l'émulateur Auth. L'adresse de connexion n'est pas modifiable depuis l'app.
 - **Suppression / désactivation** : supprimer le profil ou décocher « Compte actif » retire immédiatement tout accès. L'identifiant de connexion reste listé dans la console Firebase (*Authentication*), d'où on peut le supprimer définitivement.
 - **Documents** : les PDF et fiches sont hébergés sur votre espace de partage (Google Drive, SharePoint, site officiel…). L'application ne stocke que les liens. L'accès aux fichiers dépend donc des droits de partage de cet espace.
@@ -75,7 +75,7 @@ scripts/seed.mjs référentiel des grilles du livret, planning 2026-2027, groupe
 
 | Collection | Contenu |
 |---|---|
-| `users` | profil, `role`, `active`, `apprenticeType` (`SPV` / `JSP_N3` / `JSP_N4`), `groupId` (null = sans groupe), `fireStation` (CIS) |
+| `users` | profil (`firstName`, `lastName`, `email`), `role`, `active`, `apprenticeType` (`SPV` / `JSP_N3` / `JSP_N4`), `groupId` (null = sans groupe) |
 | `groups` | `label`, `referentId` (formateur ou administrateur référent), `promoYear`, `active` |
 | `modules` | `code`, `label`, `targetType` (`ALL` / `SPV_ONLY` / `JSP_ONLY`), `evaluationScale` (`levels` = N1/N2/N3, `status` = En cours/Acquis/À revoir) |
 | `competencies` | cases des grilles : `moduleId`, `code` (OS 2, C1…), `label`, `criteria`, `order`, `active` |

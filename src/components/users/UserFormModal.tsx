@@ -30,7 +30,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
     role: user?.role ?? 'trainee',
     apprenticeType: user?.apprenticeType ?? 'SPV',
     groupId: user?.groupId ?? null,
-    fireStation: user?.fireStation ?? '',
     active: user?.active ?? true,
   });
   const [password, setPassword] = useState('');
@@ -112,13 +111,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
             required
             value={form.lastName}
             onChange={(event) => updateField('lastName', event.target.value)}
-          />
-          <TextField
-            label={t('users.fields.fireStation')}
-            placeholder={t('users.fields.fireStationPlaceholder')}
-            className="sm:col-span-2"
-            value={form.fireStation}
-            onChange={(event) => updateField('fireStation', event.target.value)}
           />
         </section>
 

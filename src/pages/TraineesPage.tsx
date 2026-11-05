@@ -1,4 +1,4 @@
-import { ChevronRight, MapPin, UsersRound } from 'lucide-react';
+import { ChevronRight, UsersRound } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -28,7 +28,7 @@ export function TraineesPage() {
 
   const visibleTrainees = trainees.filter(
     (trainee) =>
-      matchesSearch(search, trainee.firstName, trainee.lastName, trainee.fireStation) &&
+      matchesSearch(search, trainee.firstName, trainee.lastName) &&
       (groupFilter === ALL || (groupFilter === NO_GROUP ? !trainee.groupId : trainee.groupId === groupFilter)) &&
       (typeFilter === ALL || trainee.apprenticeType === typeFilter),
   );
@@ -94,12 +94,6 @@ export function TraineesPage() {
                   )}
                   {trainee.active === false && <Badge tone="fire">{t('users.inactive')}</Badge>}
                 </div>
-                {trainee.fireStation && (
-                  <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
-                    <MapPin className="size-3" />
-                    {trainee.fireStation}
-                  </p>
-                )}
               </div>
               <ChevronRight className="size-5 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-500" />
             </Link>

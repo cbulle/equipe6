@@ -12,6 +12,7 @@ const KNOWN_ERROR_CODES = [
   'auth/user-disabled',
   'auth/too-many-requests',
   'auth/network-request-failed',
+  'registration/sdis-email-not-allowed',
 ] as const;
 
 type KnownErrorCode = (typeof KNOWN_ERROR_CODES)[number];

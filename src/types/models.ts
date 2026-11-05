@@ -28,7 +28,6 @@ export interface UserProfile {
   role: UserRole;
   apprenticeType: ApprenticeType | null;
   groupId: string | null;
-  fireStation: string;
   active: boolean;
 }
 

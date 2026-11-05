@@ -1,7 +1,7 @@
 import { ArrowLeft, LogIn, MailCheck, Send } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { AppLogo } from '@/components/layout/AppLogo';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { Button } from '@/components/ui/Button';
@@ -112,6 +112,12 @@ export function LoginPage() {
                 >
                   {t('auth.forgotPassword')}
                 </button>
+                <p className="mt-4 text-center text-sm text-slate-600">
+                  {t('auth.noAccount')}{' '}
+                  <Link to="/register" className="font-medium text-brand-600 hover:text-brand-900 hover:underline">
+                    {t('auth.register')}
+                  </Link>
+                </p>
               </>
             ) : (
               <>

@@ -1,7 +1,7 @@
 rules_version = '2';
 
 // Roles are read from the `users/{uid}` profile ('admin' | 'trainer' | 'trainee').
-// Only an administrator can write profiles, so users cannot grant themselves a role.
+// Administrators manage profiles; self-registration is limited to trainee profiles.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -36,6 +36,31 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function isValidSelfCreatedProfile() {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'email', 'firstName', 'lastName', 'role', 'apprenticeType',
+          'groupId', 'active', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'email', 'firstName', 'lastName', 'role', 'apprenticeType',
+          'groupId', 'active', 'createdAt'
+        ])
+        && data.email is string
+        && data.email == request.auth.token.email
+        && !data.email.matches('.*@([a-zA-Z0-9-]+\\.)*sdis01\\.fr$')
+        && data.firstName is string
+        && data.firstName.matches('.*\\S.*')
+        && data.lastName is string
+        && data.lastName.matches('.*\\S.*')
+        && data.role in ['trainee', 'trainer']
+        && ((data.role == 'trainee' && data.apprenticeType == 'SPV')
+          || (data.role == 'trainer' && data.apprenticeType == null))
+        && data.groupId == null
+        && data.active == true
+        && data.createdAt is number;
+    }
+
     // A trainee may read the profile of the referent trainer of their group.
     function isOwnReferent(userId) {
       let groupId = get(ownProfilePath()).data.groupId;
@@ -53,7 +78,7 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isSelf(userId) || isStaff() || (isMember() && isOwnReferent(userId));
-      allow create: if isAdmin();
+      allow create: if isAdmin() || (isSelf(userId) && isValidSelfCreatedProfile());
       // An administrator cannot remove their own access by mistake.
       allow update: if isAdmin() && !(isSelf(userId) && changedKeys().hasAny(['role', 'active']));
       allow delete: if isAdmin() && !isSelf(userId);

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser, sendPasswordResetEmail, signOut } from 'firebase/auth';
 import { collection, deleteField, doc, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { accountCreationAuth, auth, db } from '@/config/firebase';
 import i18n from '@/i18n';
@@ -6,6 +6,19 @@ import type { UserProfile } from '@/types/models';
 import { COLLECTIONS } from './collections';
 
 export type UserProfileInput = Omit<UserProfile, 'id'>;
+
+export interface SelfRegistrationInput {
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: SelfRegistrationRole;
+}
+
+export type SelfRegistrationRole = 'trainee' | 'trainer';
+
+class DisallowedRegistrationEmailError extends Error {
+  readonly code = 'registration/sdis-email-not-allowed';
+}
 
 const usersCollection = collection(db, COLLECTIONS.users);
 
@@ -25,7 +38,41 @@ export const staffQuery = () => query(usersCollection, where('role', 'in', ['adm
 export async function createUserAccount(input: UserProfileInput, password: string): Promise<string> {
   const credential = await createUserWithEmailAndPassword(accountCreationAuth, input.email.trim(), password);
   await signOut(accountCreationAuth);
-  await setDoc(userDocRef(credential.user.uid), { ...input, email: input.email.trim().toLowerCase(), createdAt: Date.now() });
+  await setDoc(userDocRef(credential.user.uid), {
+    ...input,
+    email: input.email.trim().toLowerCase(),
+    createdAt: Date.now(),
+  });
+  return credential.user.uid;
+}
+
+export async function registerUser(input: SelfRegistrationInput, password: string): Promise<string> {
+  const email = input.email.trim().toLowerCase();
+  const domain = email.split('@').at(-1) ?? '';
+  if (domain === 'sdis01.fr' || domain.endsWith('.sdis01.fr')) {
+    throw new DisallowedRegistrationEmailError();
+  }
+
+  const credential = await createUserWithEmailAndPassword(auth, email, password);
+  try {
+    await setDoc(userDocRef(credential.user.uid), {
+      email: credential.user.email ?? email,
+      firstName: input.firstName.trim(),
+      lastName: input.lastName.trim(),
+      role: input.role,
+      apprenticeType: input.role === 'trainee' ? 'SPV' : null,
+      groupId: null,
+      active: true,
+      createdAt: Date.now(),
+    });
+  } catch (error) {
+    try {
+      await deleteUser(credential.user);
+    } catch (cleanupError) {
+      throw new AggregateError([error, cleanupError], 'Could not create or clean up the registration account.');
+    }
+    throw error;
+  }
   return credential.user.uid;
 }
 

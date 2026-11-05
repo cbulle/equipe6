@@ -7,6 +7,7 @@ import { RequireRole } from './components/routing/RequireRole';
 import { PageLoader } from './components/ui/Feedback';
 import { AuthProvider } from './contexts/AuthProvider';
 import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
 
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage })));
 const CalendarPage = lazy(() => import('./pages/CalendarPage').then((module) => ({ default: module.CalendarPage })));
@@ -29,6 +30,7 @@ export function App() {
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route element={<RequireAuth />}>
               <Route element={<AppLayout />}>
                 <Route index element={<DashboardPage />} />
