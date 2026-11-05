@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { ArrowLeft, Check, CheckCheck, Clock, FileDown, MessageSquarePlus, UsersRound, X } from 'lucide-react';
+import { jsPDF } from 'jspdf';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
@@ -168,9 +169,10 @@ export function RollCallPage() {
     toast.success(t('rollCall.allMarkedPresent', { count: unrecordedIds.length }));
   };
 
-  const unrecordedStaff = visibleStaff.filter((person) => !attendanceByUser.get(person.id)?.status).length;
+  const activeTrainees = trainees.filter((trainee) => trainee.active !== false);
+  const activeStaff = users.filter((user) => user.active !== false && user.role !== 'trainee');
   const isCallComplete =
-    visibleTrainees.length + visibleStaff.length > 0 && counts.unrecorded + unrecordedStaff === 0;
+    activeTrainees.length > 0 && activeTrainees.every((trainee) => attendanceByUser.get(trainee.id)?.status);
 
   if (sessionLoading || traineesLoading || usersLoading) {
     return <PageLoader />;
@@ -180,6 +182,107 @@ export function RollCallPage() {
     return <EmptyState title={t('rollCall.sessionNotFound')} />;
   }
 
+  const handleExportPdf = () => {
+    const pdfTab = window.open('about:blank', '_blank');
+    if (!pdfTab) {
+      toast.error(t('rollCall.popupBlocked'));
+      return;
+    }
+
+    try {
+      const pdf = new jsPDF({ orientation: 'landscape' });
+      const margin = 12;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const columns = [
+        { label: t('rollCall.printName'), width: 55 },
+        { label: t('rollCall.printCategory'), width: 42 },
+        { label: t('rollCall.printGroup'), width: 55 },
+        { label: t('rollCall.printStatus'), width: 42 },
+        { label: t('rollCall.printNote'), width: pageWidth - margin * 2 - 194 },
+      ];
+      const title = t('rollCall.printTitle', { title: session.title });
+      pdf.setProperties({ title });
+      const drawTableHeader = (y: number) => {
+        let x = margin;
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        columns.forEach((column) => {
+          pdf.setFillColor(242, 244, 242);
+          pdf.rect(x, y, column.width, 9, 'FD');
+          pdf.text(column.label, x + 2, y + 6);
+          x += column.width;
+        });
+      };
+
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(16);
+      const titleLines = pdf.splitTextToSize(title, pageWidth - margin * 2);
+      pdf.text(titleLines, margin, 16);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.text(
+        `${formatDate(session.date, { dateStyle: 'full' })} · ${session.startTime} – ${session.endTime}`,
+        margin,
+        16 + titleLines.length * 7,
+      );
+
+      let y = 21 + titleLines.length * 7;
+      drawTableHeader(y);
+      y += 9;
+      const addRow = (values: string[]) => {
+        const wrappedValues = values.map((value, index) =>
+          pdf.splitTextToSize(value, columns[index].width - 4),
+        );
+        const rowHeight = Math.max(9, ...wrappedValues.map((lines) => lines.length * 4 + 4));
+        if (y + rowHeight > pageHeight - margin) {
+          pdf.addPage();
+          y = margin;
+          drawTableHeader(y);
+          y += 9;
+        }
+
+        let x = margin;
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        columns.forEach((column, index) => {
+          pdf.rect(x, y, column.width, rowHeight);
+          pdf.text(wrappedValues[index], x + 2, y + 5);
+          x += column.width;
+        });
+        y += rowHeight;
+      };
+
+      activeTrainees.forEach((person) => {
+        const attendance = attendanceByUser.get(person.id);
+        addRow([
+          fullName(person),
+          t(`apprenticeTypes.short.${person.apprenticeType ?? 'SPV'}`),
+          person.groupId ? (groupLabels.get(person.groupId) ?? '') : t('groups.noGroup'),
+          attendance?.status ? t(`attendanceStatuses.${attendance.status}`) : '',
+          attendance?.note ?? '',
+        ]);
+      });
+      activeStaff.forEach((person) => {
+        const attendance = attendanceByUser.get(person.id);
+        addRow([
+          fullName(person),
+          t(`roles.${person.role}`),
+          '—',
+          attendance?.status ? t(`attendanceStatuses.${attendance.status}`) : '',
+          attendance?.note ?? '',
+        ]);
+      });
+
+      const pdfUrl = URL.createObjectURL(pdf.output('blob'));
+      pdfTab.location.replace(pdfUrl);
+      window.setTimeout(() => URL.revokeObjectURL(pdfUrl), 60_000);
+    } catch (error) {
+      pdfTab.close();
+      notifyError(error);
+    }
+  };
+
   const groupFilterOptions = [
     { id: ALL_GROUPS, label: t('rollCall.allGroups') },
     ...groups.filter((group) => group.active).map((group) => ({ id: group.id, label: group.label })),
@@ -188,7 +291,6 @@ export function RollCallPage() {
 
   return (
     <>
-      <div className="print:hidden">
       <PageHeader
         back={
           <Link to="/calendar" className="inline-flex items-center gap-1 text-sm text-brand-600 hover:text-brand-900">
@@ -208,7 +310,7 @@ export function RollCallPage() {
             <Button
               variant="secondary"
               icon={<FileDown className="size-4" />}
-              onClick={() => window.print()}
+              onClick={handleExportPdf}
               disabled={!isStaff || !isCallComplete}
               title={!isCallComplete ? t('rollCall.completeBeforeExport') : undefined}
             >
@@ -301,51 +403,6 @@ export function RollCallPage() {
           </>
         )}
       </Card>
-      </div>
-
-      <section className="hidden print:block">
-        <h1 className="text-2xl font-bold">{t('rollCall.printTitle', { title: session.title })}</h1>
-        <p className="mt-2 text-sm">
-          {formatDate(session.date, { dateStyle: 'full' })} · {session.startTime} – {session.endTime}
-        </p>
-        <table className="mt-6 w-full border-collapse text-left text-sm">
-          <thead>
-            <tr>
-              <th>{t('rollCall.printName')}</th>
-              <th>{t('rollCall.printCategory')}</th>
-              <th>{t('rollCall.printGroup')}</th>
-              <th>{t('rollCall.printStatus')}</th>
-              <th>{t('rollCall.printNote')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleTrainees.map((person) => {
-              const attendance = attendanceByUser.get(person.id);
-              return (
-                <tr key={person.id}>
-                  <td>{fullName(person)}</td>
-                  <td>{t(`apprenticeTypes.short.${person.apprenticeType ?? 'SPV'}`)}</td>
-                  <td>{person.groupId ? (groupLabels.get(person.groupId) ?? '') : t('groups.noGroup')}</td>
-                  <td>{attendance?.status ? t(`attendanceStatuses.${attendance.status}`) : ''}</td>
-                  <td>{attendance?.note ?? ''}</td>
-                </tr>
-              );
-            })}
-            {visibleStaff.map((person) => {
-              const attendance = attendanceByUser.get(person.id);
-              return (
-                <tr key={person.id}>
-                  <td>{fullName(person)}</td>
-                  <td>{t(`roles.${person.role}`)}</td>
-                  <td>—</td>
-                  <td>{attendance?.status ? t(`attendanceStatuses.${attendance.status}`) : ''}</td>
-                  <td>{attendance?.note ?? ''}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </section>
     </>
   );
 }

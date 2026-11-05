@@ -122,12 +122,12 @@ export function AppLayout() {
 
   return (
     <div className="min-h-dvh lg:pl-64">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 lg:block print:hidden">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 lg:block">
         <SidebarContent />
       </aside>
 
       {isMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden print:hidden">
+        <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setIsMenuOpen(false)} aria-hidden />
           <aside className="relative h-full w-72 max-w-[85vw] shadow-xl">
             <button
@@ -143,7 +143,7 @@ export function AppLayout() {
         </div>
       )}
 
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b-2 border-brand-700 bg-white px-4 py-2.5 lg:hidden print:hidden">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b-2 border-brand-700 bg-white px-4 py-2.5 lg:hidden">
         <button
           type="button"
           onClick={() => setIsMenuOpen(true)}
@@ -157,7 +157,7 @@ export function AppLayout() {
       </header>
 
       {!isOnline && (
-        <div className="flex items-center justify-center gap-2 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 print:hidden">
+        <div className="flex items-center justify-center gap-2 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900">
           <WifiOff className="size-4" />
           {t('app.offline')}
         </div>

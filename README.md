@@ -51,7 +51,7 @@ Quotas gratuits Firestore : 50 000 lectures et 20 000 écritures par jour, 1 Go 
 - **Adresse e-mail** : le propriétaire modifie son adresse depuis « Mon compte »; Firebase Auth et Firestore sont synchronisés. Firebase demande son mot de passe actuel pour confirmer le changement.
 - **Mot de passe** : chacun peut demander un lien depuis « Mot de passe oublié ? » sur l'écran de connexion, et l'admin peut l'envoyer depuis la fiche utilisateur. Avec les émulateurs, aucun e-mail n'est envoyé : le lien apparaît dans la console de l'émulateur Auth.
 - **Suppression / désactivation** : la Cloud Function `deleteUserAccount` supprime le compte Firebase Auth, son profil Firestore et ses affectations comme référent. Décocher « Compte actif » retire immédiatement l'accès à l'application sans supprimer le compte Auth.
-- **Feuille d'appel** : les formateurs et administrateurs peuvent enregistrer la présence de l'encadrement, sans inclure ces présences dans les statistiques. Une fois toutes les personnes visibles renseignées, le bouton d'export ouvre l'impression du navigateur; choisir « Enregistrer au format PDF » pour créer le fichier.
+- **Feuille d'appel** : les formateurs et administrateurs peuvent enregistrer la présence de l'encadrement, sans inclure ces présences dans les statistiques. Dès que tous les stagiaires actifs ont un statut, l'export ouvre le PDF dans un nouvel onglet. La présence de l'encadrement peut rester vide.
 - **Documents** : les PDF et fiches sont hébergés sur votre espace de partage (Google Drive, SharePoint, site officiel…). L'application ne stocke que les liens. L'accès aux fichiers dépend donc des droits de partage de cet espace.
 
 ## Architecture
