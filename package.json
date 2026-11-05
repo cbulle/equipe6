@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "build:functions": "npm --prefix functions run build",
+    "deploy:free": "firebase deploy --only hosting,firestore",
     "emulators": "npm run build:functions && firebase emulators:start --import=./.emulator-data --export-on-exit",
     "seed": "node scripts/seed.mjs",
     "seed:emulator": "node scripts/seed.mjs --emulator --demo"

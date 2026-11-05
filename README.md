@@ -5,7 +5,7 @@ Sapeur-Pompier Volontaire & Jeunes Sapeurs-Pompiers — Équipe 6.
 
 **Stack** : React 18 · Vite · TypeScript · Tailwind CSS 4 · Firebase (Auth, Firestore, Hosting) · react-i18next · PWA (offline).
 
-L'application utilise Firebase Auth, Firestore, Hosting et une Cloud Function pour supprimer proprement les comptes Firebase. Le déploiement des Cloud Functions nécessite le plan **Blaze** avec facturation activée; l'émulateur fonctionne en local sans facturation.
+L'application utilise Firebase Auth, Firestore et Hosting. L'export PDF est généré directement dans le navigateur : il fonctionne sur le plan gratuit **Spark**, sans Cloud Function. La suppression définitive des comptes Firebase Auth, elle, nécessite la Cloud Function et le plan **Blaze**; les émulateurs fonctionnent en local sans facturation.
 
 ## Démarrage rapide (émulateurs locaux)
 
@@ -40,7 +40,8 @@ Comptes de démo créés par le seed :
    GOOGLE_APPLICATION_CREDENTIALS=./service-account.json \
    SEED_ADMIN_EMAIL=admin@mon-sdis.fr SEED_ADMIN_PASSWORD='***' npm run seed
    ```
-4. Activez le plan Firebase **Blaze** pour déployer la Cloud Function, puis lancez `npm run build`, `npm run build:functions` et `firebase deploy`. Cela déploie les règles Firestore, la fonction et l'hébergement.
+4. Pour rester sur le plan gratuit **Spark**, lancez `npm run build` puis `npm run deploy:free`. Cette commande déploie uniquement l'hébergement et les règles Firestore, pas les Cloud Functions. L'export de la feuille d'appel en PDF fonctionne sans Blaze. La suppression définitive d'un compte Firebase Auth par un administrateur reste indisponible sans Blaze; la désactivation du compte reste utilisable.
+5. Si vous choisissez plus tard le plan **Blaze**, `npm run build:functions` puis `firebase deploy` déploient aussi la Cloud Function de suppression des comptes.
 
 Quotas gratuits Firestore : 50 000 lectures et 20 000 écritures par jour, 1 Go stocké. Le cache hors ligne limite les relectures. Une équipe de quelques dizaines de personnes reste très en dessous.
 
@@ -50,7 +51,7 @@ Quotas gratuits Firestore : 50 000 lectures et 20 000 écritures par jour, 1 Go 
 - **Création de compte** : l'inscription est ouverte avec le nom, le prénom, un rôle stagiaire ou formateur et une adresse e-mail personnelle (les adresses `@sdis01.fr` sont refusées). Les stagiaires commencent en SPV sans groupe. Les rôles administrateur sont attribués séparément. L'admin peut aussi créer d'autres comptes depuis l'application, via une instance Auth secondaire, sans être déconnecté.
 - **Adresse e-mail** : le propriétaire modifie son adresse depuis « Mon compte »; Firebase Auth et Firestore sont synchronisés. Firebase demande son mot de passe actuel pour confirmer le changement.
 - **Mot de passe** : chacun peut demander un lien depuis « Mot de passe oublié ? » sur l'écran de connexion, et l'admin peut l'envoyer depuis la fiche utilisateur. Avec les émulateurs, aucun e-mail n'est envoyé : le lien apparaît dans la console de l'émulateur Auth.
-- **Suppression / désactivation** : la Cloud Function `deleteUserAccount` supprime le compte Firebase Auth, son profil Firestore et ses affectations comme référent. Décocher « Compte actif » retire immédiatement l'accès à l'application sans supprimer le compte Auth.
+- **Suppression / désactivation** : sur Blaze, la Cloud Function `deleteUserAccount` supprime le compte Firebase Auth, son profil Firestore et ses affectations comme référent. Sur Spark, cette suppression définitive n'est pas disponible; décocher « Compte actif » retire toujours immédiatement l'accès à l'application.
 - **Feuille d'appel** : les formateurs et administrateurs peuvent enregistrer la présence de l'encadrement, sans inclure ces présences dans les statistiques. Dès que tous les stagiaires actifs ont un statut, l'export ouvre le PDF dans un nouvel onglet. La présence de l'encadrement peut rester vide.
 - **Documents** : les PDF et fiches sont hébergés sur votre espace de partage (Google Drive, SharePoint, site officiel…). L'application ne stocke que les liens. L'accès aux fichiers dépend donc des droits de partage de cet espace.
 
@@ -110,4 +111,5 @@ une clé absente de `fr.json` ou de `en.json` fait échouer `npm run typecheck`.
 | `npm run lint` | ESLint |
 | `npm run emulators` | émulateurs Firebase, avec données persistées dans `.emulator-data` |
 | `npm run build:functions` | compilation des Cloud Functions |
+| `npm run deploy:free` | déploiement Hosting + règles Firestore, sans Cloud Functions (Spark) |
 | `npm run seed` / `seed:emulator` | initialisation du référentiel et du premier administrateur |
