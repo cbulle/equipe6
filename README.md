@@ -1,115 +1,115 @@
-# Livret de l'apprenant SPV / JSP
+# Guide d'utilisation
 
-Application web & mobile (PWA) de dématérialisation du livret d'apprenant
-Sapeur-Pompier Volontaire & Jeunes Sapeurs-Pompiers — Équipe 6.
+## Présentation
 
-**Stack** : React 18 · Vite · TypeScript · Tailwind CSS 4 · Firebase (Auth, Firestore, Hosting) · react-i18next · PWA (offline).
+Cette application sert à suivre la formation des stagiaires SPV et JSP : séances, appels, progression dans les compétences, entretiens et vœux de stages. Elle peut être utilisée sur ordinateur, tablette ou téléphone.
 
-L'application utilise Firebase Auth, Firestore et Hosting. L'export PDF est généré directement dans le navigateur : il fonctionne sur le plan gratuit **Spark**, sans Cloud Function. La suppression définitive des comptes Firebase Auth, elle, nécessite la Cloud Function et le plan **Blaze**; les émulateurs fonctionnent en local sans facturation.
+Chaque personne se connecte avec son adresse e-mail et son mot de passe. Les menus visibles dépendent de son rôle :
 
-## Démarrage rapide (émulateurs locaux)
+- **Stagiaire** : consulte et complète son propre livret.
+- **Formateur** : suit les stagiaires, fait l'appel et renseigne les livrets.
+- **Administrateur** : gère aussi les comptes, les groupes, les modules et les séances.
 
-Prérequis : Node 22+, Java 11+ (requis par l'émulateur Firestore), Firebase CLI (`npm i -g firebase-tools`).
+## Commencer
 
-```bash
-npm install
-npm --prefix functions install
-cp .env.example .env.local          # VITE_USE_EMULATORS=true par défaut
+### Créer un compte
 
-npm run emulators                   # terminal 1 : Auth + Firestore + Functions
-npm run seed:emulator               # terminal 2 : référentiel + comptes de démo
-npm run dev                         # terminal 3 : http://localhost:5173
-```
+Sur l'écran de connexion, choisissez **Créer un compte**, puis renseignez votre nom, votre prénom, votre adresse e-mail personnelle et un mot de passe. Les adresses `@sdis01.fr` ne sont pas acceptées. Choisissez **Stagiaire** ou **Formateur**. Le rôle administrateur est attribué séparément.
 
-Comptes de démo créés par le seed :
+Un administrateur peut également créer un compte depuis **Utilisateurs** et choisir son rôle. Le mot de passe doit comporter au moins huit caractères. Il peut envoyer un e-mail de réinitialisation du mot de passe depuis la fiche de la personne.
 
-| Rôle | E-mail | Mot de passe |
-|---|---|---|
-| Administrateur | `admin@spv.local` | `Admin1234!` |
-| Formateur (référent Équipe 6) | `formateur@spv.local` | `Formateur1234!` |
-| Stagiaire SPV | `spv@spv.local` | `Stagiaire1234!` |
-| Stagiaire JSP 3 | `jsp@spv.local` | `Stagiaire1234!` |
-| Stagiaire JSP 4 sans groupe | `sansgroupe@spv.local` | `Stagiaire1234!` |
+### Se connecter et naviguer
 
-## Mise en production
+Après connexion, le menu permet d'ouvrir l'accueil, le calendrier, les ressources et **Mon compte**. Les autres rubriques apparaissent selon votre rôle. Sur téléphone, ouvrez le menu avec le bouton en haut à gauche.
 
-1. Créer le projet Firebase, puis activer **Authentication** (fournisseur e-mail / mot de passe) et **Firestore** (région `europe-west1` par exemple).
-2. Ajouter une application Web et reporter ses clés dans `.env.local` (`VITE_USE_EMULATORS=false`), puis renseigner l'identifiant du projet dans `.firebaserc`.
-3. Créer le premier administrateur et le référentiel. Il faut une clé de compte de service : *Paramètres du projet > Comptes de service > Générer une nouvelle clé privée*. Ne la commitez jamais.
-   ```bash
-   GOOGLE_APPLICATION_CREDENTIALS=./service-account.json \
-   SEED_ADMIN_EMAIL=admin@mon-sdis.fr SEED_ADMIN_PASSWORD='***' npm run seed
-   ```
-4. Pour rester sur le plan gratuit **Spark**, lancez `npm run build` puis `npm run deploy:free`. Cette commande déploie uniquement l'hébergement et les règles Firestore, pas les Cloud Functions. L'export de la feuille d'appel en PDF fonctionne sans Blaze. La suppression définitive d'un compte Firebase Auth par un administrateur reste indisponible sans Blaze; la désactivation du compte reste utilisable.
-5. Si vous choisissez plus tard le plan **Blaze**, `npm run build:functions` puis `firebase deploy` déploient aussi la Cloud Function de suppression des comptes.
+L'accueil affiche les prochaines séances. Pour changer la langue, utilisez le sélecteur en bas du menu. Pour quitter l'application, choisissez **Déconnexion**.
 
-Quotas gratuits Firestore : 50 000 lectures et 20 000 écritures par jour, 1 Go stocké. Le cache hors ligne limite les relectures. Une équipe de quelques dizaines de personnes reste très en dessous.
+### Modifier ses informations
 
-## Comptes et autorisations Firebase
+Dans **Mon compte**, chacun peut corriger son nom, son prénom ou son adresse e-mail. Pour changer l'adresse e-mail, saisissez aussi votre mot de passe actuel. Pour un mot de passe oublié, utilisez **Mot de passe oublié ?** sur l'écran de connexion.
 
-- **Rôles** : ils sont stockés dans le profil `users/{uid}` (`role`, `active`) et vérifiés par [firestore.rules](firestore.rules). Un administrateur peut changer le rôle de tous les utilisateurs, y compris le sien. Un utilisateur peut uniquement modifier son propre nom, prénom et adresse e-mail.
-- **Création de compte** : l'inscription est ouverte avec le nom, le prénom, un rôle stagiaire ou formateur et une adresse e-mail personnelle (les adresses `@sdis01.fr` sont refusées). Les stagiaires commencent en SPV sans groupe. Les rôles administrateur sont attribués séparément. L'admin peut aussi créer d'autres comptes depuis l'application, via une instance Auth secondaire, sans être déconnecté.
-- **Adresse e-mail** : le propriétaire modifie son adresse depuis « Mon compte »; Firebase Auth et Firestore sont synchronisés. Firebase demande son mot de passe actuel pour confirmer le changement.
-- **Mot de passe** : chacun peut demander un lien depuis « Mot de passe oublié ? » sur l'écran de connexion, et l'admin peut l'envoyer depuis la fiche utilisateur. Avec les émulateurs, aucun e-mail n'est envoyé : le lien apparaît dans la console de l'émulateur Auth.
-- **Suppression / désactivation** : sur Blaze, la Cloud Function `deleteUserAccount` supprime le compte Firebase Auth, son profil Firestore et ses affectations comme référent. Sur Spark, cette suppression définitive n'est pas disponible; décocher « Compte actif » retire toujours immédiatement l'accès à l'application.
-- **Feuille d'appel** : les formateurs et administrateurs peuvent enregistrer la présence de l'encadrement, sans inclure ces présences dans les statistiques. Dès que tous les stagiaires actifs ont un statut, l'export ouvre le PDF dans un nouvel onglet. La présence de l'encadrement peut rester vide.
-- **Documents** : les PDF et fiches sont hébergés sur votre espace de partage (Google Drive, SharePoint, site officiel…). L'application ne stocke que les liens. L'accès aux fichiers dépend donc des droits de partage de cet espace.
+## Fonctions communes
 
-## Architecture
+### Calendrier et séances
 
-```
-src/
-  config/        initialisation Firebase (cache offline persistant, instance Auth secondaire, émulateurs)
-  types/         modèles de données + énumérations (rôles, statuts, échelles…)
-  services/      accès Firestore / Auth, un fichier par domaine
-  hooks/         abonnements temps réel (useCollectionData, useDocumentData) et hooks métier
-  contexts/      AuthProvider (utilisateur, profil, rôle)
-  components/
-    ui/          design system (Button, Modal, FormFields, Tabs, SegmentedControl…)
-    layout/      AppLayout (sidebar / menu mobile), sélecteur de langue
-    routing/     RequireAuth, RequireRole
-    booklet/     livret : en-tête, grilles N1/N2/N3, fiche JSP, présences, entretiens, vœux
-    sessions/    carte et formulaire de séance
-  pages/         pages routées (chargées à la demande) ; pages/admin pour le super-CRUD
-  i18n/          configuration + locales/fr.json, locales/en.json
-scripts/seed.mjs référentiel des grilles du livret, planning 2026-2027, groupe Équipe 6
-functions/       Cloud Functions de gestion des comptes
-```
+Dans **Calendrier**, changez de mois avec les flèches, choisissez un type de séance si besoin, puis sélectionnez une séance pour voir ses détails et ses documents.
 
-### Modèle Firestore
+Les stagiaires peuvent consulter le calendrier et voir leur statut de présence aux séances passées. Les formateurs et administrateurs peuvent aussi ouvrir la feuille d'appel. Seul l'administrateur peut ajouter, modifier ou supprimer une séance.
 
-| Collection | Contenu |
-|---|---|
-| `users` | profil (`firstName`, `lastName`, `email`), `role`, `active`, `apprenticeType` (`SPV` / `JSP_N3` / `JSP_N4`), `groupId` (null = sans groupe) |
-| `groups` | `label`, `referentId` (formateur ou administrateur référent), `promoYear`, `active` |
-| `modules` | `code`, `label`, `targetType` (`ALL` / `SPV_ONLY` / `JSP_ONLY`), `evaluationScale` (`levels` = N1/N2/N3, `status` = En cours/Acquis/À revoir) |
-| `competencies` | cases des grilles : `moduleId`, `code` (OS 2, C1…), `label`, `criteria`, `order`, `active` |
-| `sessions` | séances créées par l'admin : `date`, horaires, `title`, `theme`, `moduleId`, `type` (`course` / `sport` / `opening`) |
-| `resources` | liens vers les documents (`title`, `url`), éventuellement liés à une séance et/ou un module |
-| `attendances` | `{sessionId}_{userId}` : `status` (`present` / `absent` / `excused`), `note` |
-| `evaluations` | une case cochée = un document avec le visa (`validatedBy`, `validatedByName`, `validatedAt`) ; `{userId}_{moduleId}_module` (niveau `MODULE_COMPLETED`) = module déclaré terminé sans que toutes les cases soient cochées |
-| `interviews` | 3 entretiens par année scolaire, visas formateur / apprenant |
-| `internshipWishes` | `{userId}` : 3 vœux par stage, dispense (JSP), contraintes |
+### Ressources
 
-### Droits (RBAC)
+Dans **Ressources**, recherchez un document par son titre ou filtrez par module. Sélectionnez son titre ou le bouton d'ouverture pour consulter le document dans un nouvel onglet. Les documents sont des liens vers des espaces de partage externes.
 
-- **Admin** : super-CRUD (profils, groupes et référents, séances et documents, modules et cases), correction de toute validation. Il peut lui-même être référent d'un groupe et modifier la fiche d'un apprenant depuis son livret.
-- **Formateur** : accès transversal à tous les groupes. Il fait l'appel, valide les grilles, marque un module terminé et ajoute des liens de ressources. Il ne peut retirer que ses propres validations.
-- **Stagiaire** : lecture de son livret, de son référent et des ressources. Il signe ses entretiens et saisit ses vœux.
+Les formateurs et administrateurs peuvent ajouter un lien. Un formateur peut supprimer les liens qu'il a ajoutés; un administrateur peut supprimer tous les liens.
 
-## Traductions
+## Stagiaire
 
-Le français est la langue par défaut, l'anglais est disponible via le sélecteur. Les clés sont typées :
-une clé absente de `fr.json` ou de `en.json` fait échouer `npm run typecheck`.
+### Consulter son livret
 
-## Scripts
+Ouvrez **Mon livret**. Les onglets disponibles sont :
 
-| Commande | Rôle |
-|---|---|
-| `npm run dev` | serveur de développement |
-| `npm run build` | vérification TypeScript + build de production (PWA) |
-| `npm run lint` | ESLint |
-| `npm run emulators` | émulateurs Firebase, avec données persistées dans `.emulator-data` |
-| `npm run build:functions` | compilation des Cloud Functions |
-| `npm run deploy:free` | déploiement Hosting + règles Firestore, sans Cloud Functions (Spark) |
-| `npm run seed` / `seed:emulator` | initialisation du référentiel et du premier administrateur |
+- **Compétences** : consultez vos modules, les compétences et leur progression. Les validations sont faites par un formateur ou un administrateur.
+- **Fiche JSP** : pour les JSP, consultez l'état d'avancement de la fiche. Seul l'encadrement peut modifier les statuts.
+- **Présences** : consultez vos présences, absences, excuses et votre taux de présence.
+- **Entretiens** : consultez les comptes rendus et choisissez **Signer** pour apposer votre visa.
+- **Vœux de stage** : saisissez vos trois choix pour chaque stage et, si nécessaire, vos contraintes. Les JSP concernés peuvent indiquer une dispense. Pensez à enregistrer.
+
+Vous ne pouvez consulter et modifier que votre propre livret et vos propres vœux.
+
+## Formateur
+
+### Suivre les stagiaires
+
+Dans **Stagiaires**, recherchez une personne ou filtrez la liste par groupe et par type de formation. Ouvrez sa fiche pour consulter son livret.
+
+Dans l'onglet **Compétences**, choisissez les niveaux validés. Dans la fiche JSP, mettez à jour les statuts proposés. Vous pouvez aussi déclarer un module terminé. Une validation que vous avez faite peut être retirée par vous; l'administrateur peut corriger toutes les validations.
+
+Dans **Entretiens**, vous pouvez créer, modifier et supprimer un compte rendu, dans la limite de trois entretiens par stagiaire et par année scolaire. Le stagiaire et un formateur peuvent chacun signer leur partie.
+
+### Faire l'appel
+
+Dans **Calendrier**, ouvrez une séance puis choisissez **Faire l'appel**. Pour chaque stagiaire, indiquez **Présent**, **Absent** ou **Excusé**. Vous pouvez ajouter une remarque. **Tous présents** marque uniquement les stagiaires dont le statut n'est pas encore renseigné.
+
+Les lignes des formateurs et administrateurs sont séparées : vous pouvez y renseigner leur présence, mais elle ne compte pas dans les statistiques des stagiaires.
+
+#### Exporter la feuille d'appel en PDF
+
+Le bouton **Exporter en PDF** est réservé aux formateurs et administrateurs. Il devient disponible lorsque **tous les stagiaires actifs** ont un statut : présent, absent ou excusé. Il n'est pas nécessaire de renseigner la présence des formateurs ou des administrateurs.
+
+Le PDF s'ouvre dans un nouvel onglet. Il contient tous les stagiaires et membres de l'encadrement actifs, avec les statuts renseignés. Un statut d'encadrement non renseigné reste vide. Si le nouvel onglet ne s'ouvre pas, autorisez les fenêtres pop-up pour le site.
+
+### Ajouter des ressources
+
+Dans **Ressources**, choisissez **Ajouter** et renseignez le titre et le lien du document. Vous pouvez associer le lien à un module ou à une séance. Vous pouvez supprimer vos propres liens.
+
+## Administrateur
+
+L'administrateur dispose aussi des fonctions du formateur et peut gérer l'application.
+
+### Gérer les utilisateurs
+
+Dans **Utilisateurs**, vous pouvez rechercher et filtrer les comptes, créer un compte, modifier son nom, son prénom, son rôle ou son état actif, et envoyer un lien de réinitialisation du mot de passe. Pour un stagiaire, vous pouvez également choisir son type SPV/JSP et son groupe.
+
+Désactiver un compte retire son accès à l'application sans supprimer son compte. Pour supprimer définitivement une personne, **ne cliquez pas sur Supprimer** : prévenez le développeur. Il doit retirer correctement son profil et son compte de connexion; ne supprimez pas seulement l'un des deux.
+
+### Gérer les groupes
+
+Dans **Groupes**, vous pouvez créer, modifier et supprimer un groupe, indiquer sa promotion et choisir son référent. Vous pouvez affecter un stagiaire à un groupe ou le retirer d'un groupe. Lorsqu'un groupe est supprimé, ses stagiaires sont conservés sans groupe.
+
+### Gérer les modules et les compétences
+
+Dans **Modules**, choisissez **Ajouter un module** pour saisir son code, son nom, les personnes concernées et le type d'évaluation. Sélectionnez ensuite le module pour ajouter ou modifier ses compétences et leurs critères.
+
+Vous pouvez masquer une compétence sans la supprimer, la réafficher, ou réorganiser les modules et les compétences en les faisant glisser. Les boutons de modification et de suppression sont sur chaque module ou compétence.
+
+### Gérer les séances
+
+Dans **Calendrier**, choisissez **Ajouter une séance**. Renseignez son titre, son type, sa date et ses horaires. Le thème, le module associé et les liens de documents sont facultatifs. Pour corriger une séance, ouvrez-la puis choisissez **Modifier**. Sa suppression efface également son appel et ses liens de documents associés.
+
+### Corriger les livrets
+
+Dans **Stagiaires**, ouvrez une fiche pour consulter ou corriger les compétences, la fiche JSP, les présences, les entretiens et les vœux. Contrairement au formateur, l'administrateur peut retirer toute validation.
+
+## Besoin d'aide ?
+
+Si une rubrique ou un bouton n'apparaît pas, vérifiez votre rôle auprès de l'administrateur. Pour une suppression définitive de compte, contactez le développeur avant toute action.
