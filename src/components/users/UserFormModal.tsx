@@ -2,7 +2,6 @@ import { KeyRound } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { useCurrentUser } from '@/hooks/useAuth';
 import { referentGroupIdsOf } from '@/services/groupService';
 import { createUserAccount, sendUserPasswordReset, updateUserProfile, type UserProfileInput } from '@/services/userService';
 import { APPRENTICE_TYPES, USER_ROLES, type Group, type UserProfile, type UserRole } from '@/types/models';
@@ -22,7 +21,6 @@ interface UserFormModalProps {
 
 export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
   const { t } = useTranslation();
-  const { uid } = useCurrentUser();
   const [form, setForm] = useState<UserProfileInput>({
     email: user?.email ?? '',
     firstName: user?.firstName ?? '',
@@ -35,9 +33,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
   const [password, setPassword] = useState('');
   const [saving, setSaving] = useState(false);
   const isTrainee = form.role === 'trainee';
-  // An administrator cannot change their own role or deactivate themselves (see firestore.rules).
-  const isSelf = user?.id === uid;
-
   const updateField = <K extends keyof UserProfileInput>(key: K, value: UserProfileInput[K]) =>
     setForm((previous) => ({ ...previous, [key]: value }));
 
@@ -123,7 +118,7 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
             type="email"
             required
             disabled={Boolean(user)}
-            hint={user ? t('users.emailLockedHint') : undefined}
+            hint={user ? t('users.emailEditHint') : undefined}
             value={form.email}
             onChange={(event) => updateField('email', event.target.value)}
           />
@@ -148,8 +143,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
           )}
           <SelectField
             label={t('users.fields.role')}
-            disabled={isSelf}
-            hint={isSelf ? t('users.ownRoleLockedHint') : undefined}
             value={form.role}
             onChange={(event) => updateField('role', event.target.value as UserRole)}
           >
@@ -159,7 +152,7 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
               </option>
             ))}
           </SelectField>
-          {user && !isSelf && (
+          {user && (
             <CheckboxField
               label={t('users.fields.active')}
               description={t('users.activeHint')}

@@ -4,6 +4,11 @@ import i18n from '@/i18n';
 const KNOWN_ERROR_CODES = [
   'permission-denied',
   'unavailable',
+  'functions/permission-denied',
+  'functions/unauthenticated',
+  'functions/internal',
+  'functions/invalid-argument',
+  'functions/unavailable',
   'auth/email-already-in-use',
   'auth/invalid-email',
   'auth/weak-password',
@@ -12,6 +17,8 @@ const KNOWN_ERROR_CODES = [
   'auth/user-disabled',
   'auth/too-many-requests',
   'auth/network-request-failed',
+  'auth/requires-recent-login',
+  'auth/wrong-password',
   'registration/sdis-email-not-allowed',
 ] as const;
 

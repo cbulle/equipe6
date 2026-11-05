@@ -5,7 +5,7 @@ Sapeur-Pompier Volontaire & Jeunes Sapeurs-Pompiers — Équipe 6.
 
 **Stack** : React 18 · Vite · TypeScript · Tailwind CSS 4 · Firebase (Auth, Firestore, Hosting) · react-i18next · PWA (offline).
 
-**100 % gratuit** : l'application tient dans l'offre Firebase **Spark**, sans carte bancaire. Elle n'utilise ni Cloud Functions ni Storage.
+L'application utilise Firebase Auth, Firestore, Hosting et une Cloud Function pour supprimer proprement les comptes Firebase. Le déploiement des Cloud Functions nécessite le plan **Blaze** avec facturation activée; l'émulateur fonctionne en local sans facturation.
 
 ## Démarrage rapide (émulateurs locaux)
 
@@ -13,9 +13,10 @@ Prérequis : Node 22+, Java 11+ (requis par l'émulateur Firestore), Firebase CL
 
 ```bash
 npm install
+npm --prefix functions install
 cp .env.example .env.local          # VITE_USE_EMULATORS=true par défaut
 
-npm run emulators                   # terminal 1 : Auth + Firestore
+npm run emulators                   # terminal 1 : Auth + Firestore + Functions
 npm run seed:emulator               # terminal 2 : référentiel + comptes de démo
 npm run dev                         # terminal 3 : http://localhost:5173
 ```
@@ -30,7 +31,7 @@ Comptes de démo créés par le seed :
 | Stagiaire JSP 3 | `jsp@spv.local` | `Stagiaire1234!` |
 | Stagiaire JSP 4 sans groupe | `sansgroupe@spv.local` | `Stagiaire1234!` |
 
-## Mise en production (plan Spark gratuit)
+## Mise en production
 
 1. Créer le projet Firebase, puis activer **Authentication** (fournisseur e-mail / mot de passe) et **Firestore** (région `europe-west1` par exemple).
 2. Ajouter une application Web et reporter ses clés dans `.env.local` (`VITE_USE_EMULATORS=false`), puis renseigner l'identifiant du projet dans `.firebaserc`.
@@ -39,16 +40,18 @@ Comptes de démo créés par le seed :
    GOOGLE_APPLICATION_CREDENTIALS=./service-account.json \
    SEED_ADMIN_EMAIL=admin@mon-sdis.fr SEED_ADMIN_PASSWORD='***' npm run seed
    ```
-4. `npm run build && firebase deploy`. Cela déploie les règles Firestore et l'hébergement.
+4. Activez le plan Firebase **Blaze** pour déployer la Cloud Function, puis lancez `npm run build`, `npm run build:functions` et `firebase deploy`. Cela déploie les règles Firestore, la fonction et l'hébergement.
 
 Quotas gratuits Firestore : 50 000 lectures et 20 000 écritures par jour, 1 Go stocké. Le cache hors ligne limite les relectures. Une équipe de quelques dizaines de personnes reste très en dessous.
 
-## Fonctionnement sans Cloud Functions
+## Comptes et autorisations Firebase
 
-- **Rôles** : ils sont stockés dans le profil `users/{uid}` (`role`, `active`) et vérifiés par [firestore.rules](firestore.rules). Seul un administrateur peut gérer les profils; un utilisateur peut uniquement créer son propre profil stagiaire. Un admin ne peut ni changer son propre rôle ni se désactiver.
+- **Rôles** : ils sont stockés dans le profil `users/{uid}` (`role`, `active`) et vérifiés par [firestore.rules](firestore.rules). Un administrateur peut changer le rôle de tous les utilisateurs, y compris le sien. Un utilisateur peut uniquement modifier son propre nom, prénom et adresse e-mail.
 - **Création de compte** : l'inscription est ouverte avec le nom, le prénom, un rôle stagiaire ou formateur et une adresse e-mail personnelle (les adresses `@sdis01.fr` sont refusées). Les stagiaires commencent en SPV sans groupe. Les rôles administrateur sont attribués séparément. L'admin peut aussi créer d'autres comptes depuis l'application, via une instance Auth secondaire, sans être déconnecté.
-- **Mot de passe** : chacun peut demander un lien depuis « Mot de passe oublié ? » sur l'écran de connexion, et l'admin peut l'envoyer depuis la fiche utilisateur. Avec les émulateurs, aucun e-mail n'est envoyé : le lien apparaît dans la console de l'émulateur Auth. L'adresse de connexion n'est pas modifiable depuis l'app.
-- **Suppression / désactivation** : supprimer le profil ou décocher « Compte actif » retire immédiatement tout accès. L'identifiant de connexion reste listé dans la console Firebase (*Authentication*), d'où on peut le supprimer définitivement.
+- **Adresse e-mail** : le propriétaire modifie son adresse depuis « Mon compte »; Firebase Auth et Firestore sont synchronisés. Firebase demande son mot de passe actuel pour confirmer le changement.
+- **Mot de passe** : chacun peut demander un lien depuis « Mot de passe oublié ? » sur l'écran de connexion, et l'admin peut l'envoyer depuis la fiche utilisateur. Avec les émulateurs, aucun e-mail n'est envoyé : le lien apparaît dans la console de l'émulateur Auth.
+- **Suppression / désactivation** : la Cloud Function `deleteUserAccount` supprime le compte Firebase Auth, son profil Firestore et ses affectations comme référent. Décocher « Compte actif » retire immédiatement l'accès à l'application sans supprimer le compte Auth.
+- **Feuille d'appel** : les formateurs et administrateurs peuvent enregistrer la présence de l'encadrement, sans inclure ces présences dans les statistiques. Une fois toutes les personnes visibles renseignées, le bouton d'export ouvre l'impression du navigateur; choisir « Enregistrer au format PDF » pour créer le fichier.
 - **Documents** : les PDF et fiches sont hébergés sur votre espace de partage (Google Drive, SharePoint, site officiel…). L'application ne stocke que les liens. L'accès aux fichiers dépend donc des droits de partage de cet espace.
 
 ## Architecture
@@ -69,6 +72,7 @@ src/
   pages/         pages routées (chargées à la demande) ; pages/admin pour le super-CRUD
   i18n/          configuration + locales/fr.json, locales/en.json
 scripts/seed.mjs référentiel des grilles du livret, planning 2026-2027, groupe Équipe 6
+functions/       Cloud Functions de gestion des comptes
 ```
 
 ### Modèle Firestore
@@ -105,4 +109,5 @@ une clé absente de `fr.json` ou de `en.json` fait échouer `npm run typecheck`.
 | `npm run build` | vérification TypeScript + build de production (PWA) |
 | `npm run lint` | ESLint |
 | `npm run emulators` | émulateurs Firebase, avec données persistées dans `.emulator-data` |
+| `npm run build:functions` | compilation des Cloud Functions |
 | `npm run seed` / `seed:emulator` | initialisation du référentiel et du premier administrateur |

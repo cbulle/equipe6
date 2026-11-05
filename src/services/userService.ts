@@ -1,6 +1,16 @@
-import { createUserWithEmailAndPassword, deleteUser, sendPasswordResetEmail, signOut } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  sendPasswordResetEmail,
+  signOut,
+  updateEmail,
+  updateProfile,
+} from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
 import { collection, deleteField, doc, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
-import { accountCreationAuth, auth, db } from '@/config/firebase';
+import { accountCreationAuth, auth, db, functions } from '@/config/firebase';
 import i18n from '@/i18n';
 import type { UserProfile } from '@/types/models';
 import { COLLECTIONS } from './collections';
@@ -14,10 +24,22 @@ export interface SelfRegistrationInput {
   role: SelfRegistrationRole;
 }
 
+export interface OwnProfileUpdate {
+  email: string;
+  firstName: string;
+  lastName: string;
+  currentPassword: string;
+}
+
 export type SelfRegistrationRole = 'trainee' | 'trainer';
 
 class DisallowedRegistrationEmailError extends Error {
   readonly code = 'registration/sdis-email-not-allowed';
+}
+
+function isDisallowedEmail(email: string): boolean {
+  const domain = email.split('@').at(-1) ?? '';
+  return domain === 'sdis01.fr' || domain.endsWith('.sdis01.fr');
 }
 
 const usersCollection = collection(db, COLLECTIONS.users);
@@ -48,8 +70,7 @@ export async function createUserAccount(input: UserProfileInput, password: strin
 
 export async function registerUser(input: SelfRegistrationInput, password: string): Promise<string> {
   const email = input.email.trim().toLowerCase();
-  const domain = email.split('@').at(-1) ?? '';
-  if (domain === 'sdis01.fr' || domain.endsWith('.sdis01.fr')) {
+  if (isDisallowedEmail(email)) {
     throw new DisallowedRegistrationEmailError();
   }
 
@@ -78,7 +99,7 @@ export async function registerUser(input: SelfRegistrationInput, password: strin
 
 /**
  * Updates a profile. When the user becomes a trainee, they are removed as referent
- * of the given groups. The login email cannot be changed from the client.
+ * of the given groups. Login email changes are handled by the owner in Firebase Auth.
  */
 export async function updateUserProfile(
   userId: string,
@@ -94,15 +115,53 @@ export async function updateUserProfile(
   await batch.commit();
 }
 
+export async function updateOwnProfile(userId: string, input: OwnProfileUpdate): Promise<void> {
+  const currentUser = auth.currentUser;
+  if (!currentUser || currentUser.uid !== userId) {
+    throw new Error('You can only update your own profile.');
+  }
+
+  const email = input.email.trim().toLowerCase();
+  const firstName = input.firstName.trim();
+  const lastName = input.lastName.trim();
+  const currentEmail = currentUser.email?.toLowerCase();
+
+  if (!firstName || !lastName || !email) {
+    throw new Error('Name, first name and email are required.');
+  }
+  if (isDisallowedEmail(email)) {
+    throw new DisallowedRegistrationEmailError();
+  }
+
+  if (email !== currentEmail) {
+    if (!input.currentPassword) {
+      const error = new Error('Your current password is required to change your email.');
+      Object.assign(error, { code: 'auth/requires-recent-login' });
+      throw error;
+    }
+    await reauthenticateWithCredential(
+      currentUser,
+      EmailAuthProvider.credential(currentUser.email ?? email, input.currentPassword),
+    );
+    await updateEmail(currentUser, email);
+    await currentUser.getIdToken(true);
+  }
+
+  await updateProfile(currentUser, { displayName: `${firstName} ${lastName}` });
+  await updateDoc(userDocRef(userId), {
+    email: currentUser.email ?? email,
+    firstName,
+    lastName,
+    updatedAt: Date.now(),
+  });
+}
+
 /**
- * Deletes the profile: without a profile the account no longer has access to anything.
- * The Firebase Auth login itself can only be removed from the Firebase console.
+ * Deletes the Firebase Auth account, profile and any group referent assignments.
  */
-export async function deleteUserProfile(userId: string, referentGroupIds: string[]): Promise<void> {
-  const batch = writeBatch(db);
-  referentGroupIds.forEach((groupId) => batch.update(doc(db, COLLECTIONS.groups, groupId), { referentId: null }));
-  batch.delete(userDocRef(userId));
-  await batch.commit();
+export async function deleteUserAccount(userId: string): Promise<void> {
+  const deleteAccount = httpsCallable<{ userId: string }, { deleted: boolean }>(functions, 'deleteUserAccount');
+  await deleteAccount({ userId });
 }
 
 const UNUSABLE_CONTINUE_URL_CODES = ['auth/unauthorized-continue-uri', 'auth/invalid-continue-uri'];

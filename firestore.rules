@@ -1,7 +1,7 @@
 rules_version = '2';
 
 // Roles are read from the `users/{uid}` profile ('admin' | 'trainer' | 'trainee').
-// Administrators manage profiles; self-registration is limited to trainee profiles.
+// Administrators manage profiles; self-registration is limited to trainee and trainer profiles.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -72,6 +72,20 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys();
     }
 
+    function isValidSelfProfileUpdate(userId) {
+      let data = request.resource.data;
+      return isSelf(userId)
+        && changedKeys().hasOnly(['email', 'firstName', 'lastName', 'updatedAt'])
+        && data.email is string
+        && data.email == request.auth.token.email
+        && !data.email.matches('.*@([a-zA-Z0-9-]+\\.)*sdis01\\.fr$')
+        && data.firstName is string
+        && data.firstName.matches('.*\\S.*')
+        && data.lastName is string
+        && data.lastName.matches('.*\\S.*')
+        && data.updatedAt is number;
+    }
+
     function isValidLink() {
       return request.resource.data.url is string && request.resource.data.url.matches('^https?://.+');
     }
@@ -79,9 +93,8 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isSelf(userId) || isStaff() || (isMember() && isOwnReferent(userId));
       allow create: if isAdmin() || (isSelf(userId) && isValidSelfCreatedProfile());
-      // An administrator cannot remove their own access by mistake.
-      allow update: if isAdmin() && !(isSelf(userId) && changedKeys().hasAny(['role', 'active']));
-      allow delete: if isAdmin() && !isSelf(userId);
+      allow update: if isAdmin() || isValidSelfProfileUpdate(userId);
+      allow delete: if isAdmin();
     }
 
     match /groups/{groupId} {

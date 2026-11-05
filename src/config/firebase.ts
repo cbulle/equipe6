@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, inMemoryPersistence, initializeAuth, type Auth } from 'firebase/auth';
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 import {
   connectFirestoreEmulator,
   initializeFirestore,
@@ -26,6 +27,7 @@ export const auth = getAuth(firebaseApp);
 export const db = initializeFirestore(firebaseApp, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
 });
+export const functions = getFunctions(firebaseApp, 'europe-west1');
 
 // Secondary, non-persisted Auth instance used by the administrator to create accounts
 // without being signed out of their own session (no Admin SDK on the free Spark plan).
@@ -37,4 +39,5 @@ if (useEmulators) {
   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
   connectAuthEmulator(accountCreationAuth, 'http://127.0.0.1:9099', { disableWarnings: true });
   connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  connectFunctionsEmulator(functions, '127.0.0.1', 5001);
 }

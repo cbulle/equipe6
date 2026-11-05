@@ -18,6 +18,7 @@ const TraineeBookletPage = lazy(() =>
 );
 const MyBookletPage = lazy(() => import('./pages/MyBookletPage').then((module) => ({ default: module.MyBookletPage })));
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage').then((module) => ({ default: module.ResourcesPage })));
+const ProfilePage = lazy(() => import('./pages/ProfilePage').then((module) => ({ default: module.ProfilePage })));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage').then((module) => ({ default: module.UsersPage })));
 const GroupsPage = lazy(() => import('./pages/admin/GroupsPage').then((module) => ({ default: module.GroupsPage })));
 const ModulesPage = lazy(() => import('./pages/admin/ModulesPage').then((module) => ({ default: module.ModulesPage })));
@@ -36,6 +37,7 @@ export function App() {
                 <Route index element={<DashboardPage />} />
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="resources" element={<ResourcesPage />} />
+                <Route path="profile" element={<ProfilePage />} />
 
                 <Route element={<RequireRole roles={['trainee']} />}>
                   <Route path="my-booklet" element={<MyBookletPage />} />

@@ -1,10 +1,10 @@
 import clsx from 'clsx';
-import { ArrowLeft, Check, CheckCheck, Clock, MessageSquarePlus, UsersRound, X } from 'lucide-react';
+import { ArrowLeft, Check, CheckCheck, Clock, FileDown, MessageSquarePlus, UsersRound, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { ApprenticeTypeBadge, SessionTypeBadge } from '@/components/shared/DomainBadges';
+import { ApprenticeTypeBadge, RoleBadge, SessionTypeBadge } from '@/components/shared/DomainBadges';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -14,8 +14,8 @@ import { IconButton } from '@/components/ui/IconButton';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { SegmentedControl, type SegmentOption } from '@/components/ui/SegmentedControl';
-import { useGroups, useSession, useSessionAttendances, useTrainees } from '@/hooks/useAppData';
-import { useCurrentUser } from '@/hooks/useAuth';
+import { useGroups, useSession, useSessionAttendances, useTrainees, useUsers } from '@/hooks/useAppData';
+import { useAuth, useCurrentUser } from '@/hooks/useAuth';
 import {
   clearAttendance,
   recordAttendance,
@@ -31,16 +31,17 @@ const NO_GROUP = '__none__';
 const ALL_GROUPS = '__all__';
 
 interface RollCallRowProps {
-  trainee: UserProfile;
-  groupLabel: string;
+  person: UserProfile;
+  groupLabel?: string;
   attendance: Attendance | undefined;
   sessionId: string;
   recordedBy: string;
 }
 
-function RollCallRow({ trainee, groupLabel, attendance, sessionId, recordedBy }: RollCallRowProps) {
+function RollCallRow({ person, groupLabel, attendance, sessionId, recordedBy }: RollCallRowProps) {
   const { t } = useTranslation();
   const [isNoteOpen, setIsNoteOpen] = useState(Boolean(attendance?.note));
+  const isTrainee = person.role === 'trainee';
 
   const statusOptions: SegmentOption<AttendanceStatus>[] = [
     { value: 'present', label: t('attendanceStatuses.present'), icon: <Check className="size-4" />, tone: 'success' },
@@ -51,26 +52,32 @@ function RollCallRow({ trainee, groupLabel, attendance, sessionId, recordedBy }:
   // Writes are not awaited: with the offline cache they resolve only once synced with the server.
   const handleStatusChange = (status: AttendanceStatus | null) => {
     const write = status
-      ? recordAttendance({ sessionId, userId: trainee.id, status, recordedBy })
-      : clearAttendance(sessionId, trainee.id);
+      ? recordAttendance({ sessionId, userId: person.id, status, recordedBy })
+      : clearAttendance(sessionId, person.id);
     write.catch(notifyError);
   };
 
   const handleNoteBlur = (note: string) => {
     if (note !== (attendance?.note ?? '')) {
-      saveAttendanceNote(sessionId, trainee.id, note, recordedBy).catch(notifyError);
+      saveAttendanceNote(sessionId, person.id, note, recordedBy).catch(notifyError);
     }
   };
 
   return (
     <li className="px-4 py-3">
       <div className="flex flex-wrap items-center gap-3">
-        <Avatar person={trainee} size="sm" />
+        <Avatar person={person} size="sm" />
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-brand-900">{fullName(trainee)}</p>
+          <p className="truncate font-medium text-brand-900">{fullName(person)}</p>
           <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
-            <ApprenticeTypeBadge type={trainee.apprenticeType} />
-            <span>{groupLabel}</span>
+            {isTrainee ? (
+              <>
+                <ApprenticeTypeBadge type={person.apprenticeType} />
+                <span>{groupLabel}</span>
+              </>
+            ) : (
+              <RoleBadge role={person.role} />
+            )}
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -80,7 +87,7 @@ function RollCallRow({ trainee, groupLabel, attendance, sessionId, recordedBy }:
             onClick={() => setIsNoteOpen((previous) => !previous)}
           />
           <SegmentedControl
-            ariaLabel={t('rollCall.statusFor', { name: fullName(trainee) })}
+            ariaLabel={t('rollCall.statusFor', { name: fullName(person) })}
             options={statusOptions}
             value={attendance?.status ?? null}
             onChange={handleStatusChange}
@@ -94,7 +101,11 @@ function RollCallRow({ trainee, groupLabel, attendance, sessionId, recordedBy }:
           type="text"
           defaultValue={attendance?.note ?? ''}
           onBlur={(event) => handleNoteBlur(event.target.value)}
-          placeholder={trainee.apprenticeType === 'SPV' ? t('rollCall.notePlaceholder') : t('rollCall.jspNotePlaceholder')}
+          placeholder={
+            !isTrainee || person.apprenticeType === 'SPV'
+              ? t('rollCall.notePlaceholder')
+              : t('rollCall.jspNotePlaceholder')
+          }
           aria-label={t('rollCall.addNote')}
           className={clsx(inputClassName, 'mt-2')}
         />
@@ -107,8 +118,10 @@ export function RollCallPage() {
   const { t } = useTranslation();
   const { sessionId } = useParams<{ sessionId: string }>();
   const { uid } = useCurrentUser();
+  const { isStaff } = useAuth();
   const { data: session, loading: sessionLoading } = useSession(sessionId);
   const { data: trainees, loading: traineesLoading } = useTrainees();
+  const { data: users, loading: usersLoading } = useUsers();
   const { data: groups } = useGroups();
   const { data: attendances } = useSessionAttendances(sessionId);
 
@@ -127,6 +140,12 @@ export function RollCallPage() {
       (groupFilter === ALL_GROUPS ||
         (groupFilter === NO_GROUP ? !trainee.groupId : trainee.groupId === groupFilter)) &&
       matchesSearch(search, trainee.firstName, trainee.lastName),
+  );
+  const visibleStaff = users.filter(
+    (user) =>
+      user.active !== false &&
+      user.role !== 'trainee' &&
+      matchesSearch(search, user.firstName, user.lastName),
   );
 
   const counts = visibleTrainees.reduce(
@@ -149,7 +168,11 @@ export function RollCallPage() {
     toast.success(t('rollCall.allMarkedPresent', { count: unrecordedIds.length }));
   };
 
-  if (sessionLoading || traineesLoading) {
+  const unrecordedStaff = visibleStaff.filter((person) => !attendanceByUser.get(person.id)?.status).length;
+  const isCallComplete =
+    visibleTrainees.length + visibleStaff.length > 0 && counts.unrecorded + unrecordedStaff === 0;
+
+  if (sessionLoading || traineesLoading || usersLoading) {
     return <PageLoader />;
   }
 
@@ -165,6 +188,7 @@ export function RollCallPage() {
 
   return (
     <>
+      <div className="print:hidden">
       <PageHeader
         back={
           <Link to="/calendar" className="inline-flex items-center gap-1 text-sm text-brand-600 hover:text-brand-900">
@@ -180,14 +204,25 @@ export function RollCallPage() {
           </span>
         }
         actions={
-          <Button
-            variant="secondary"
-            icon={<CheckCheck className="size-4" />}
-            onClick={handleMarkAllPresent}
-            disabled={counts.unrecorded === 0}
-          >
-            {t('rollCall.markAllPresent')}
-          </Button>
+          <>
+            <Button
+              variant="secondary"
+              icon={<FileDown className="size-4" />}
+              onClick={() => window.print()}
+              disabled={!isStaff || !isCallComplete}
+              title={!isCallComplete ? t('rollCall.completeBeforeExport') : undefined}
+            >
+              {t('rollCall.exportPdf')}
+            </Button>
+            <Button
+              variant="secondary"
+              icon={<CheckCheck className="size-4" />}
+              onClick={handleMarkAllPresent}
+              disabled={counts.unrecorded === 0}
+            >
+              {t('rollCall.markAllPresent')}
+            </Button>
+          </>
         }
       />
 
@@ -229,20 +264,88 @@ export function RollCallPage() {
         {visibleTrainees.length === 0 ? (
           <EmptyState icon={<UsersRound className="size-6" />} title={t('rollCall.noTrainees')} />
         ) : (
-          <ul className="divide-y divide-brand-50">
-            {visibleTrainees.map((trainee) => (
-              <RollCallRow
-                key={trainee.id}
-                trainee={trainee}
-                groupLabel={trainee.groupId ? (groupLabels.get(trainee.groupId) ?? '') : t('groups.noGroup')}
-                attendance={attendanceByUser.get(trainee.id)}
-                sessionId={sessionId}
-                recordedBy={uid}
-              />
-            ))}
-          </ul>
+          <>
+            <h2 className="border-b border-brand-100 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-900">
+              {t('rollCall.traineesSection')}
+            </h2>
+            <ul className="divide-y divide-brand-50">
+              {visibleTrainees.map((trainee) => (
+                <RollCallRow
+                  key={trainee.id}
+                  person={trainee}
+                  groupLabel={trainee.groupId ? (groupLabels.get(trainee.groupId) ?? '') : t('groups.noGroup')}
+                  attendance={attendanceByUser.get(trainee.id)}
+                  sessionId={sessionId}
+                  recordedBy={uid}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+        {visibleStaff.length > 0 && (
+          <>
+            <h2 className="border-y border-brand-100 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-900">
+              {t('rollCall.staffSection')}
+            </h2>
+            <ul className="divide-y divide-brand-50">
+              {visibleStaff.map((person) => (
+                <RollCallRow
+                  key={person.id}
+                  person={person}
+                  attendance={attendanceByUser.get(person.id)}
+                  sessionId={sessionId}
+                  recordedBy={uid}
+                />
+              ))}
+            </ul>
+          </>
         )}
       </Card>
+      </div>
+
+      <section className="hidden print:block">
+        <h1 className="text-2xl font-bold">{t('rollCall.printTitle', { title: session.title })}</h1>
+        <p className="mt-2 text-sm">
+          {formatDate(session.date, { dateStyle: 'full' })} · {session.startTime} – {session.endTime}
+        </p>
+        <table className="mt-6 w-full border-collapse text-left text-sm">
+          <thead>
+            <tr>
+              <th>{t('rollCall.printName')}</th>
+              <th>{t('rollCall.printCategory')}</th>
+              <th>{t('rollCall.printGroup')}</th>
+              <th>{t('rollCall.printStatus')}</th>
+              <th>{t('rollCall.printNote')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibleTrainees.map((person) => {
+              const attendance = attendanceByUser.get(person.id);
+              return (
+                <tr key={person.id}>
+                  <td>{fullName(person)}</td>
+                  <td>{t(`apprenticeTypes.short.${person.apprenticeType ?? 'SPV'}`)}</td>
+                  <td>{person.groupId ? (groupLabels.get(person.groupId) ?? '') : t('groups.noGroup')}</td>
+                  <td>{attendance?.status ? t(`attendanceStatuses.${attendance.status}`) : ''}</td>
+                  <td>{attendance?.note ?? ''}</td>
+                </tr>
+              );
+            })}
+            {visibleStaff.map((person) => {
+              const attendance = attendanceByUser.get(person.id);
+              return (
+                <tr key={person.id}>
+                  <td>{fullName(person)}</td>
+                  <td>{t(`roles.${person.role}`)}</td>
+                  <td>—</td>
+                  <td>{attendance?.status ? t(`attendanceStatuses.${attendance.status}`) : ''}</td>
+                  <td>{attendance?.note ?? ''}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </section>
     </>
   );
 }

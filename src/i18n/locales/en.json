@@ -27,6 +27,7 @@
     "calendar": "Calendar",
     "trainees": "Trainees",
     "resources": "Resources",
+    "profile": "My account",
     "users": "Users",
     "groups": "Groups & referents",
     "modules": "Modules & grids"
@@ -58,6 +59,12 @@
     "sendResetLink": "Send me the link",
     "resetEmailSentTitle": "Check your inbox",
     "backToSignIn": "Back to sign in"
+  },
+  "profile": {
+    "title": "My account",
+    "hint": "Update your name, first name, or sign-in email address.",
+    "currentPassword": "Current password (to change email)",
+    "updated": "Your account has been updated."
   },
   "roles": {
     "admin": "Administrator",
@@ -113,6 +120,11 @@
     "generic": "Something went wrong. Please try again.",
     "permission-denied": "You are not allowed to perform this action.",
     "unavailable": "Service unavailable. Check your connection.",
+    "functions/permission-denied": "Only an active administrator can delete an account.",
+    "functions/unauthenticated": "Sign in to perform this action.",
+    "functions/internal": "The server operation failed. Try again or contact an administrator.",
+    "functions/invalid-argument": "The provided information is invalid.",
+    "functions/unavailable": "The account deletion service is unavailable. Check your connection.",
     "auth/invalid-credential": "Incorrect email address or password.",
     "auth/too-many-requests": "Too many attempts. Try again in a few minutes.",
     "auth/network-request-failed": "Network connection problem.",
@@ -121,6 +133,8 @@
     "auth/weak-password": "Password is too weak (8 characters minimum).",
     "auth/missing-email": "Enter your email address.",
     "auth/user-disabled": "This account has been disabled. Contact the administrator.",
+    "auth/requires-recent-login": "Enter your current password to confirm the email address change.",
+    "auth/wrong-password": "The current password is incorrect.",
     "registration/sdis-email-not-allowed": "Use a personal email address, not an @sdis01.fr address."
   },
   "notFound": {
@@ -184,6 +198,16 @@
     "sessionNotFound": "Session not found.",
     "allGroups": "All groups",
     "markAllPresent": "All present",
+    "exportPdf": "Export PDF",
+    "completeBeforeExport": "Set a status for every trainee and staff member before exporting.",
+    "printTitle": "Roll call — {{title}}",
+    "printName": "Name",
+    "printCategory": "Role",
+    "printGroup": "Group",
+    "printStatus": "Attendance",
+    "printNote": "Note",
+    "traineesSection": "Trainees",
+    "staffSection": "Trainers and administrators",
     "allMarkedPresent_one": "{{count}} trainee marked present.",
     "allMarkedPresent_other": "{{count}} trainees marked present.",
     "noTrainees": "No matching trainee.",
@@ -308,7 +332,7 @@
     "passwordHint_other": "At least {{count}} characters.",
     "activeHint": "An inactive account can no longer sign in.",
     "deleteTitle": "Delete user",
-    "deleteMessage": "{{name}}'s profile will be deleted and their access removed. The sign-in identifier remains visible in the Firebase console.",
+    "deleteMessage": "{{name}}'s Firebase account and profile will be permanently deleted.",
     "fields": {
       "firstName": "First name",
       "lastName": "Last name",
@@ -319,7 +343,7 @@
       "group": "Group",
       "active": "Active account"
     },
-    "emailLockedHint": "The sign-in address cannot be changed here (Firebase console > Authentication).",
+    "emailEditHint": "Each user can change their address from the “My account” page.",
     "sendPasswordReset": "Send a password reset email",
     "resetEmailSent": "Password reset email sent to {{email}}.",
     "editTitleNamed": "Edit {{name}}'s profile",

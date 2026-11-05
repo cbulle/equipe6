@@ -9,6 +9,7 @@ import {
   Menu,
   Users,
   UsersRound,
+  UserRound,
   WifiOff,
   X,
   type LucideIcon,
@@ -27,7 +28,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface NavigationItem {
   to: string;
-  labelKey: 'dashboard' | 'myBooklet' | 'calendar' | 'trainees' | 'resources' | 'users' | 'groups' | 'modules';
+  labelKey: 'dashboard' | 'myBooklet' | 'calendar' | 'trainees' | 'resources' | 'profile' | 'users' | 'groups' | 'modules';
   icon: LucideIcon;
   roles: UserRole[];
   section: 'main' | 'admin';
@@ -39,6 +40,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
   { to: '/calendar', labelKey: 'calendar', icon: CalendarDays, roles: ['admin', 'trainer', 'trainee'], section: 'main' },
   { to: '/trainees', labelKey: 'trainees', icon: UsersRound, roles: ['admin', 'trainer'], section: 'main' },
   { to: '/resources', labelKey: 'resources', icon: FolderOpen, roles: ['admin', 'trainer', 'trainee'], section: 'main' },
+  { to: '/profile', labelKey: 'profile', icon: UserRound, roles: ['admin', 'trainer', 'trainee'], section: 'main' },
   { to: '/admin/users', labelKey: 'users', icon: Users, roles: ['admin'], section: 'admin' },
   { to: '/admin/groups', labelKey: 'groups', icon: UsersRound, roles: ['admin'], section: 'admin' },
   { to: '/admin/modules', labelKey: 'modules', icon: ListChecks, roles: ['admin'], section: 'admin' },
@@ -120,12 +122,12 @@ export function AppLayout() {
 
   return (
     <div className="min-h-dvh lg:pl-64">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 lg:block print:hidden">
         <SidebarContent />
       </aside>
 
       {isMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
+        <div className="fixed inset-0 z-40 lg:hidden print:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setIsMenuOpen(false)} aria-hidden />
           <aside className="relative h-full w-72 max-w-[85vw] shadow-xl">
             <button
@@ -141,7 +143,7 @@ export function AppLayout() {
         </div>
       )}
 
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b-2 border-brand-700 bg-white px-4 py-2.5 lg:hidden">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b-2 border-brand-700 bg-white px-4 py-2.5 lg:hidden print:hidden">
         <button
           type="button"
           onClick={() => setIsMenuOpen(true)}
@@ -155,7 +157,7 @@ export function AppLayout() {
       </header>
 
       {!isOnline && (
-        <div className="flex items-center justify-center gap-2 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900">
+        <div className="flex items-center justify-center gap-2 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 print:hidden">
           <WifiOff className="size-4" />
           {t('app.offline')}
         </div>

@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc -b",
-    "emulators": "firebase emulators:start --import=./.emulator-data --export-on-exit",
+    "build:functions": "npm --prefix functions run build",
+    "emulators": "npm run build:functions && firebase emulators:start --import=./.emulator-data --export-on-exit",
     "seed": "node scripts/seed.mjs",
     "seed:emulator": "node scripts/seed.mjs --emulator --demo"
   },

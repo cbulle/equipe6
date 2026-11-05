@@ -15,9 +15,7 @@ import { IconButton } from '@/components/ui/IconButton';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SearchInput } from '@/components/ui/SearchInput';
 import { useGroups, useUsers } from '@/hooks/useAppData';
-import { useCurrentUser } from '@/hooks/useAuth';
-import { referentGroupIdsOf } from '@/services/groupService';
-import { assignUserToGroup, deleteUserProfile } from '@/services/userService';
+import { assignUserToGroup, deleteUserAccount } from '@/services/userService';
 import { USER_ROLES, type UserProfile, type UserRole } from '@/types/models';
 import { notifyError } from '@/utils/errors';
 import { fullName, matchesSearch } from '@/utils/names';
@@ -26,7 +24,6 @@ type RoleFilter = UserRole | 'all';
 
 export function UsersPage() {
   const { t } = useTranslation();
-  const { uid } = useCurrentUser();
   const { data: users, loading } = useUsers();
   const { data: groups } = useGroups();
   const [search, setSearch] = useState('');
@@ -122,7 +119,6 @@ export function UsersPage() {
                     label={t('common.delete')}
                     tone="danger"
                     icon={<Trash2 className="size-4" />}
-                    disabled={user.id === uid}
                     onClick={() => setUserToDelete(user)}
                   />
                 </div>
@@ -141,7 +137,7 @@ export function UsersPage() {
         title={t('users.deleteTitle')}
         message={t('users.deleteMessage', { name: userToDelete ? fullName(userToDelete) : '' })}
         onConfirm={() =>
-          userToDelete ? deleteUserProfile(userToDelete.id, referentGroupIdsOf(userToDelete.id, groups)) : Promise.resolve()
+          userToDelete ? deleteUserAccount(userToDelete.id) : Promise.resolve()
         }
         onClose={() => setUserToDelete(null)}
       />

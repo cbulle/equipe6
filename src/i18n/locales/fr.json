@@ -27,6 +27,7 @@
     "calendar": "Calendrier",
     "trainees": "Apprenants",
     "resources": "Ressources",
+    "profile": "Mon compte",
     "users": "Utilisateurs",
     "groups": "Groupes & référents",
     "modules": "Modules & grilles"
@@ -58,6 +59,12 @@
     "sendResetLink": "Recevoir le lien",
     "resetEmailSentTitle": "Vérifiez votre boîte mail",
     "backToSignIn": "Retour à la connexion"
+  },
+  "profile": {
+    "title": "Mon compte",
+    "hint": "Modifiez votre nom, votre prénom ou votre adresse e-mail de connexion.",
+    "currentPassword": "Mot de passe actuel (pour changer l'e-mail)",
+    "updated": "Votre compte a été mis à jour."
   },
   "roles": {
     "admin": "Administrateur",
@@ -113,6 +120,11 @@
     "generic": "Une erreur est survenue. Veuillez réessayer.",
     "permission-denied": "Vous n'avez pas les droits pour effectuer cette action.",
     "unavailable": "Service indisponible. Vérifiez votre connexion.",
+    "functions/permission-denied": "Seul un administrateur actif peut supprimer un compte.",
+    "functions/unauthenticated": "Connectez-vous pour effectuer cette action.",
+    "functions/internal": "L'opération a échoué sur le serveur. Réessayez ou contactez un administrateur.",
+    "functions/invalid-argument": "Les informations fournies ne sont pas valides.",
+    "functions/unavailable": "Le service de suppression est indisponible. Vérifiez votre connexion.",
     "auth/invalid-credential": "Adresse e-mail ou mot de passe incorrect.",
     "auth/too-many-requests": "Trop de tentatives. Réessayez dans quelques minutes.",
     "auth/network-request-failed": "Problème de connexion réseau.",
@@ -121,6 +133,8 @@
     "auth/weak-password": "Le mot de passe est trop faible (8 caractères minimum).",
     "auth/missing-email": "Saisissez votre adresse e-mail.",
     "auth/user-disabled": "Ce compte a été désactivé. Contactez l'administrateur.",
+    "auth/requires-recent-login": "Saisissez votre mot de passe actuel pour confirmer le changement d'adresse e-mail.",
+    "auth/wrong-password": "Le mot de passe actuel est incorrect.",
     "registration/sdis-email-not-allowed": "Utilisez une adresse e-mail personnelle, pas une adresse @sdis01.fr."
   },
   "notFound": {
@@ -184,6 +198,16 @@
     "sessionNotFound": "Séance introuvable.",
     "allGroups": "Tous les groupes",
     "markAllPresent": "Tous présents",
+    "exportPdf": "Exporter en PDF",
+    "completeBeforeExport": "Renseignez le statut de chaque stagiaire et membre de l'encadrement avant l'export.",
+    "printTitle": "Feuille d'appel — {{title}}",
+    "printName": "Nom et prénom",
+    "printCategory": "Statut",
+    "printGroup": "Groupe",
+    "printStatus": "Présence",
+    "printNote": "Remarque",
+    "traineesSection": "Stagiaires",
+    "staffSection": "Formateurs et administrateurs",
     "allMarkedPresent_one": "{{count}} apprenant marqué présent.",
     "allMarkedPresent_other": "{{count}} apprenants marqués présents.",
     "noTrainees": "Aucun apprenant ne correspond.",
@@ -308,7 +332,7 @@
     "passwordHint_other": "{{count}} caractères minimum.",
     "activeHint": "Un compte inactif ne peut plus se connecter.",
     "deleteTitle": "Supprimer l'utilisateur",
-    "deleteMessage": "Le profil de {{name}} sera supprimé et son accès retiré. L'identifiant de connexion reste visible dans la console Firebase.",
+    "deleteMessage": "Le compte Firebase de {{name}} et son profil seront définitivement supprimés.",
     "fields": {
       "firstName": "Prénom",
       "lastName": "Nom",
@@ -319,7 +343,7 @@
       "group": "Groupe",
       "active": "Compte actif"
     },
-    "emailLockedHint": "L'adresse de connexion ne peut pas être modifiée ici (console Firebase > Authentication).",
+    "emailEditHint": "Chaque utilisateur modifie son adresse depuis la page « Mon compte ».",
     "sendPasswordReset": "Envoyer un e-mail de réinitialisation",
     "resetEmailSent": "E-mail de réinitialisation envoyé à {{email}}.",
     "editTitleNamed": "Modifier la fiche de {{name}}",
