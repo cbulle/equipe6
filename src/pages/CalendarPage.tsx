@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SessionCard } from '@/components/sessions/SessionCard';
 import { SessionFormModal } from '@/components/sessions/SessionFormModal';
+import { SessionMessagePanel } from '@/components/sessions/SessionMessagePanel';
 import { Button } from '@/components/ui/Button';
 import { buttonClassName } from '@/components/ui/styles';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -289,39 +290,37 @@ export function CalendarPage() {
             </div>
             <div className="space-y-3">
               {openedSessions.map((session) => (
-                <SessionCard
-                  key={session.id}
-                  session={session}
-                  trainingModule={session.moduleId ? modulesById.get(session.moduleId) : undefined}
-                  documents={resourcesBySession(session.id)}
-                  actions={
-                    isStaff && (
-                      <>
-                        {isAdmin && (
-                          <>
-                            <IconButton
-                              label={t('common.edit')}
-                              icon={<Pencil className="size-4" />}
-                              onClick={() => {
-                                setOpenedIds(null);
-                                setEditedSession(session);
-                              }}
-                            />
-                            <IconButton
-                              label={t('common.delete')}
-                              tone="danger"
-                              icon={<Trash2 className="size-4" />}
-                              onClick={() => {
-                                setOpenedIds(null);
-                                setSessionToDelete(session);
-                              }}
-                            />
-                          </>
-                        )}
-                      </>
-                    )
-                  }
-                />
+                <div key={session.id} className="space-y-2">
+                  <SessionCard
+                    session={session}
+                    trainingModule={session.moduleId ? modulesById.get(session.moduleId) : undefined}
+                    documents={resourcesBySession(session.id)}
+                    actions={
+                      isStaff && isAdmin ? (
+                        <>
+                          <IconButton
+                            label={t('common.edit')}
+                            icon={<Pencil className="size-4" />}
+                            onClick={() => {
+                              setOpenedIds(null);
+                              setEditedSession(session);
+                            }}
+                          />
+                          <IconButton
+                            label={t('common.delete')}
+                            tone="danger"
+                            icon={<Trash2 className="size-4" />}
+                            onClick={() => {
+                              setOpenedIds(null);
+                              setSessionToDelete(session);
+                            }}
+                          />
+                        </>
+                      ) : undefined
+                    }
+                  />
+                  <SessionMessagePanel session={session} />
+                </div>
               ))}
             </div>
           </div>

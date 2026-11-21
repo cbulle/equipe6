@@ -22,7 +22,7 @@ Dans **Mon compte**, chacun peut corriger son nom, son prénom ou son adresse e-
 
 ### Calendrier et séances
 
-Dans **Calendrier**, changez de mois avec les flèches, choisissez un type de séance si besoin, puis sélectionnez une séance pour voir ses détails et ses documents. Seul l'administrateur peut ajouter, modifier ou supprimer une séance.
+Dans **Calendrier**, changez de mois avec les flèches, choisissez un type de séance si besoin, puis sélectionnez une séance pour voir ses détails et ses documents. Un stagiaire peut aussi y envoyer un message pour prévenir d'une absence; les formateurs et administrateurs peuvent consulter les messages de chaque séance. Seul l'administrateur peut ajouter, modifier ou supprimer une séance.
 
 ### Ressources
 

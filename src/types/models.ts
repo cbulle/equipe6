@@ -60,6 +60,15 @@ export interface TrainingSession {
   createdBy: string;
 }
 
+export interface SessionMessage {
+  id: string;
+  sessionId: string;
+  userId: string;
+  userName: string;
+  message: string;
+  updatedAt: number;
+}
+
 export interface Resource {
   id: string;
   title: string;

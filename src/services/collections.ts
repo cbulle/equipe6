@@ -4,6 +4,7 @@ export const COLLECTIONS = {
   modules: 'modules',
   competencies: 'competencies',
   sessions: 'sessions',
+  sessionMessages: 'sessionMessages',
   resources: 'resources',
   evaluations: 'evaluations',
   interviews: 'interviews',

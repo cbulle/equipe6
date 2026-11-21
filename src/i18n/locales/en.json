@@ -125,7 +125,15 @@
     "description": "Weekly training sessions and related revision documents.",
     "showPast": "Show past sessions",
     "empty": "No session to display.",
-    "emptyAdminHint": "Create a session with the “New session” button."
+    "emptyAdminHint": "Create a session with the “New session” button.",
+    "absenceMessageTitle": "Report an absence",
+    "absenceMessageHint": "If you cannot attend, leave a message for the trainers.",
+    "absenceMessageLabel": "Your message",
+    "sendAbsenceMessage": "Send",
+    "updateAbsenceMessage": "Edit my message",
+    "absenceMessageSaved": "Your message has been saved.",
+    "absenceMessages": "Trainee messages",
+    "noAbsenceMessages": "No trainee has reported an absence."
   },
   "sessions": {
     "create": "New session",

@@ -36,6 +36,23 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function isValidSessionMessage(sessionId, messageId) {
+      let data = request.resource.data;
+      let profile = get(ownProfilePath()).data;
+      return hasRole(['trainee'])
+        && exists(/databases/$(database)/documents/sessions/$(sessionId))
+        && messageId == sessionId + '_' + request.auth.uid
+        && data.keys().hasAll(['sessionId', 'userId', 'userName', 'message', 'updatedAt'])
+        && data.keys().hasOnly(['sessionId', 'userId', 'userName', 'message', 'updatedAt'])
+        && data.sessionId == sessionId
+        && data.userId == request.auth.uid
+        && data.userName == profile.firstName + ' ' + profile.lastName
+        && data.message is string
+        && data.message.matches('.*\\S.*')
+        && data.message.size() <= 1000
+        && data.updatedAt is number;
+    }
+
     function isValidSelfCreatedProfile() {
       let data = request.resource.data;
       return data.keys().hasAll([
@@ -111,6 +128,12 @@ service cloud.firestore {
     match /sessions/{sessionId} {
       allow read: if isMember();
       allow write: if isAdmin();
+    }
+
+    match /sessionMessages/{messageId} {
+      allow read: if isStaff() || (hasRole(['trainee']) && resource.data.userId == request.auth.uid);
+      allow create, update: if isValidSessionMessage(request.resource.data.sessionId, messageId);
+      allow delete: if isAdmin();
     }
 
     match /resources/{resourceId} {

@@ -125,7 +125,15 @@
     "description": "Séances d'entraînement hebdomadaires et documents de révision associés.",
     "showPast": "Afficher les séances passées",
     "empty": "Aucune séance à afficher.",
-    "emptyAdminHint": "Créez une séance avec le bouton « Nouvelle séance »."
+    "emptyAdminHint": "Créez une séance avec le bouton « Nouvelle séance ».",
+    "absenceMessageTitle": "Prévenir d'une absence",
+    "absenceMessageHint": "Si vous ne pouvez pas venir, laissez un message aux formateurs.",
+    "absenceMessageLabel": "Votre message",
+    "sendAbsenceMessage": "Envoyer",
+    "updateAbsenceMessage": "Modifier mon message",
+    "absenceMessageSaved": "Votre message a été enregistré.",
+    "absenceMessages": "Messages des apprenants",
+    "noAbsenceMessages": "Aucun apprenant n'a signalé d'absence."
   },
   "sessions": {
     "create": "Nouvelle séance",
