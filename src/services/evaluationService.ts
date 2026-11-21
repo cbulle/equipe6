@@ -1,6 +1,6 @@
 import { collection, deleteDoc, doc, query, setDoc, where } from 'firebase/firestore';
 import { db } from '@/config/firebase';
-import { MODULE_COMPLETED, type Competency, type Evaluation, type SkillLevel, type SkillStatus } from '@/types/models';
+import { MODULE_COMPLETED, type Competency, type Evaluation, type SkillLevel } from '@/types/models';
 import { COLLECTIONS } from './collections';
 
 export interface Validator {
@@ -13,8 +13,6 @@ const evaluationsCollection = collection(db, COLLECTIONS.evaluations);
 export const levelEvaluationId = (userId: string, competencyId: string, level: SkillLevel) =>
   `${userId}_${competencyId}_${level}`;
 
-export const statusEvaluationId = (userId: string, competencyId: string) => `${userId}_${competencyId}_status`;
-
 export const moduleCompletionId = (userId: string, moduleId: string) => `${userId}_${moduleId}_module`;
 
 /** The evaluations that declare a module finished. */
@@ -26,7 +24,7 @@ export const userEvaluationsQuery = (userId: string) => query(evaluationsCollect
 function buildEvaluation(
   userId: string,
   competency: Competency,
-  level: SkillLevel | SkillStatus,
+  level: SkillLevel,
   validator: Validator,
 ): Omit<Evaluation, 'id'> {
   return {
@@ -45,14 +43,6 @@ export function validateLevel(userId: string, competency: Competency, level: Ski
   return setDoc(
     doc(evaluationsCollection, levelEvaluationId(userId, competency.id, level)),
     buildEvaluation(userId, competency, level, validator),
-  );
-}
-
-/** Sets the "In progress / Acquired / To review" status of a JSP sheet item. */
-export function setCompetencyStatus(userId: string, competency: Competency, status: SkillStatus, validator: Validator) {
-  return setDoc(
-    doc(evaluationsCollection, statusEvaluationId(userId, competency.id)),
-    buildEvaluation(userId, competency, status, validator),
   );
 }
 

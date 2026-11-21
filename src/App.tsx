@@ -11,7 +11,6 @@ import { RegisterPage } from './pages/RegisterPage';
 
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage })));
 const CalendarPage = lazy(() => import('./pages/CalendarPage').then((module) => ({ default: module.CalendarPage })));
-const RollCallPage = lazy(() => import('./pages/RollCallPage').then((module) => ({ default: module.RollCallPage })));
 const TraineesPage = lazy(() => import('./pages/TraineesPage').then((module) => ({ default: module.TraineesPage })));
 const TraineeBookletPage = lazy(() =>
   import('./pages/TraineeBookletPage').then((module) => ({ default: module.TraineeBookletPage })),
@@ -44,7 +43,6 @@ export function App() {
                 </Route>
 
                 <Route element={<RequireRole roles={['admin', 'trainer']} />}>
-                  <Route path="sessions/:sessionId/roll-call" element={<RollCallPage />} />
                   <Route path="trainees" element={<TraineesPage />} />
                   <Route path="trainees/:userId" element={<TraineeBookletPage />} />
                 </Route>

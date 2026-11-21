@@ -23,7 +23,7 @@ export const firebaseApp = initializeApp(firebaseConfig);
 
 export const auth = getAuth(firebaseApp);
 
-// Persistent cache: attendance sheets and grids remain usable offline at the fire station.
+// Persistent cache keeps session details and training grids usable offline.
 export const db = initializeFirestore(firebaseApp, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
 });

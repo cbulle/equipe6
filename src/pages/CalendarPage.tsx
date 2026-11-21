@@ -1,19 +1,17 @@
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight, ClipboardCheck, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { SessionCard } from '@/components/sessions/SessionCard';
 import { SessionFormModal } from '@/components/sessions/SessionFormModal';
-import { AttendanceStatusBadge } from '@/components/shared/DomainBadges';
 import { Button } from '@/components/ui/Button';
 import { buttonClassName } from '@/components/ui/styles';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { PageLoader } from '@/components/ui/Feedback';
 import { IconButton } from '@/components/ui/IconButton';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { useModules, useResources, useSessions, useUserAttendances } from '@/hooks/useAppData';
-import { useAuth, useCurrentUser } from '@/hooks/useAuth';
+import { useModules, useResources, useSessions } from '@/hooks/useAppData';
+import { useAuth } from '@/hooks/useAuth';
 import { deleteSession } from '@/services/sessionService';
 import { SESSION_TYPES, type SessionType, type TrainingSession } from '@/types/models';
 import { formatMonth, todayIsoDate } from '@/utils/dates';
@@ -42,12 +40,10 @@ const parseIsoDate = (iso: string) => {
 
 export function CalendarPage() {
   const { t, i18n } = useTranslation();
-  const { isAdmin, isStaff, role } = useAuth();
-  const { uid } = useCurrentUser();
+  const { isAdmin, isStaff } = useAuth();
   const { data: sessions, loading } = useSessions();
   const { data: modules } = useModules();
   const { data: resources } = useResources();
-  const { data: attendances } = useUserAttendances(role === 'trainee' ? uid : undefined);
 
   const [typeFilter, setTypeFilter] = useState<SessionTypeFilter>('all');
   const [visibleMonth, setVisibleMonth] = useState(() => {
@@ -67,10 +63,6 @@ export function CalendarPage() {
   };
 
   const modulesById = useMemo(() => new Map(modules.map((trainingModule) => [trainingModule.id, trainingModule])), [modules]);
-  const attendanceBySession = useMemo(
-    () => new Map(attendances.map((attendance) => [attendance.sessionId, attendance.status])),
-    [attendances],
-  );
   const resourcesBySession = (sessionId: string) => resources.filter((resource) => resource.sessionId === sessionId);
 
   const sessionsByDate = useMemo(() => {
@@ -302,18 +294,9 @@ export function CalendarPage() {
                   session={session}
                   trainingModule={session.moduleId ? modulesById.get(session.moduleId) : undefined}
                   documents={resourcesBySession(session.id)}
-                  status={
-                    role === 'trainee' && session.date <= today ? (
-                      <AttendanceStatusBadge status={attendanceBySession.get(session.id) ?? null} />
-                    ) : undefined
-                  }
                   actions={
                     isStaff && (
                       <>
-                        <Link to={`/sessions/${session.id}/roll-call`} className={buttonClassName('secondary', 'sm')}>
-                          <ClipboardCheck className="size-4" />
-                          {t('calendar.rollCall')}
-                        </Link>
                         {isAdmin && (
                           <>
                             <IconButton

@@ -39,12 +39,10 @@ service cloud.firestore {
     function isValidSelfCreatedProfile() {
       let data = request.resource.data;
       return data.keys().hasAll([
-          'email', 'firstName', 'lastName', 'role', 'apprenticeType',
-          'groupId', 'active', 'createdAt'
+          'email', 'firstName', 'lastName', 'role', 'groupId', 'active', 'createdAt'
         ])
         && data.keys().hasOnly([
-          'email', 'firstName', 'lastName', 'role', 'apprenticeType',
-          'groupId', 'active', 'createdAt'
+          'email', 'firstName', 'lastName', 'role', 'groupId', 'active', 'createdAt'
         ])
         && data.email is string
         && data.email == request.auth.token.email
@@ -54,8 +52,6 @@ service cloud.firestore {
         && data.lastName is string
         && data.lastName.matches('.*\\S.*')
         && data.role in ['trainee', 'trainer']
-        && ((data.role == 'trainee' && data.apprenticeType == 'SPV')
-          || (data.role == 'trainer' && data.apprenticeType == null))
         && data.groupId == null
         && data.active == true
         && data.createdAt is number;
@@ -122,11 +118,6 @@ service cloud.firestore {
       allow create: if isStaff() && isValidLink() && request.resource.data.uploadedBy == request.auth.uid;
       allow update: if isAdmin() && isValidLink();
       allow delete: if isAdmin() || (isStaff() && resource.data.uploadedBy == request.auth.uid);
-    }
-
-    match /attendances/{attendanceId} {
-      allow read: if isStaff() || (isMember() && resource.data.userId == request.auth.uid);
-      allow write: if isStaff();
     }
 
     // One ticked box, or `{userId}_{moduleId}_module` for a module declared finished.

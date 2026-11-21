@@ -1,9 +1,9 @@
 {
   "app": {
     "name": "Livret de l'apprenant",
-    "tagline": "SPV / JSP — Équipe 6",
+    "tagline": "SPV — Équipe 6",
     "offline": "Mode hors ligne : vos saisies seront synchronisées au retour du réseau.",
-    "footer": "Sapeurs-Pompiers Volontaires & Jeunes Sapeurs-Pompiers"
+    "footer": "Sapeurs-Pompiers Volontaires"
   },
   "common": {
     "all": "Tous",
@@ -71,43 +71,10 @@
     "trainer": "Formateur",
     "trainee": "Stagiaire"
   },
-  "apprenticeTypes": {
-    "short": {
-      "SPV": "SPV",
-      "JSP_N3": "JSP 3",
-      "JSP_N4": "JSP 4"
-    },
-    "long": {
-      "SPV": "SPV en formation initiale",
-      "JSP_N3": "JSP niveau 3",
-      "JSP_N4": "JSP niveau 4"
-    }
-  },
   "sessionTypes": {
     "course": "Cours",
     "sport": "Sport",
     "opening": "Ouverture"
-  },
-  "attendanceStatuses": {
-    "present": "Présent",
-    "absent": "Absent",
-    "excused": "Excusé",
-    "unrecorded": "Non saisi"
-  },
-  "skillStatuses": {
-    "IN_PROGRESS": "En cours",
-    "ACQUIRED": "Acquis",
-    "TO_REVIEW": "À revoir",
-    "none": "Non évalué"
-  },
-  "targetTypes": {
-    "ALL": "Tous les apprenants",
-    "SPV_ONLY": "SPV uniquement",
-    "JSP_ONLY": "JSP uniquement"
-  },
-  "evaluationScales": {
-    "levels": "Niveaux N1 / N2 / N3",
-    "status": "En cours / Acquis / À revoir"
   },
   "internships": {
     "PS": "Prompt Secours",
@@ -144,31 +111,21 @@
   },
   "dashboard": {
     "greeting": "Bonjour {{name}}",
-    "staffSubtitle": "Séances à venir et suivi des présences.",
+    "staffSubtitle": "Séances à venir et suivi des compétences.",
     "traineeSubtitle": "Votre progression et vos prochaines séances.",
     "upcomingSessions": "Prochaines séances",
     "seeCalendar": "Voir le calendrier",
     "noUpcomingSessions": "Aucune séance à venir.",
     "skillsProgress": "Compétences validées",
-    "attendanceRate": "Taux de présence",
     "activeTrainees": "Apprenants",
-    "today": "Aujourd'hui",
-    "attendanceDetail": "Présences aux séances passées",
-    "traineeStats": "Statistiques par apprenant",
-    "traineeStatsHint": "Présences sur les séances passées. Cliquez sur un nom pour ouvrir le détail.",
-    "noTrainees": "Aucun apprenant dans cette sélection.",
-    "columns": {
-      "trainee": "Apprenant",
-      "group": "Groupe"
-    }
+    "today": "Aujourd'hui"
   },
   "calendar": {
     "title": "Calendrier des séances",
     "description": "Séances d'entraînement hebdomadaires et documents de révision associés.",
     "showPast": "Afficher les séances passées",
     "empty": "Aucune séance à afficher.",
-    "emptyAdminHint": "Créez une séance avec le bouton « Nouvelle séance ».",
-    "rollCall": "Appel"
+    "emptyAdminHint": "Créez une séance avec le bouton « Nouvelle séance »."
   },
   "sessions": {
     "create": "Nouvelle séance",
@@ -177,7 +134,7 @@
     "created": "Séance créée.",
     "updated": "Séance mise à jour.",
     "deleteTitle": "Supprimer la séance",
-    "deleteMessage": "La séance « {{title}} », ses présences et ses documents seront définitivement supprimés.",
+    "deleteMessage": "La séance « {{title}} » et ses documents seront définitivement supprimés.",
     "documents": "Documents de cours / révision",
     "documentsHint": "Liens vers les fiches de séance et PDF de révision consultables par les apprenants.",
     "fields": {
@@ -193,50 +150,21 @@
     },
     "addDocument": "Ajouter"
   },
-  "rollCall": {
-    "title": "Appel — {{title}}",
-    "sessionNotFound": "Séance introuvable.",
-    "allGroups": "Tous les groupes",
-    "markAllPresent": "Tous présents",
-    "exportPdf": "Exporter en PDF",
-    "completeBeforeExport": "Renseignez le statut de chaque stagiaire avant l'export.",
-    "popupBlocked": "Autorisez les fenêtres pop-up pour ouvrir le PDF.",
-    "printTitle": "Feuille d'appel — {{title}}",
-    "printName": "Nom et prénom",
-    "printCategory": "Statut",
-    "printGroup": "Groupe",
-    "printStatus": "Présence",
-    "printNote": "Remarque",
-    "traineesSection": "Stagiaires",
-    "staffSection": "Formateurs et administrateurs",
-    "allMarkedPresent_one": "{{count}} apprenant marqué présent.",
-    "allMarkedPresent_other": "{{count}} apprenants marqués présents.",
-    "noTrainees": "Aucun apprenant ne correspond.",
-    "statusFor": "Présence de {{name}}",
-    "addNote": "Ajouter une remarque",
-    "notePlaceholder": "Remarque (retard, tenue…)",
-    "jspNotePlaceholder": "Suivi de l'activité JSP / remarque"
-  },
   "trainees": {
     "title": "Apprenants",
     "description_one": "{{count}} apprenant, tous groupes confondus.",
     "description_other": "{{count}} apprenants, tous groupes confondus.",
     "searchPlaceholder": "Rechercher un apprenant…",
     "filterGroup": "Filtrer par groupe",
-    "filterType": "Filtrer par statut",
     "allGroups": "Tous les groupes",
-    "allTypes": "Tous les statuts",
     "empty": "Aucun apprenant ne correspond à vos filtres.",
     "notFound": "Apprenant introuvable."
   },
   "booklet": {
     "referent": "Référent",
     "noReferent": "Aucun référent désigné.",
-    "entryStatus": "Statut d'entrée",
     "tabs": {
       "skills": "Grilles de compétences",
-      "jspSheet": "Fiche JSP",
-      "attendance": "Présences",
       "interviews": "Entretiens",
       "wishes": "Vœux de stage"
     },
@@ -249,15 +177,6 @@
     "staffHint": "Cliquez sur un niveau pour le valider, cliquez à nouveau pour retirer votre validation. Un module peut aussi être marqué terminé sans que toutes les cases soient cochées.",
     "validatedBy": "Validé par {{name}} le {{date}}",
     "notValidated": "Non validé"
-  },
-  "jspSheet": {
-    "empty": "Aucune fiche complémentaire configurée.",
-    "description": "Suivi du Brevet National JSP 3 & 4",
-    "visa": "Visa : {{name}} — {{date}}"
-  },
-  "attendance": {
-    "empty": "Aucune séance passée pour le moment.",
-    "rate": "Taux de présence"
   },
   "interviews": {
     "counter_one": "{{count}} entretien sur {{max}} en {{year}}",
@@ -289,9 +208,6 @@
     "lastUpdate": "Dernière mise à jour : {{date}}",
     "wishNumber": "Vœu {{number}}",
     "wishPlaceholder": "Ex : 12-16 mars",
-    "exempted": "Dispensé",
-    "exemptedLabel": "Module validé / dispensé (Brevet JSP)",
-    "exemptedHint": "Aucun vœu à saisir pour ce stage.",
     "constraints": "Vos disponibilités ou contraintes à signaler",
     "save": "Enregistrer mes vœux",
     "saved": "Vœux enregistrés."
@@ -340,7 +256,6 @@
       "email": "Adresse e-mail",
       "password": "Mot de passe",
       "role": "Rôle",
-      "apprenticeType": "Statut d'entrée",
       "group": "Groupe",
       "active": "Compte actif"
     },
@@ -413,8 +328,6 @@
     "fields": {
       "code": "Code",
       "label": "Intitulé",
-      "targetType": "Public concerné",
-      "evaluationScale": "Échelle d'évaluation",
       "competencyCode": "Code (OS, C, Atelier…)",
       "competencyLabel": "Intitulé de la compétence",
       "criteria": "Critère de validation",

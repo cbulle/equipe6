@@ -81,7 +81,6 @@ export async function registerUser(input: SelfRegistrationInput, password: strin
       firstName: input.firstName.trim(),
       lastName: input.lastName.trim(),
       role: input.role,
-      apprenticeType: input.role === 'trainee' ? 'SPV' : null,
       groupId: null,
       active: true,
       createdAt: Date.now(),

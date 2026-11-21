@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, orderBy, query, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { addDoc, collection, doc, orderBy, query, updateDoc, writeBatch } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import type { Resource, TrainingSession } from '@/types/models';
 import { COLLECTIONS } from './collections';
@@ -20,13 +20,9 @@ export function updateSession(sessionId: string, input: Partial<SessionInput>): 
   return updateDoc(sessionDocRef(sessionId), input);
 }
 
-/** Deletes a session along with its attendance records and attached document links. */
+/** Deletes a session along with its attached document links. */
 export async function deleteSession(sessionId: string, linkedResources: Resource[]): Promise<void> {
-  const attendances = await getDocs(
-    query(collection(db, COLLECTIONS.attendances), where('sessionId', '==', sessionId)),
-  );
   const batch = writeBatch(db);
-  attendances.forEach((attendance) => batch.delete(attendance.ref));
   linkedResources.forEach((resource) => batch.delete(doc(db, COLLECTIONS.resources, resource.id)));
   batch.delete(sessionDocRef(sessionId));
   await batch.commit();

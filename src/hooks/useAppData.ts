@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { attendancesQuery, sessionAttendancesQuery, userAttendancesQuery } from '@/services/attendanceService';
 import { userEvaluationsQuery } from '@/services/evaluationService';
 import { groupDocRef, groupsQuery } from '@/services/groupService';
 import { userInterviewsQuery } from '@/services/interviewService';
@@ -9,7 +8,6 @@ import { competenciesQuery, modulesQuery } from '@/services/trainingService';
 import { staffQuery, traineesQuery, userDocRef, usersQuery } from '@/services/userService';
 import { internshipWishesDocRef } from '@/services/wishService';
 import type {
-  Attendance,
   Competency,
   Evaluation,
   Group,
@@ -62,14 +60,6 @@ export const useSession = (sessionId: string | undefined) =>
   useDocumentData<TrainingSession>(sessionId ? sessionDocRef(sessionId) : null);
 
 export const useResources = () => useCollectionData<Resource>(resourcesQuery());
-
-export const useSessionAttendances = (sessionId: string | undefined) =>
-  useCollectionData<Attendance>(sessionId ? sessionAttendancesQuery(sessionId) : null);
-
-export const useAllAttendances = () => useCollectionData<Attendance>(attendancesQuery());
-
-export const useUserAttendances = (userId: string | undefined) =>
-  useCollectionData<Attendance>(userId ? userAttendancesQuery(userId) : null);
 
 export const useUserEvaluations = (userId: string | undefined) =>
   useCollectionData<Evaluation>(userId ? userEvaluationsQuery(userId) : null);

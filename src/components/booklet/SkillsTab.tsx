@@ -15,7 +15,7 @@ import {
 import { formatTimestamp } from '@/utils/dates';
 import { notifyError } from '@/utils/errors';
 import { fullName } from '@/utils/names';
-import { computeLevelProgress, getApplicableModules, groupCompetenciesByModule } from '@/utils/training';
+import { computeLevelProgress, groupCompetenciesByModule } from '@/utils/training';
 import { Badge } from '../ui/Badge';
 import { EmptyState, ProgressBar } from '../ui/Feedback';
 import { ModuleCompletionBar } from './ModuleCompletionBar';
@@ -70,7 +70,7 @@ export function SkillsTab({ trainee, modules, competencies, evaluations, complet
   const { isAdmin, isStaff } = useAuth();
   const { uid, profile } = useCurrentUser();
 
-  const applicableModules = getApplicableModules(modules, trainee.apprenticeType, 'levels');
+  const applicableModules = modules;
   const competenciesByModule = useMemo(() => groupCompetenciesByModule(competencies), [competencies]);
   const evaluationsById = useMemo(
     () => new Map(evaluations.map((evaluation) => [evaluation.id, evaluation])),

@@ -9,7 +9,7 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { DragHandle } from '@/components/ui/DragHandle';
 import { EmptyState, PageLoader } from '@/components/ui/Feedback';
-import { CheckboxField, SelectField, TextField } from '@/components/ui/FormFields';
+import { CheckboxField, TextField } from '@/components/ui/FormFields';
 import { IconButton } from '@/components/ui/IconButton';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -28,11 +28,7 @@ import {
   type ModuleInput,
 } from '@/services/trainingService';
 import {
-  EVALUATION_SCALES,
-  MODULE_TARGET_TYPES,
   type Competency,
-  type EvaluationScale,
-  type ModuleTargetType,
   type TrainingModule,
 } from '@/types/models';
 import { notifyError } from '@/utils/errors';
@@ -49,8 +45,6 @@ function ModuleFormModal({ trainingModule, nextOrder, onSaved, onClose }: Module
   const [form, setForm] = useState<ModuleInput>({
     code: trainingModule?.code ?? '',
     label: trainingModule?.label ?? '',
-    targetType: trainingModule?.targetType ?? 'ALL',
-    evaluationScale: trainingModule?.evaluationScale ?? 'levels',
     order: trainingModule?.order ?? nextOrder,
   });
   const [saving, setSaving] = useState(false);
@@ -105,30 +99,6 @@ function ModuleFormModal({ trainingModule, nextOrder, onSaved, onClose }: Module
           value={form.label}
           onChange={(event) => setForm((previous) => ({ ...previous, label: event.target.value }))}
         />
-        <SelectField
-          label={t('modules.fields.targetType')}
-          value={form.targetType}
-          onChange={(event) => setForm((previous) => ({ ...previous, targetType: event.target.value as ModuleTargetType }))}
-        >
-          {MODULE_TARGET_TYPES.map((targetType) => (
-            <option key={targetType} value={targetType}>
-              {t(`targetTypes.${targetType}`)}
-            </option>
-          ))}
-        </SelectField>
-        <SelectField
-          label={t('modules.fields.evaluationScale')}
-          value={form.evaluationScale}
-          onChange={(event) =>
-            setForm((previous) => ({ ...previous, evaluationScale: event.target.value as EvaluationScale }))
-          }
-        >
-          {EVALUATION_SCALES.map((scale) => (
-            <option key={scale} value={scale}>
-              {t(`evaluationScales.${scale}`)}
-            </option>
-          ))}
-        </SelectField>
       </div>
     </Modal>
   );
@@ -317,12 +287,6 @@ export function ModulesPage() {
                   <span className="flex flex-wrap items-center gap-2">
                     <Badge tone="fire">{selectedModule.code}</Badge>
                     {selectedModule.label}
-                  </span>
-                }
-                description={
-                  <span className="mt-1 flex flex-wrap gap-2">
-                    <Badge tone="brand">{t(`targetTypes.${selectedModule.targetType}`)}</Badge>
-                    <Badge tone="neutral">{t(`evaluationScales.${selectedModule.evaluationScale}`)}</Badge>
                   </span>
                 }
                 actions={

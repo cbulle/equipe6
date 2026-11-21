@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { Pencil, Trash2, UserPlus, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ApprenticeTypeBadge, RoleBadge } from '@/components/shared/DomainBadges';
+import { RoleBadge } from '@/components/shared/DomainBadges';
 import { UserFormModal } from '@/components/users/UserFormModal';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
@@ -92,7 +92,6 @@ export function UsersPage() {
                     <p className="flex flex-wrap items-center gap-2 font-medium text-brand-900">
                       {fullName(user)}
                       <RoleBadge role={user.role} />
-                      <ApprenticeTypeBadge type={user.apprenticeType} />
                       {user.active === false && <Badge tone="fire">{t('users.inactive')}</Badge>}
                     </p>
                     <p className="truncate text-xs text-slate-500">{user.email}</p>

@@ -40,8 +40,6 @@ const MODULES = [
     id: 'ps',
     code: 'PS',
     label: 'Stage 1 — Prompt Secours',
-    targetType: 'ALL',
-    evaluationScale: 'levels',
     order: 1,
     competencies: [
       ['OS 2', 'Assurer la sécurité (soi, victime, tiers) et réaliser un dégagement d’urgence', 'Accrochage & sécurisation zone'],
@@ -63,8 +61,6 @@ const MODULES = [
     id: 'see',
     code: 'SEE',
     label: 'Stage 2 — Secours en Équipe',
-    targetType: 'ALL',
-    evaluationScale: 'levels',
     order: 2,
     competencies: [
       ['OS 3', 'Prendre en charge une atteinte liée aux circonstances (chaleur, froid, électrisation...)'],
@@ -83,8 +79,6 @@ const MODULES = [
     id: 'od',
     code: 'OD',
     label: 'Stage 3 — Opérations Diverses',
-    targetType: 'ALL',
-    evaluationScale: 'levels',
     order: 3,
     competencies: [
       ['C1', 'Appliquer les règles de sécurité, porter les EPI, connaître l’inventaire du VTU et des lots'],
@@ -102,8 +96,6 @@ const MODULES = [
     id: 'protec',
     code: 'PROTEC',
     label: 'Stage 4 — Protection Incendie',
-    targetType: 'ALL',
-    evaluationScale: 'levels',
     order: 4,
     competencies: [
       ['C1', 'Analyser son environnement et adapter son comportement à la situation'],
@@ -121,25 +113,8 @@ const MODULES = [
     id: 'inc',
     code: 'INC',
     label: 'Stage 5 — Incendie',
-    targetType: 'ALL',
-    evaluationScale: 'levels',
     order: 5,
     competencies: [],
-  },
-  {
-    id: 'jsp-bn',
-    code: 'JSP_BN',
-    label: 'Fiche complémentaire — Brevet National JSP',
-    targetType: 'JSP_ONLY',
-    evaluationScale: 'status',
-    order: 6,
-    competencies: [
-      ['SUAP', 'Secours à personne'],
-      ['INC', 'Incendie'],
-      ['OD', 'Opérations diverses'],
-      ['APS', 'Activités physiques et sportives'],
-      ['CULT', 'Culture administrative / Épreuve écrite'],
-    ],
   },
 ];
 
@@ -180,7 +155,7 @@ function slugify(value) {
     .replace(/(^-|-$)/g, '');
 }
 
-async function upsertAccount({ email, password, firstName, lastName, role, apprenticeType = null, groupId = null }) {
+async function upsertAccount({ email, password, firstName, lastName, role, groupId = null }) {
   let user;
   try {
     user = await auth.getUserByEmail(email);
@@ -193,7 +168,6 @@ async function upsertAccount({ email, password, firstName, lastName, role, appre
       firstName,
       lastName,
       role,
-      apprenticeType,
       groupId,
       active: true,
       createdAt: Date.now(),
@@ -259,16 +233,6 @@ async function seedDemoAccounts() {
     firstName: 'Lucas',
     lastName: 'Bernard',
     role: 'trainee',
-    apprenticeType: 'SPV',
-    groupId: DEFAULT_GROUP_ID,
-  });
-  await upsertAccount({
-    email: 'jsp@spv.local',
-    password: 'Stagiaire1234!',
-    firstName: 'Inès',
-    lastName: 'Petit',
-    role: 'trainee',
-    apprenticeType: 'JSP_N3',
     groupId: DEFAULT_GROUP_ID,
   });
   await upsertAccount({
@@ -277,7 +241,6 @@ async function seedDemoAccounts() {
     firstName: 'Noah',
     lastName: 'Roux',
     role: 'trainee',
-    apprenticeType: 'JSP_N4',
   });
 }
 
@@ -295,5 +258,5 @@ if (withDemoData) {
 
 console.log(`Seed completed. Administrator: ${ADMIN_EMAIL}`);
 if (withDemoData) {
-  console.log('Demo accounts: formateur@spv.local / Formateur1234!, spv@spv.local, jsp@spv.local, sansgroupe@spv.local / Stagiaire1234!');
+  console.log('Demo accounts: formateur@spv.local / Formateur1234!, spv@spv.local, sansgroupe@spv.local / Stagiaire1234!');
 }

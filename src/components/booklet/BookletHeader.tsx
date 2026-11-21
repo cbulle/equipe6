@@ -1,10 +1,9 @@
-import clsx from 'clsx';
-import { Check, Mail, Pencil, ShieldCheck, UsersRound } from 'lucide-react';
+import { Mail, Pencil, ShieldCheck, UsersRound } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGroup, useGroups, useUser } from '@/hooks/useAppData';
 import { useAuth } from '@/hooks/useAuth';
-import { APPRENTICE_TYPES, type UserProfile } from '@/types/models';
+import type { UserProfile } from '@/types/models';
 import { fullName } from '@/utils/names';
 import { Avatar } from '../ui/Avatar';
 import { Button } from '../ui/Button';
@@ -62,31 +61,6 @@ export function BookletHeader({ trainee }: { trainee: UserProfile }) {
           ) : (
             <p className="mt-2 text-sm text-slate-500">{t('booklet.noReferent')}</p>
           )}
-        </div>
-      </div>
-
-      <div className="border-t border-brand-100 bg-brand-50/50 px-5 py-3">
-        <p className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">{t('booklet.entryStatus')}</p>
-        <div className="flex flex-wrap gap-x-6 gap-y-2">
-          {APPRENTICE_TYPES.map((type) => {
-            const isChecked = trainee.apprenticeType === type;
-            return (
-              <span
-                key={type}
-                className={clsx('inline-flex items-center gap-2 text-sm', isChecked ? 'font-semibold text-brand-900' : 'text-slate-400')}
-              >
-                <span
-                  className={clsx(
-                    'flex size-5 items-center justify-center rounded border',
-                    isChecked ? 'border-fire-600 bg-fire-600 text-white' : 'border-slate-300 bg-white',
-                  )}
-                >
-                  {isChecked && <Check className="size-3.5" />}
-                </span>
-                {t(`apprenticeTypes.long.${type}`)}
-              </span>
-            );
-          })}
         </div>
       </div>
 

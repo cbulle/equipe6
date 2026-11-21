@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { referentGroupIdsOf } from '@/services/groupService';
 import { createUserAccount, sendUserPasswordReset, updateUserProfile, type UserProfileInput } from '@/services/userService';
-import { APPRENTICE_TYPES, USER_ROLES, type Group, type UserProfile, type UserRole } from '@/types/models';
+import { USER_ROLES, type Group, type UserProfile, type UserRole } from '@/types/models';
 import { notifyError } from '@/utils/errors';
 import { fullName } from '@/utils/names';
 import { Button } from '../ui/Button';
@@ -26,7 +26,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
     firstName: user?.firstName ?? '',
     lastName: user?.lastName ?? '',
     role: user?.role ?? 'trainee',
-    apprenticeType: user?.apprenticeType ?? 'SPV',
     groupId: user?.groupId ?? null,
     active: user?.active ?? true,
   });
@@ -41,7 +40,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
     try {
       const input: UserProfileInput = {
         ...form,
-        apprenticeType: isTrainee ? form.apprenticeType : null,
         groupId: isTrainee ? form.groupId : null,
       };
       if (user) {
@@ -167,17 +165,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
             <h3 className="text-xs font-semibold tracking-wide text-slate-500 uppercase sm:col-span-2">
               {t('users.sections.training')}
             </h3>
-            <SelectField
-              label={t('users.fields.apprenticeType')}
-              value={form.apprenticeType ?? 'SPV'}
-              onChange={(event) => updateField('apprenticeType', event.target.value as UserProfileInput['apprenticeType'])}
-            >
-              {APPRENTICE_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {t(`apprenticeTypes.long.${type}`)}
-                </option>
-              ))}
-            </SelectField>
             <SelectField
               label={t('users.fields.group')}
               value={form.groupId ?? ''}

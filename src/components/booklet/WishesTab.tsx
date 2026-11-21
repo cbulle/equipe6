@@ -12,16 +12,14 @@ import {
 } from '@/types/models';
 import { formatTimestamp } from '@/utils/dates';
 import { notifyError } from '@/utils/errors';
-import { isJspApprentice } from '@/utils/training';
-import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Card, CardHeader } from '../ui/Card';
-import { CheckboxField, TextAreaField, TextField } from '../ui/FormFields';
+import { TextAreaField, TextField } from '../ui/FormFields';
 
 const WISHES_PER_INTERNSHIP = 3;
 
 function buildInitialInput(wishes: InternshipWishes | null): InternshipWishesInput {
-  const emptyChoice = (): InternshipChoice => ({ wishes: Array(WISHES_PER_INTERNSHIP).fill(''), exempted: false });
+  const emptyChoice = (): InternshipChoice => ({ wishes: Array(WISHES_PER_INTERNSHIP).fill('') });
   const choices = Object.fromEntries(
     INTERNSHIP_CODES.map((code) => [code, wishes?.choices[code] ?? emptyChoice()]),
   ) as Record<InternshipCode, InternshipChoice>;
@@ -38,8 +36,6 @@ export function WishesTab({ trainee, wishes, canEdit }: WishesTabProps) {
   const { t } = useTranslation();
   const [form, setForm] = useState(() => buildInitialInput(wishes));
   const [saving, setSaving] = useState(false);
-  const isJsp = isJspApprentice(trainee.apprenticeType);
-
   const updateChoice = (code: InternshipCode, update: Partial<InternshipChoice>) =>
     setForm((previous) => ({
       ...previous,
@@ -86,32 +82,20 @@ export function WishesTab({ trainee, wishes, canEdit }: WishesTabProps) {
               <CardHeader
                 icon={<CalendarHeart className="size-5" />}
                 title={t(`internships.${code}`)}
-                actions={choice.exempted && <Badge tone="success">{t('wishes.exempted')}</Badge>}
               />
               <div className="space-y-3 p-4">
-                {isJsp && (
-                  <CheckboxField
-                    label={t('wishes.exemptedLabel')}
-                    description={t('wishes.exemptedHint')}
-                    checked={choice.exempted}
-                    disabled={!canEdit}
-                    onChange={(event) => updateChoice(code, { exempted: event.target.checked })}
-                  />
-                )}
-                {!choice.exempted && (
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    {choice.wishes.map((wish, index) => (
-                      <TextField
-                        key={index}
-                        label={t('wishes.wishNumber', { number: index + 1 })}
-                        placeholder={t('wishes.wishPlaceholder')}
-                        value={wish}
-                        disabled={!canEdit}
-                        onChange={(event) => updateWish(code, index, event.target.value)}
-                      />
-                    ))}
-                  </div>
-                )}
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {choice.wishes.map((wish, index) => (
+                    <TextField
+                      key={index}
+                      label={t('wishes.wishNumber', { number: index + 1 })}
+                      placeholder={t('wishes.wishPlaceholder')}
+                      value={wish}
+                      disabled={!canEdit}
+                      onChange={(event) => updateWish(code, index, event.target.value)}
+                    />
+                  ))}
+                </div>
               </div>
             </Card>
           );

@@ -2,7 +2,6 @@ import { Pencil, Plus, ShieldCheck, Trash2, UserMinus, UsersRound } from 'lucide
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ApprenticeTypeBadge } from '@/components/shared/DomainBadges';
 import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -137,7 +136,6 @@ function MemberList({ members, onRemove }: MemberListProps) {
         <li key={member.id} className="flex items-center gap-3 px-4 py-2 sm:px-5">
           <Avatar person={member} size="sm" />
           <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-800">{fullName(member)}</span>
-          <ApprenticeTypeBadge type={member.apprenticeType} />
           {onRemove && (
             <IconButton
               label={t('groups.removeMember')}

@@ -12,9 +12,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: "Livret de l'apprenant SPV / JSP",
+        name: "Livret de l'apprenant SPV",
         short_name: 'Livret SPV',
-        description: "Livret de l'apprenant Sapeur-Pompier Volontaire & Jeunes Sapeurs-Pompiers",
+        description: "Livret de l'apprenant Sapeur-Pompier Volontaire",
         lang: 'fr',
         theme_color: '#1d3c24',
         background_color: '#f2f4f2',
