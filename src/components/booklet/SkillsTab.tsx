@@ -32,15 +32,21 @@ interface SkillsTabProps {
 interface LevelCellProps {
   level: SkillLevel;
   evaluation: Evaluation | undefined;
+  moduleCompletion: Evaluation | undefined;
   canToggle: boolean;
   onToggle: () => void;
 }
 
-function LevelCell({ level, evaluation, canToggle, onToggle }: LevelCellProps) {
+function LevelCell({ level, evaluation, moduleCompletion, canToggle, onToggle }: LevelCellProps) {
   const { t } = useTranslation();
-  const tooltip = evaluation
-    ? t('skills.validatedBy', { name: evaluation.validatedByName, date: formatTimestamp(evaluation.validatedAt) })
+  const validation = moduleCompletion ?? evaluation;
+  const tooltip = validation
+    ? t('skills.validatedBy', {
+        name: validation.validatedByName,
+        date: formatTimestamp(validation.validatedAt),
+      })
     : t('skills.notValidated');
+  const isValidated = Boolean(evaluation || moduleCompletion);
 
   return (
     <button
@@ -48,18 +54,18 @@ function LevelCell({ level, evaluation, canToggle, onToggle }: LevelCellProps) {
       onClick={onToggle}
       disabled={!canToggle}
       title={tooltip}
-      aria-pressed={Boolean(evaluation)}
+      aria-pressed={isValidated}
       aria-label={`${level} — ${tooltip}`}
       className={clsx(
         'flex h-9 w-12 items-center justify-center gap-1 rounded-lg text-xs font-bold transition-colors',
-        evaluation
+        isValidated
           ? 'bg-emerald-600 text-white'
           : 'bg-white text-slate-400 ring-1 ring-inset ring-brand-200',
-        canToggle && (evaluation ? 'hover:bg-emerald-700' : 'hover:bg-brand-50 hover:text-brand-800 hover:ring-brand-400'),
+        canToggle && (isValidated ? 'hover:bg-emerald-700' : 'hover:bg-brand-50 hover:text-brand-800 hover:ring-brand-400'),
         !canToggle && 'cursor-default',
       )}
     >
-      {evaluation && <Check className="size-3.5" />}
+      {isValidated && <Check className="size-3.5" />}
       {level}
     </button>
   );
@@ -80,6 +86,10 @@ export function SkillsTab({ trainee, modules, competencies, evaluations, complet
     () => new Map(completions.map((completion) => [completion.moduleId, completion])),
     [completions],
   );
+  const firstIncompleteModuleId = applicableModules.find((trainingModule) => {
+    const progress = computeLevelProgress(competenciesByModule.get(trainingModule.id) ?? [], evaluations);
+    return !completionsByModule.has(trainingModule.id) && progress.percent < 100;
+  })?.id;
 
   const handleToggle = (competency: Competency, level: SkillLevel, evaluation: Evaluation | undefined) => {
     const write = evaluation
@@ -95,7 +105,7 @@ export function SkillsTab({ trainee, modules, competencies, evaluations, complet
   return (
     <div className="space-y-3">
       {isStaff && <p className="text-sm text-slate-500">{t('skills.staffHint')}</p>}
-      {applicableModules.map((trainingModule, moduleIndex) => {
+      {applicableModules.map((trainingModule) => {
         const moduleCompetencies = competenciesByModule.get(trainingModule.id) ?? [];
         const progress = computeLevelProgress(moduleCompetencies, evaluations);
         const completion = completionsByModule.get(trainingModule.id);
@@ -103,7 +113,7 @@ export function SkillsTab({ trainee, modules, competencies, evaluations, complet
         return (
           <details
             key={trainingModule.id}
-            open={moduleIndex === 0}
+            open={trainingModule.id === firstIncompleteModuleId}
             className="group overflow-hidden rounded-sm bg-white ring-1 ring-brand-200"
           >
             <summary className="flex cursor-pointer list-none items-center gap-4 bg-brand-100/60 px-4 py-2.5 hover:bg-brand-100 [&::-webkit-details-marker]:hidden">
@@ -145,12 +155,14 @@ export function SkillsTab({ trainee, modules, competencies, evaluations, complet
                     <div className="flex gap-2">
                       {SKILL_LEVELS.map((level) => {
                         const evaluation = evaluationsById.get(levelEvaluationId(trainee.id, competency.id, level));
-                        const canToggle = isStaff && (!evaluation || isAdmin || evaluation.validatedBy === uid);
+                        const canToggle =
+                          !completion && isStaff && (!evaluation || isAdmin || evaluation.validatedBy === uid);
                         return (
                           <LevelCell
                             key={level}
                             level={level}
                             evaluation={evaluation}
+                            moduleCompletion={completion}
                             canToggle={canToggle}
                             onToggle={() => handleToggle(competency, level, evaluation)}
                           />

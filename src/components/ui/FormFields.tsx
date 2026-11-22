@@ -20,12 +20,12 @@ interface FieldShellProps {
 function FieldShell({ id, label, hint, required, children, className }: FieldShellProps) {
   return (
     <div className={className}>
-      <label htmlFor={id} className="mb-1 block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-slate-700">
         {label}
         {required && <span className="ml-0.5 text-fire-600">*</span>}
       </label>
       {children}
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="mt-1.5 text-xs leading-5 text-slate-500">{hint}</p>}
     </div>
   );
 }

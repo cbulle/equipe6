@@ -6,22 +6,18 @@ import {
   LayoutDashboard,
   ListChecks,
   LogOut,
-  Menu,
   Users,
   UsersRound,
   UserRound,
   WifiOff,
-  X,
   type LucideIcon,
 } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useCurrentUser, useAuth } from '@/hooks/useAuth';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import type { UserRole } from '@/types/models';
 import { fullName } from '@/utils/names';
-import { RoleBadge } from '../shared/DomainBadges';
 import { Avatar } from '../ui/Avatar';
 import { AppLogo } from './AppLogo';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -31,129 +27,74 @@ interface NavigationItem {
   labelKey: 'dashboard' | 'myBooklet' | 'calendar' | 'trainees' | 'resources' | 'profile' | 'users' | 'groups' | 'modules';
   icon: LucideIcon;
   roles: UserRole[];
-  section: 'main' | 'admin';
+  section: 'overview' | 'training' | 'progress' | 'admin';
 }
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
-  { to: '/', labelKey: 'dashboard', icon: LayoutDashboard, roles: ['admin', 'trainer', 'trainee'], section: 'main' },
-  { to: '/my-booklet', labelKey: 'myBooklet', icon: BookMarked, roles: ['trainee'], section: 'main' },
-  { to: '/calendar', labelKey: 'calendar', icon: CalendarDays, roles: ['admin', 'trainer', 'trainee'], section: 'main' },
-  { to: '/trainees', labelKey: 'trainees', icon: UsersRound, roles: ['admin', 'trainer'], section: 'main' },
-  { to: '/resources', labelKey: 'resources', icon: FolderOpen, roles: ['admin', 'trainer', 'trainee'], section: 'main' },
-  { to: '/profile', labelKey: 'profile', icon: UserRound, roles: ['admin', 'trainer', 'trainee'], section: 'main' },
+  { to: '/', labelKey: 'dashboard', icon: LayoutDashboard, roles: ['admin', 'trainer', 'trainee'], section: 'overview' },
+  { to: '/calendar', labelKey: 'calendar', icon: CalendarDays, roles: ['admin', 'trainer', 'trainee'], section: 'training' },
+  { to: '/resources', labelKey: 'resources', icon: FolderOpen, roles: ['admin', 'trainer', 'trainee'], section: 'training' },
+  { to: '/my-booklet', labelKey: 'myBooklet', icon: BookMarked, roles: ['trainee'], section: 'progress' },
+  { to: '/trainees', labelKey: 'trainees', icon: UsersRound, roles: ['admin', 'trainer'], section: 'progress' },
   { to: '/admin/users', labelKey: 'users', icon: Users, roles: ['admin'], section: 'admin' },
   { to: '/admin/groups', labelKey: 'groups', icon: UsersRound, roles: ['admin'], section: 'admin' },
   { to: '/admin/modules', labelKey: 'modules', icon: ListChecks, roles: ['admin'], section: 'admin' },
 ];
 
-function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+export function AppLayout() {
   const { t } = useTranslation();
   const { role, signOut } = useAuth();
   const { profile } = useCurrentUser();
-  const items = NAVIGATION_ITEMS.filter((item) => role && item.roles.includes(role));
-
-  const renderItems = (section: NavigationItem['section']) =>
-    items
-      .filter((item) => item.section === section)
-      .map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          end={item.to === '/'}
-          onClick={onNavigate}
-          className={({ isActive }) =>
-            clsx(
-              'flex items-center gap-3 rounded-sm border-l-4 px-3 py-2 text-sm font-medium transition-colors',
-              isActive
-                ? 'border-fire-600 bg-white font-semibold text-brand-900'
-                : 'border-transparent text-brand-100 hover:bg-white/10 hover:text-white',
-            )
-          }
-        >
-          <item.icon className="size-5 shrink-0" />
-          {t(`nav.${item.labelKey}`)}
-        </NavLink>
-      ));
-
-  return (
-    <div className="flex h-full flex-col bg-brand-800 px-3 py-4">
-      <div className="-mx-3 -mt-4 mb-4 border-b border-white/10 bg-brand-900 px-5 py-4">
-        <AppLogo inverted />
-      </div>
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto" aria-label={t('nav.mainNavigation')}>
-        {renderItems('main')}
-        {role === 'admin' && (
-          <>
-            <p className="mt-6 mb-1 border-b border-white/10 px-3 pb-1 text-xs font-bold tracking-wider text-brand-300 uppercase">
-              {t('nav.administration')}
-            </p>
-            {renderItems('admin')}
-          </>
-        )}
-      </nav>
-      <div className="-mx-3 -mb-4 mt-4 border-t border-white/10 bg-brand-900 px-5 py-3">
-        <div className="flex items-center gap-3">
-          <Avatar person={profile} size="sm" tone="fire" />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-white">{fullName(profile)}</p>
-            <RoleBadge role={profile.role} />
-          </div>
-        </div>
-        <div className="mt-3 flex items-center justify-between">
-          <LanguageSwitcher className="text-brand-100" />
-          <button
-            type="button"
-            onClick={() => void signOut()}
-            className="inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs font-medium text-brand-100 hover:bg-white/10 hover:text-white"
-          >
-            <LogOut className="size-4" />
-            {t('auth.signOut')}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function AppLayout() {
-  const { t } = useTranslation();
   const isOnline = useOnlineStatus();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const items = NAVIGATION_ITEMS.filter((item) => role && item.roles.includes(role));
+  const mobileItems: NavigationItem[] = [
+    ...items,
+    { to: '/profile', labelKey: 'profile', icon: UserRound, roles: ['admin', 'trainer', 'trainee'], section: 'overview' },
+  ];
+
+  const linkClassName = ({ isActive }: { isActive: boolean }) =>
+    clsx(
+      'inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+      isActive ? 'bg-white text-brand-900 shadow-sm' : 'text-slate-600 hover:bg-white/70 hover:text-brand-900',
+    );
 
   return (
-    <div className="min-h-dvh lg:pl-64">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 lg:block">
-        <SidebarContent />
-      </aside>
-
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setIsMenuOpen(false)} aria-hidden />
-          <aside className="relative h-full w-72 max-w-[85vw] shadow-xl">
+    <div className="min-h-dvh">
+      <header className="sticky top-0 z-30 border-b border-brand-200/80 bg-white/95 px-4 backdrop-blur sm:px-7 lg:px-10">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-5">
+          <Link to="/" aria-label={t('nav.dashboard')} className="shrink-0">
+            <AppLogo />
+          </Link>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <NavLink to="/profile" className="hidden items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-brand-50 sm:flex">
+              <Avatar person={profile} size="sm" tone="fire" />
+              <span className="max-w-36 truncate text-sm font-medium text-slate-700">{fullName(profile)}</span>
+            </NavLink>
+            <LanguageSwitcher className="text-slate-600" />
             <button
               type="button"
-              onClick={() => setIsMenuOpen(false)}
-              aria-label={t('common.close')}
-              className="absolute top-4 right-3 z-10 rounded-lg p-1 text-brand-200 hover:bg-white/10"
+              onClick={() => void signOut()}
+              aria-label={t('auth.signOut')}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold text-fire-700 transition-colors hover:bg-fire-50 sm:text-sm"
             >
-              <X className="size-5" />
+              <LogOut className="size-4" />
+              <span className="hidden lg:inline">{t('auth.signOut')}</span>
             </button>
-            <SidebarContent onNavigate={() => setIsMenuOpen(false)} />
-          </aside>
+          </div>
         </div>
-      )}
-
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b-2 border-brand-700 bg-white px-4 py-2.5 lg:hidden">
-        <button
-          type="button"
-          onClick={() => setIsMenuOpen(true)}
-          aria-label={t('nav.openMenu')}
-          className="rounded-lg p-1.5 text-brand-800 hover:bg-brand-100"
+        <nav
+          aria-label={t('nav.mainNavigation')}
+          className="-mx-4 hidden overflow-x-auto border-t border-brand-300 bg-brand-200 px-4 sm:block lg:-mx-10 lg:px-10"
         >
-          <Menu className="size-6" />
-        </button>
-        <AppLogo />
-        <span className="size-9" />
+          <div className="mx-auto flex max-w-7xl items-center gap-1 py-2">
+            {items.map((item) => (
+              <NavLink key={item.to} to={item.to} end={item.to === '/'} className={linkClassName}>
+                <item.icon className="size-4 shrink-0" />
+                <span>{t(`nav.${item.labelKey}`)}</span>
+              </NavLink>
+            ))}
+          </div>
+        </nav>
       </header>
 
       {!isOnline && (
@@ -163,9 +104,38 @@ export function AppLayout() {
         </div>
       )}
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+      <main className="mx-auto w-full max-w-7xl px-4 py-7 pb-28 sm:px-7 sm:pb-10 lg:px-10 lg:py-10">
         <Outlet />
       </main>
+      <nav
+        aria-label={t('nav.mainNavigation')}
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-brand-300 bg-brand-200 px-2 pt-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgb(28_33_28/0.06)] backdrop-blur sm:hidden"
+      >
+        <div className="mx-auto flex w-full max-w-lg items-stretch justify-start overflow-x-auto">
+          {mobileItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
+              className={({ isActive }) =>
+                clsx(
+                  'flex w-[4.5rem] shrink-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 text-[11px] font-medium transition-colors',
+                  isActive ? 'text-brand-900' : 'text-slate-600 hover:text-brand-900',
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <span className={clsx('flex size-8 items-center justify-center rounded-full transition-colors', isActive && 'bg-white shadow-sm')}>
+                    <item.icon className="size-[18px]" />
+                  </span>
+                  <span className="max-w-full truncate">{t(`nav.${item.labelKey}`)}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 }

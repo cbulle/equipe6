@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "Trainee booklet",
-    "tagline": "SPV — Team 6",
     "offline": "Offline mode: your changes will sync once the network is back.",
     "footer": "Volunteer Firefighters"
   },
@@ -21,7 +20,13 @@
   "nav": {
     "mainNavigation": "Main navigation",
     "openMenu": "Open menu",
+    "more": "More",
     "administration": "Administration",
+    "sections": {
+      "training": "Training",
+      "myProgress": "My learning",
+      "traineeFollowUp": "Trainee follow-up"
+    },
     "dashboard": "Dashboard",
     "myBooklet": "My booklet",
     "calendar": "Calendar",
@@ -115,6 +120,8 @@
     "traineeSubtitle": "Your progress and your next sessions.",
     "upcomingSessions": "Upcoming sessions",
     "seeCalendar": "See calendar",
+    "seeResources": "See resources",
+    "quickAccess": "Quick access",
     "noUpcomingSessions": "No upcoming session.",
     "skillsProgress": "Validated skills",
     "activeTrainees": "Trainees",

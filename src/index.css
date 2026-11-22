@@ -1,68 +1,74 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Dark green institutional palette (brand-50 is the page background). */
-  --color-brand-50: #f2f4f2;
-  --color-brand-100: #e2e8e3;
-  --color-brand-200: #c5d1c7;
-  --color-brand-300: #9cb2a0;
-  --color-brand-400: #6d8f73;
-  --color-brand-500: #4a7051;
-  --color-brand-600: #34583b;
-  --color-brand-700: #27492e;
-  --color-brand-800: #1d3c24;
-  --color-brand-900: #16301c;
-  --color-brand-950: #0d1f11;
+  --color-brand-50: #f4f7f3;
+  --color-brand-100: #e9efe8;
+  --color-brand-200: #d5e0d4;
+  --color-brand-300: #b6cbb7;
+  --color-brand-400: #91ad94;
+  --color-brand-500: #6e9072;
+  --color-brand-600: #527557;
+  --color-brand-700: #3d5e43;
+  --color-brand-800: #2e4935;
+  --color-brand-900: #21372a;
+  --color-brand-950: #17271d;
 
-  /* Neutral greys instead of Tailwind's blue-tinted slate. */
-  --color-slate-50: #f8f8f7;
-  --color-slate-100: #f0f0ee;
-  --color-slate-200: #e2e2df;
-  --color-slate-300: #cfcfcb;
-  --color-slate-400: #a1a19c;
-  --color-slate-500: #71716c;
-  --color-slate-600: #52524e;
-  --color-slate-700: #3f3f3c;
-  --color-slate-800: #282826;
-  --color-slate-900: #191918;
-  --color-slate-950: #0c0c0b;
+  --color-slate-50: #fafaf8;
+  --color-slate-100: #f2f3f0;
+  --color-slate-200: #e5e7e2;
+  --color-slate-300: #d3d6cf;
+  --color-slate-400: #a2a69d;
+  --color-slate-500: #73786f;
+  --color-slate-600: #555b53;
+  --color-slate-700: #3f453e;
+  --color-slate-800: #2b302a;
+  --color-slate-900: #1c211c;
+  --color-slate-950: #111510;
 
-  --color-fire-50: #fef2f3;
-  --color-fire-100: #fde3e6;
-  --color-fire-200: #fbccd3;
-  --color-fire-500: #d6223d;
-  --color-fire-600: #c8102e;
-  --color-fire-700: #a50d26;
+  --color-fire-50: #fbf3ef;
+  --color-fire-100: #f5e5dc;
+  --color-fire-200: #ebcdbd;
+  --color-fire-500: #c36c4e;
+  --color-fire-600: #ad563b;
+  --color-fire-700: #8d432e;
 
-  /* Square look: corners are barely softened, whatever utility a component uses. */
-  --radius-xs: 1px;
-  --radius-sm: 2px;
-  --radius-md: 2px;
-  --radius-lg: 3px;
-  --radius-xl: 3px;
-  --radius-2xl: 3px;
-  --radius-3xl: 3px;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
 
-  /* Flat surfaces: borders separate the blocks, shadows only lift overlays. */
-  --shadow-xs: none;
-  --shadow-sm: none;
-  --shadow-md: none;
-  --shadow-lg: 0 2px 8px rgb(0 0 0 / 0.15);
-  --shadow-xl: 0 6px 20px rgb(0 0 0 / 0.2);
+  --shadow-xs: 0 1px 2px rgb(28 33 28 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(28 33 28 / 0.06), 0 1px 2px rgb(28 33 28 / 0.04);
+  --shadow-md: 0 8px 24px rgb(28 33 28 / 0.08);
+  --shadow-lg: 0 16px 40px rgb(28 33 28 / 0.14);
+  --shadow-xl: 0 24px 56px rgb(28 33 28 / 0.18);
 }
 
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-brand-50 text-slate-800 antialiased;
+    min-width: 320px;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgb(195 108 78 / 0.045), transparent 20rem),
+      radial-gradient(circle at 88% 18%, rgb(82 117 87 / 0.055), transparent 24rem);
+    background-attachment: fixed;
   }
 
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-950;
   }
 }

@@ -14,10 +14,8 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { useModules, useResources, useSessions } from '@/hooks/useAppData';
 import { useAuth } from '@/hooks/useAuth';
 import { deleteSession } from '@/services/sessionService';
-import { SESSION_TYPES, type SessionType, type TrainingSession } from '@/types/models';
+import type { TrainingSession } from '@/types/models';
 import { formatMonth, todayIsoDate } from '@/utils/dates';
-
-type SessionTypeFilter = SessionType | 'all';
 
 const MAX_CHIPS_PER_DAY = 2;
 
@@ -46,7 +44,6 @@ export function CalendarPage() {
   const { data: modules } = useModules();
   const { data: resources } = useResources();
 
-  const [typeFilter, setTypeFilter] = useState<SessionTypeFilter>('all');
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -68,13 +65,11 @@ export function CalendarPage() {
 
   const sessionsByDate = useMemo(() => {
     const groups = new Map<string, TrainingSession[]>();
-    sessions
-      .filter((session) => typeFilter === 'all' || session.type === typeFilter)
-      .forEach((session) => {
-        groups.set(session.date, [...(groups.get(session.date) ?? []), session]);
-      });
+    sessions.forEach((session) => {
+      groups.set(session.date, [...(groups.get(session.date) ?? []), session]);
+    });
     return groups;
-  }, [sessions, typeFilter]);
+  }, [sessions]);
 
   const weekdayLabels = useMemo(() => {
     const formatter = new Intl.DateTimeFormat(i18n.language, { weekday: 'short' });
@@ -159,24 +154,6 @@ export function CalendarPage() {
           )
         }
       />
-
-      <div className="mb-5 flex flex-wrap gap-2">
-        {(['all', ...SESSION_TYPES] as const).map((type) => (
-          <button
-            key={type}
-            type="button"
-            onClick={() => setTypeFilter(type)}
-            className={clsx(
-              'rounded-sm px-3 py-1.5 text-sm font-medium transition-colors',
-              typeFilter === type
-                ? 'bg-brand-800 text-white'
-                : 'bg-white text-slate-600 ring-1 ring-brand-200 hover:bg-brand-50',
-            )}
-          >
-            {type === 'all' ? t('common.all') : t(`sessionTypes.${type}`)}
-          </button>
-        ))}
-      </div>
 
       <section className="rounded-2xl bg-white p-3 ring-1 ring-brand-200 sm:p-4">
         <div className="mb-3 flex items-center justify-between gap-2">

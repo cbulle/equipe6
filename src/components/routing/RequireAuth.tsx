@@ -26,7 +26,7 @@ export function RequireAuth() {
           title={t('auth.accountNotConfigured')}
           description={t('auth.accountNotConfiguredHint')}
           action={
-            <Button variant="secondary" onClick={() => void signOut()}>
+            <Button variant="danger" onClick={() => void signOut()}>
               {t('auth.signOut')}
             </Button>
           }

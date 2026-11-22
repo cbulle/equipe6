@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "Livret de l'apprenant",
-    "tagline": "SPV — Équipe 6",
     "offline": "Mode hors ligne : vos saisies seront synchronisées au retour du réseau.",
     "footer": "Sapeurs-Pompiers Volontaires"
   },
@@ -21,7 +20,13 @@
   "nav": {
     "mainNavigation": "Navigation principale",
     "openMenu": "Ouvrir le menu",
+    "more": "Plus",
     "administration": "Administration",
+    "sections": {
+      "training": "Formation",
+      "myProgress": "Mon parcours",
+      "traineeFollowUp": "Suivi des apprenants"
+    },
     "dashboard": "Tableau de bord",
     "myBooklet": "Mon livret",
     "calendar": "Calendrier",
@@ -112,9 +117,10 @@
   "dashboard": {
     "greeting": "Bonjour {{name}}",
     "staffSubtitle": "Séances à venir et suivi des compétences.",
-    "traineeSubtitle": "Votre progression et vos prochaines séances.",
     "upcomingSessions": "Prochaines séances",
     "seeCalendar": "Voir le calendrier",
+    "seeResources": "Voir les ressources",
+    "quickAccess": "Accès directs",
     "noUpcomingSessions": "Aucune séance à venir.",
     "skillsProgress": "Compétences validées",
     "activeTrainees": "Apprenants",
