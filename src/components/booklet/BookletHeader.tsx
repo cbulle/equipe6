@@ -1,7 +1,7 @@
 import { Mail, Pencil, ShieldCheck, UsersRound } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGroup, useGroups, useUser } from '@/hooks/useAppData';
+import { useModules, useUser } from '@/hooks/useAppData';
 import { useAuth } from '@/hooks/useAuth';
 import type { UserProfile } from '@/types/models';
 import { fullName } from '@/utils/names';
@@ -12,10 +12,10 @@ import { UserFormModal } from '../users/UserFormModal';
 
 export function BookletHeader({ trainee }: { trainee: UserProfile }) {
   const { t } = useTranslation();
-  const { data: group } = useGroup(trainee.groupId);
-  const { data: referent } = useUser(group?.referentId);
   const { isAdmin } = useAuth();
-  const { data: groups } = useGroups();
+  const { data: modules } = useModules();
+  const group = modules.find((trainingModule) => trainingModule.id === trainee.moduleId);
+  const { data: referent } = useUser(group?.referentId);
   const [editing, setEditing] = useState(false);
 
   return (
@@ -35,7 +35,7 @@ export function BookletHeader({ trainee }: { trainee: UserProfile }) {
             <div className="mt-1 flex flex-col gap-1 text-sm text-slate-600 sm:flex-row sm:flex-wrap sm:gap-x-4">
               <span className="inline-flex items-center gap-1.5">
                 <UsersRound className="size-4 text-slate-400" />
-                {group?.label ?? t('groups.noGroup')}
+                {group ? `${group.code} — ${group.label}` : t('trainees.noGroup')}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <Mail className="size-4 text-slate-400" />
@@ -64,7 +64,7 @@ export function BookletHeader({ trainee }: { trainee: UserProfile }) {
         </div>
       </div>
 
-      {editing && <UserFormModal user={trainee} groups={groups} onClose={() => setEditing(false)} />}
+      {editing && <UserFormModal user={trainee} onClose={() => setEditing(false)} />}
     </Card>
   );
 }

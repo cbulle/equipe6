@@ -9,7 +9,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
-import { collection, deleteField, doc, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
+import { collection, deleteField, doc, getDocs, query, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { accountCreationAuth, auth, db, functions } from '@/config/firebase';
 import i18n from '@/i18n';
 import type { UserProfile } from '@/types/models';
@@ -50,7 +50,7 @@ export const usersQuery = () => query(usersCollection);
 
 export const traineesQuery = () => query(usersCollection, where('role', '==', 'trainee'));
 
-/** Trainers and administrators: the accounts that can be the referent of a group. */
+/** Trainers and administrators: the accounts that can be the referent of a module. */
 export const staffQuery = () => query(usersCollection, where('role', 'in', ['admin', 'trainer']));
 
 /**
@@ -81,7 +81,7 @@ export async function registerUser(input: SelfRegistrationInput, password: strin
       firstName: input.firstName.trim(),
       lastName: input.lastName.trim(),
       role: input.role,
-      groupId: null,
+      moduleId: null,
       active: true,
       createdAt: Date.now(),
     });
@@ -97,19 +97,16 @@ export async function registerUser(input: SelfRegistrationInput, password: strin
 }
 
 /**
- * Updates a profile. When the user becomes a trainee, they are removed as referent
- * of the given groups. Login email changes are handled by the owner in Firebase Auth.
+ * Updates a profile. When the user becomes a trainee, they are removed as module referent.
+ * Login email changes are handled by the owner in Firebase Auth.
  */
-export async function updateUserProfile(
-  userId: string,
-  input: Omit<UserProfileInput, 'email'>,
-  referentGroupIds: string[],
-): Promise<void> {
+export async function updateUserProfile(userId: string, input: Omit<UserProfileInput, 'email'>): Promise<void> {
   const batch = writeBatch(db);
   // `phone` is no longer collected: drop it from older profiles.
   batch.update(userDocRef(userId), { ...input, phone: deleteField(), updatedAt: Date.now() });
   if (input.role === 'trainee') {
-    referentGroupIds.forEach((groupId) => batch.update(doc(db, COLLECTIONS.groups, groupId), { referentId: null }));
+    const modules = await getDocs(query(collection(db, COLLECTIONS.modules), where('referentId', '==', userId)));
+    modules.docs.forEach((trainingModule) => batch.update(trainingModule.ref, { referentId: null }));
   }
   await batch.commit();
 }
@@ -183,6 +180,6 @@ export async function sendUserPasswordReset(email: string): Promise<void> {
   }
 }
 
-export function assignUserToGroup(userId: string, groupId: string | null): Promise<void> {
-  return updateDoc(userDocRef(userId), { groupId });
+export function assignUserToModule(userId: string, moduleId: string | null): Promise<void> {
+  return updateDoc(userDocRef(userId), { moduleId });
 }

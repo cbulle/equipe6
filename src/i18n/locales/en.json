@@ -34,7 +34,6 @@
     "resources": "Resources",
     "profile": "My account",
     "users": "Users",
-    "groups": "Groups & referents",
     "modules": "Modules & grids"
   },
   "auth": {
@@ -167,11 +166,10 @@
   },
   "trainees": {
     "title": "Trainees",
-    "description_one": "{{count}} trainee across all groups.",
-    "description_other": "{{count}} trainees across all groups.",
+    "description_one": "{{count}} trainee.",
+    "description_other": "{{count}} trainees.",
     "searchPlaceholder": "Search a trainee…",
-    "filterGroup": "Filter by group",
-    "allGroups": "All groups",
+    "noGroup": "No group",
     "empty": "No trainee matches your filters.",
     "notFound": "Trainee not found."
   },
@@ -180,7 +178,7 @@
     "noReferent": "No referent assigned.",
     "tabs": {
       "skills": "Skill grids",
-      "interviews": "Interviews",
+      "interviews": "Exchanges",
       "wishes": "Internship wishes"
     },
     "editProfile": "Edit profile"
@@ -194,22 +192,20 @@
     "notValidated": "Not validated"
   },
   "interviews": {
-    "counter_one": "{{count}} interview out of {{max}} in {{year}}",
-    "counter_other": "{{count}} interviews out of {{max}} in {{year}}",
-    "create": "New interview",
-    "createTitle": "New follow-up interview",
-    "editTitle": "Edit interview",
+    "create": "New exchange",
+    "createTitle": "New follow-up exchange",
+    "editTitle": "Edit exchange",
     "editWarning": "Editing will cancel the existing signatures.",
-    "created": "Interview saved.",
-    "empty": "No interview yet.",
-    "title": "Interview #{{occurrence}}",
+    "created": "Exchange saved.",
+    "empty": "No exchange yet.",
+    "title": "Exchange #{{occurrence}}",
     "trainerVisa": "Trainer signature",
     "traineeVisa": "Trainee signature",
     "signedBy": "Signed by {{name}} on {{date}}",
     "notSigned": "Awaiting signature",
     "sign": "Sign",
-    "deleteTitle": "Delete interview",
-    "deleteMessage": "This interview will be permanently deleted.",
+    "deleteTitle": "Delete exchange",
+    "deleteMessage": "This exchange will be permanently deleted.",
     "fields": {
       "date": "Date",
       "strengths": "Strengths",
@@ -271,7 +267,7 @@
       "email": "Email address",
       "password": "Password",
       "role": "Role",
-      "group": "Group",
+      "group": "Group (module)",
       "active": "Active account"
     },
     "emailEditHint": "Each user can change their address from the “My account” page.",
@@ -285,37 +281,6 @@
       "training": "Training"
     }
   },
-  "groups": {
-    "title": "Groups & referents",
-    "description": "Assign trainees and designate the referent trainer of each group.",
-    "create": "New group",
-    "createTitle": "New group",
-    "editTitle": "Edit group",
-    "created": "Group created.",
-    "updated": "Group updated.",
-    "empty": "No group yet.",
-    "noGroup": "No group",
-    "noGroupDescription_one": "{{count}} trainee to assign",
-    "noGroupDescription_other": "{{count}} trainees to assign",
-    "noReferent": "No referent",
-    "referentHint": "A trainer or an administrator can be the referent.",
-    "noMembers": "No trainee in this group.",
-    "memberCount_one": "{{count}} trainee",
-    "memberCount_other": "{{count}} trainees",
-    "promo": "Class of {{year}}",
-    "inactive": "Inactive",
-    "addMember": "+ Add a trainee without group…",
-    "removeMember": "Remove from group",
-    "deleteTitle": "Delete group",
-    "deleteMessage": "The group “{{label}}” will be deleted and its trainees moved to “No group”.",
-    "fields": {
-      "label": "Group name",
-      "labelPlaceholder": "E.g. Team 6",
-      "promoYear": "Class year",
-      "referent": "Referent",
-      "active": "Active group"
-    }
-  },
   "modules": {
     "title": "Modules & grids",
     "description": "Configure internships, workshops and assessment boxes of the grids.",
@@ -325,8 +290,11 @@
     "created": "Module created.",
     "updated": "Module updated.",
     "empty": "No module configured.",
+    "noReferent": "No referent",
+    "referentHint": "A trainer or an administrator can be the referent.",
     "noCompetencies": "No assessment box in this module.",
     "addCompetency": "Add a box",
+    "selectModule": "Choose a module",
     "createCompetencyTitle": "New assessment box",
     "editCompetencyTitle": "Edit assessment box",
     "competencyCreated": "Box added.",
@@ -343,6 +311,7 @@
     "fields": {
       "code": "Code",
       "label": "Label",
+      "referent": "Referent trainer",
       "competencyCode": "Code (OS, C, Workshop…)",
       "competencyLabel": "Competency label",
       "criteria": "Validation criterion",

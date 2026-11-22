@@ -1,6 +1,5 @@
 export const COLLECTIONS = {
   users: 'users',
-  groups: 'groups',
   modules: 'modules',
   competencies: 'competencies',
   sessions: 'sessions',

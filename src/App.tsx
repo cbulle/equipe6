@@ -19,7 +19,6 @@ const MyBookletPage = lazy(() => import('./pages/MyBookletPage').then((module) =
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage').then((module) => ({ default: module.ResourcesPage })));
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then((module) => ({ default: module.ProfilePage })));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage').then((module) => ({ default: module.UsersPage })));
-const GroupsPage = lazy(() => import('./pages/admin/GroupsPage').then((module) => ({ default: module.GroupsPage })));
 const ModulesPage = lazy(() => import('./pages/admin/ModulesPage').then((module) => ({ default: module.ModulesPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
 
@@ -49,7 +48,6 @@ export function App() {
 
                 <Route path="admin" element={<RequireRole roles={['admin']} />}>
                   <Route path="users" element={<UsersPage />} />
-                  <Route path="groups" element={<GroupsPage />} />
                   <Route path="modules" element={<ModulesPage />} />
                 </Route>
 

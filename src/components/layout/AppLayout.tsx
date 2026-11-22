@@ -24,7 +24,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface NavigationItem {
   to: string;
-  labelKey: 'dashboard' | 'myBooklet' | 'calendar' | 'trainees' | 'resources' | 'profile' | 'users' | 'groups' | 'modules';
+  labelKey: 'dashboard' | 'myBooklet' | 'calendar' | 'trainees' | 'resources' | 'profile' | 'users' | 'modules';
   icon: LucideIcon;
   roles: UserRole[];
   section: 'overview' | 'training' | 'progress' | 'admin';
@@ -37,7 +37,6 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
   { to: '/my-booklet', labelKey: 'myBooklet', icon: BookMarked, roles: ['trainee'], section: 'progress' },
   { to: '/trainees', labelKey: 'trainees', icon: UsersRound, roles: ['admin', 'trainer'], section: 'progress' },
   { to: '/admin/users', labelKey: 'users', icon: Users, roles: ['admin'], section: 'admin' },
-  { to: '/admin/groups', labelKey: 'groups', icon: UsersRound, roles: ['admin'], section: 'admin' },
   { to: '/admin/modules', labelKey: 'modules', icon: ListChecks, roles: ['admin'], section: 'admin' },
 ];
 
@@ -48,7 +47,7 @@ export function AppLayout() {
   const isOnline = useOnlineStatus();
   const items = NAVIGATION_ITEMS.filter((item) => role && item.roles.includes(role));
   const mobileItems: NavigationItem[] = [
-    ...items,
+    ...items.filter((item) => item.labelKey !== 'dashboard'),
     { to: '/profile', labelKey: 'profile', icon: UserRound, roles: ['admin', 'trainer', 'trainee'], section: 'overview' },
   ];
 
@@ -60,9 +59,10 @@ export function AppLayout() {
 
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-30 border-b border-brand-200/80 bg-white/95 px-4 backdrop-blur sm:px-7 lg:px-10">
+      <header className="sticky top-0 z-30 border-b border-brand-300 bg-brand-200 px-4 backdrop-blur before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-brand-800 sm:px-7 lg:px-10">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-5">
-          <Link to="/" aria-label={t('nav.dashboard')} className="shrink-0">
+          <Link to="/" aria-label={t('nav.dashboard')} className="inline-flex shrink-0 items-center gap-2">
+            <LayoutDashboard className="size-5 text-brand-800" aria-hidden />
             <AppLogo />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -84,7 +84,7 @@ export function AppLayout() {
         </div>
         <nav
           aria-label={t('nav.mainNavigation')}
-          className="-mx-4 hidden overflow-x-auto border-t border-brand-300 bg-brand-200 px-4 sm:block lg:-mx-10 lg:px-10"
+          className="relative -mx-4 hidden overflow-x-auto border-t border-brand-300 bg-brand-200 px-4 before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-brand-800 sm:block lg:-mx-10 lg:px-10"
         >
           <div className="mx-auto flex max-w-7xl items-center gap-1 py-2">
             {items.map((item) => (
@@ -109,17 +109,19 @@ export function AppLayout() {
       </main>
       <nav
         aria-label={t('nav.mainNavigation')}
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-brand-300 bg-brand-200 px-2 pt-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgb(28_33_28/0.06)] backdrop-blur sm:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-brand-300 bg-brand-200 px-2 pt-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgb(28_33_28/0.06)] backdrop-blur before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-brand-800 sm:hidden"
       >
-        <div className="mx-auto flex w-full max-w-lg items-stretch justify-start overflow-x-auto">
+        <div className="mx-auto flex w-full max-w-lg items-stretch">
           {mobileItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.to === '/'}
+              aria-label={t(`nav.${item.labelKey}`)}
+              title={t(`nav.${item.labelKey}`)}
               className={({ isActive }) =>
                 clsx(
-                  'flex w-[4.5rem] shrink-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 text-[11px] font-medium transition-colors',
+                  'flex min-w-0 flex-1 basis-0 flex-col items-center gap-1 rounded-xl px-0.5 py-1.5 text-[11px] font-medium transition-colors',
                   isActive ? 'text-brand-900' : 'text-slate-600 hover:text-brand-900',
                 )
               }
@@ -129,7 +131,7 @@ export function AppLayout() {
                   <span className={clsx('flex size-8 items-center justify-center rounded-full transition-colors', isActive && 'bg-white shadow-sm')}>
                     <item.icon className="size-[18px]" />
                   </span>
-                  <span className="max-w-full truncate">{t(`nav.${item.labelKey}`)}</span>
+                  <span className="sr-only">{t(`nav.${item.labelKey}`)}</span>
                 </>
               )}
             </NavLink>

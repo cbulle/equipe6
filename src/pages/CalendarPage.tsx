@@ -1,10 +1,9 @@
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2, X } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SessionCard } from '@/components/sessions/SessionCard';
+import { SessionDetailsModal } from '@/components/sessions/SessionDetailsModal';
 import { SessionFormModal } from '@/components/sessions/SessionFormModal';
-import { SessionMessagePanel } from '@/components/sessions/SessionMessagePanel';
 import { Button } from '@/components/ui/Button';
 import { buttonClassName } from '@/components/ui/styles';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -57,10 +56,8 @@ export function CalendarPage() {
     today: isFrench ? "Aujourd'hui" : 'Today',
     previous: isFrench ? 'Mois précédent' : 'Previous month',
     next: isFrench ? 'Mois suivant' : 'Next month',
-    close: isFrench ? 'Fermer' : 'Close',
   };
 
-  const modulesById = useMemo(() => new Map(modules.map((trainingModule) => [trainingModule.id, trainingModule])), [modules]);
   const resourcesBySession = (sessionId: string) => resources.filter((resource) => resource.sessionId === sessionId);
 
   const sessionsByDate = useMemo(() => {
@@ -106,19 +103,6 @@ export function CalendarPage() {
     }).format(parseIsoDate(openedSessions[0].date));
   }, [openedSessions, i18n.language]);
 
-  useEffect(() => {
-    if (!openedIds) {
-      return undefined;
-    }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setOpenedIds(null);
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [openedIds]);
-
   const today = todayIsoDate();
   const monthKey = `${visibleMonth.getFullYear()}-${pad(visibleMonth.getMonth() + 1)}`;
 
@@ -145,7 +129,6 @@ export function CalendarPage() {
     <>
       <PageHeader
         title={t('calendar.title')}
-        description={t('calendar.description')}
         actions={
           isAdmin && (
             <Button icon={<Plus className="size-4" />} onClick={() => setEditedSession(null)}>
@@ -247,61 +230,15 @@ export function CalendarPage() {
       </section>
 
       {openedSessions.length > 0 && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-3 sm:items-center sm:p-4"
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setOpenedIds(null)}
-        >
-          <div
-            className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-4 shadow-xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold tracking-wide text-brand-600 uppercase">{openedDateLabel}</h3>
-              <IconButton
-                label={labels.close}
-                icon={<X className="size-4" />}
-                onClick={() => setOpenedIds(null)}
-              />
-            </div>
-            <div className="space-y-3">
-              {openedSessions.map((session) => (
-                <div key={session.id} className="space-y-2">
-                  <SessionCard
-                    session={session}
-                    trainingModule={session.moduleId ? modulesById.get(session.moduleId) : undefined}
-                    documents={resourcesBySession(session.id)}
-                    actions={
-                      isStaff && isAdmin ? (
-                        <>
-                          <IconButton
-                            label={t('common.edit')}
-                            icon={<Pencil className="size-4" />}
-                            onClick={() => {
-                              setOpenedIds(null);
-                              setEditedSession(session);
-                            }}
-                          />
-                          <IconButton
-                            label={t('common.delete')}
-                            tone="danger"
-                            icon={<Trash2 className="size-4" />}
-                            onClick={() => {
-                              setOpenedIds(null);
-                              setSessionToDelete(session);
-                            }}
-                          />
-                        </>
-                      ) : undefined
-                    }
-                  />
-                  <SessionMessagePanel session={session} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <SessionDetailsModal
+          sessions={openedSessions}
+          title={openedDateLabel}
+          modules={modules}
+          resources={resources}
+          onClose={() => setOpenedIds(null)}
+          onEdit={isStaff && isAdmin ? setEditedSession : undefined}
+          onDelete={isStaff && isAdmin ? setSessionToDelete : undefined}
+        />
       )}
 
       {editedSession !== undefined && (

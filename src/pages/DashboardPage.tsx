@@ -3,12 +3,10 @@ import { ArrowRight, CalendarDays, ExternalLink, FileText, FolderOpen, UsersRoun
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { SessionCard } from '@/components/sessions/SessionCard';
-import { SessionMessagePanel } from '@/components/sessions/SessionMessagePanel';
+import { SessionDetailsModal } from '@/components/sessions/SessionDetailsModal';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { EmptyState, PageLoader } from '@/components/ui/Feedback';
 import { Badge } from '@/components/ui/Badge';
-import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useModules, useResources, useSessions, useTrainees } from '@/hooks/useAppData';
 import { useAuth, useCurrentUser } from '@/hooks/useAuth';
@@ -51,10 +49,6 @@ function UpcomingSessions({
   const [selectedSession, setSelectedSession] = useState<TrainingSession | null>(null);
   const today = todayIsoDate();
   const upcoming = sessions.filter((session) => session.date >= today).slice(0, UPCOMING_SESSIONS_COUNT);
-  const modulesById = useMemo(() => new Map(modules.map((trainingModule) => [trainingModule.id, trainingModule])), [modules]);
-  const selectedDocuments = selectedSession
-    ? resources.filter((resource) => resource.sessionId === selectedSession.id)
-    : [];
 
   return (
     <>
@@ -64,8 +58,12 @@ function UpcomingSessions({
           title={t('dashboard.upcomingSessions')}
           tone="brand"
           actions={
-            <Link to="/calendar" className="inline-flex items-center gap-1 text-sm font-medium text-white hover:text-brand-100">
-              {t('dashboard.seeCalendar')}
+            <Link
+              to="/calendar"
+              aria-label={t('dashboard.seeCalendar')}
+              className="inline-flex items-center gap-1 text-sm font-medium text-white hover:text-brand-100"
+            >
+              <span className="hidden sm:inline">{t('dashboard.seeCalendar')}</span>
               <ArrowRight className="size-4" />
             </Link>
           }
@@ -108,23 +106,18 @@ function UpcomingSessions({
         )}
       </Card>
       {selectedSession && (
-        <Modal
-          open
-          title={selectedSession.title}
-          description={`${formatDate(selectedSession.date)} · ${selectedSession.startTime} – ${selectedSession.endTime}`}
+        <SessionDetailsModal
+          sessions={[selectedSession]}
+          title={formatDate(selectedSession.date, {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+          modules={modules}
+          resources={resources}
           onClose={() => setSelectedSession(null)}
-        >
-          <div className="space-y-3">
-            <SessionCard
-              session={selectedSession}
-              trainingModule={
-                selectedSession.moduleId ? modulesById.get(selectedSession.moduleId) : undefined
-              }
-              documents={selectedDocuments}
-            />
-            <SessionMessagePanel session={selectedSession} />
-          </div>
-        </Modal>
+        />
       )}
     </>
   );
@@ -142,8 +135,12 @@ function LatestResources({ resources, modules }: { resources: Resource[]; module
         title={t('resources.title')}
         tone="brand"
         actions={
-          <Link to="/resources" className="inline-flex items-center gap-1 text-sm font-medium text-white hover:text-brand-100">
-            {t('dashboard.seeResources')}
+          <Link
+            to="/resources"
+            aria-label={t('dashboard.seeResources')}
+            className="inline-flex items-center gap-1 text-sm font-medium text-white hover:text-brand-100"
+          >
+            <span className="hidden sm:inline">{t('dashboard.seeResources')}</span>
             <ArrowRight className="size-4" />
           </Link>
         }

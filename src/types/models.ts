@@ -16,15 +16,7 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   role: UserRole;
-  groupId: string | null;
-  active: boolean;
-}
-
-export interface Group {
-  id: string;
-  label: string;
-  referentId: string | null;
-  promoYear: number;
+  moduleId?: string | null;
   active: boolean;
 }
 
@@ -33,6 +25,7 @@ export interface TrainingModule {
   code: string;
   label: string;
   order: number;
+  referentId?: string | null;
 }
 
 export interface Competency {

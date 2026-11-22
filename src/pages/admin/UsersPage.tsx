@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState, PageLoader } from '@/components/ui/Feedback';
-import { inputClassName } from '@/components/ui/styles';
 import { IconButton } from '@/components/ui/IconButton';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SearchInput } from '@/components/ui/SearchInput';
-import { useGroups, useUsers } from '@/hooks/useAppData';
-import { assignUserToGroup, deleteUserAccount } from '@/services/userService';
+import { inputClassName } from '@/components/ui/styles';
+import { useModules, useUsers } from '@/hooks/useAppData';
+import { assignUserToModule, deleteUserAccount } from '@/services/userService';
 import { USER_ROLES, type UserProfile, type UserRole } from '@/types/models';
 import { notifyError } from '@/utils/errors';
 import { fullName, matchesSearch } from '@/utils/names';
@@ -25,7 +25,7 @@ type RoleFilter = UserRole | 'all';
 export function UsersPage() {
   const { t } = useTranslation();
   const { data: users, loading } = useUsers();
-  const { data: groups } = useGroups();
+  const { data: modules } = useModules();
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
   const [editedUser, setEditedUser] = useState<UserProfile | null | undefined>(undefined);
@@ -37,8 +37,8 @@ export function UsersPage() {
       matchesSearch(search, user.firstName, user.lastName, user.email),
   );
 
-  const handleGroupChange = (user: UserProfile, groupId: string) => {
-    assignUserToGroup(user.id, groupId || null).catch(notifyError);
+  const handleModuleChange = (user: UserProfile, moduleId: string) => {
+    assignUserToModule(user.id, moduleId || null).catch(notifyError);
   };
 
   if (loading) {
@@ -49,7 +49,6 @@ export function UsersPage() {
     <>
       <PageHeader
         title={t('users.title')}
-        description={t('users.description')}
         actions={
           <Button icon={<UserPlus className="size-4" />} onClick={() => setEditedUser(null)}>
             {t('users.create')}
@@ -101,14 +100,14 @@ export function UsersPage() {
                   {user.role === 'trainee' && (
                     <select
                       aria-label={t('users.fields.group')}
-                      className={clsx(inputClassName, 'h-8 w-44 py-1')}
-                      value={user.groupId ?? ''}
-                      onChange={(event) => handleGroupChange(user, event.target.value)}
+                      className={clsx(inputClassName, 'h-8 w-full !py-1 sm:w-44')}
+                      value={user.moduleId ?? ''}
+                      onChange={(event) => handleModuleChange(user, event.target.value)}
                     >
-                      <option value="">{t('groups.noGroup')}</option>
-                      {groups.map((group) => (
-                        <option key={group.id} value={group.id}>
-                          {group.label}
+                      <option value="">{t('trainees.noGroup')}</option>
+                      {modules.map((trainingModule) => (
+                        <option key={trainingModule.id} value={trainingModule.id}>
+                          {trainingModule.code} — {trainingModule.label}
                         </option>
                       ))}
                     </select>
@@ -128,7 +127,7 @@ export function UsersPage() {
       </Card>
 
       {editedUser !== undefined && (
-        <UserFormModal key={editedUser?.id ?? 'new'} user={editedUser} groups={groups} onClose={() => setEditedUser(undefined)} />
+        <UserFormModal key={editedUser?.id ?? 'new'} user={editedUser} onClose={() => setEditedUser(undefined)} />
       )}
 
       <ConfirmDialog
