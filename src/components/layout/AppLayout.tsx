@@ -6,14 +6,16 @@ import {
   LayoutDashboard,
   ListChecks,
   LogOut,
+  Plus,
   Users,
   UsersRound,
   UserRound,
   WifiOff,
   type LucideIcon,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useCurrentUser, useAuth } from '@/hooks/useAuth';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import type { UserRole } from '@/types/models';
@@ -45,11 +47,47 @@ export function AppLayout() {
   const { role, signOut } = useAuth();
   const { profile } = useCurrentUser();
   const isOnline = useOnlineStatus();
+  const location = useLocation();
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
   const items = NAVIGATION_ITEMS.filter((item) => role && item.roles.includes(role));
-  const mobileItems: NavigationItem[] = [
-    ...items.filter((item) => item.labelKey !== 'dashboard'),
-    { to: '/profile', labelKey: 'profile', icon: UserRound, roles: ['admin', 'trainer', 'trainee'], section: 'overview' },
+  const profileItem: NavigationItem = {
+    to: '/profile',
+    labelKey: 'profile',
+    icon: UserRound,
+    roles: ['admin', 'trainer', 'trainee'],
+    section: 'overview',
+  };
+  const adminMenuItems = [
+    ...items.filter((item) => item.labelKey === 'users' || item.labelKey === 'trainees'),
+    profileItem,
   ];
+  const mobileItems = items.filter(
+    (item) => item.labelKey !== 'dashboard' && (role !== 'admin' || (item.labelKey !== 'users' && item.labelKey !== 'trainees')),
+  );
+  if (role !== 'admin') {
+    mobileItems.push(profileItem);
+  }
+  const isAdminMenuActive =
+    location.pathname === '/profile' ||
+    location.pathname.startsWith('/trainees') ||
+    location.pathname.startsWith('/admin/users');
+
+  useEffect(() => {
+    setIsAdminMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isAdminMenuOpen) {
+      return undefined;
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsAdminMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAdminMenuOpen]);
 
   const linkClassName = ({ isActive }: { isActive: boolean }) =>
     clsx(
@@ -107,10 +145,41 @@ export function AppLayout() {
       <main className="mx-auto w-full max-w-7xl px-4 py-7 pb-28 sm:px-7 sm:pb-10 lg:px-10 lg:py-10">
         <Outlet />
       </main>
+      {role === 'admin' && isAdminMenuOpen && (
+        <button
+          type="button"
+          aria-label={t('common.close')}
+          className="fixed inset-0 z-40 bg-transparent sm:hidden"
+          onClick={() => setIsAdminMenuOpen(false)}
+        />
+      )}
       <nav
         aria-label={t('nav.mainNavigation')}
         className="fixed inset-x-0 bottom-0 z-50 border-t border-brand-300 bg-brand-200 px-2 pt-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgb(28_33_28/0.06)] backdrop-blur before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-brand-800 sm:hidden"
       >
+        {role === 'admin' && isAdminMenuOpen && (
+          <div
+            aria-label={t('nav.administration')}
+            className="absolute inset-x-3 bottom-[calc(100%+0.75rem)] mx-auto max-w-lg rounded-2xl border border-brand-200 bg-white p-2 shadow-lg"
+          >
+            {adminMenuItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                aria-label={t(`nav.${item.labelKey}`)}
+                className={({ isActive }) =>
+                  clsx(
+                    'flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors',
+                    isActive ? 'bg-brand-50 text-brand-900' : 'text-slate-700 hover:bg-brand-50 hover:text-brand-900',
+                  )
+                }
+              >
+                <item.icon className="size-5 shrink-0" />
+                <span>{t(`nav.${item.labelKey}`)}</span>
+              </NavLink>
+            ))}
+          </div>
+        )}
         <div className="mx-auto flex w-full max-w-lg items-stretch">
           {mobileItems.map((item) => (
             <NavLink
@@ -136,6 +205,28 @@ export function AppLayout() {
               )}
             </NavLink>
           ))}
+          {role === 'admin' && (
+            <button
+              type="button"
+              aria-label={t('nav.openMenu')}
+              aria-expanded={isAdminMenuOpen}
+              onClick={() => setIsAdminMenuOpen((isOpen) => !isOpen)}
+              className={clsx(
+                'flex min-w-0 flex-1 basis-0 flex-col items-center gap-1 rounded-xl px-0.5 py-1.5 text-[11px] font-medium transition-colors',
+                isAdminMenuOpen || isAdminMenuActive ? 'text-brand-900' : 'text-slate-600 hover:text-brand-900',
+              )}
+            >
+              <span
+                className={clsx(
+                  'flex size-8 items-center justify-center rounded-full transition-colors',
+                  (isAdminMenuOpen || isAdminMenuActive) && 'bg-white shadow-sm',
+                )}
+              >
+                <Plus className={clsx('size-[18px] transition-transform', isAdminMenuOpen && 'rotate-45')} />
+              </span>
+              <span className="sr-only">{t('nav.more')}</span>
+            </button>
+          )}
         </div>
       </nav>
     </div>
