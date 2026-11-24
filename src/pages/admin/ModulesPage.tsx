@@ -9,11 +9,11 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { DragHandle } from '@/components/ui/DragHandle';
 import { EmptyState, PageLoader } from '@/components/ui/Feedback';
-import { CheckboxField, TextField } from '@/components/ui/FormFields';
+import { CheckboxField, SelectField, TextField } from '@/components/ui/FormFields';
 import { IconButton } from '@/components/ui/IconButton';
 import { Modal } from '@/components/ui/Modal';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { useCompetencies, useModules } from '@/hooks/useAppData';
+import { useCompetencies, useModules, useReferentCandidates } from '@/hooks/useAppData';
 import { useSortableList } from '@/hooks/useSortableList';
 import {
   createCompetency,
@@ -30,22 +30,26 @@ import {
 import {
   type Competency,
   type TrainingModule,
+  type UserProfile,
 } from '@/types/models';
 import { notifyError } from '@/utils/errors';
+import { fullName } from '@/utils/names';
 
 interface ModuleFormModalProps {
   trainingModule: TrainingModule | null;
+  referentCandidates: UserProfile[];
   nextOrder: number;
   onSaved: (moduleId: string) => void;
   onClose: () => void;
 }
 
-function ModuleFormModal({ trainingModule, nextOrder, onSaved, onClose }: ModuleFormModalProps) {
+function ModuleFormModal({ trainingModule, referentCandidates, nextOrder, onSaved, onClose }: ModuleFormModalProps) {
   const { t } = useTranslation();
   const [form, setForm] = useState<ModuleInput>({
     code: trainingModule?.code ?? '',
     label: trainingModule?.label ?? '',
     order: trainingModule?.order ?? nextOrder,
+    referentId: trainingModule?.referentId ?? null,
   });
   const [saving, setSaving] = useState(false);
 
@@ -99,6 +103,19 @@ function ModuleFormModal({ trainingModule, nextOrder, onSaved, onClose }: Module
           value={form.label}
           onChange={(event) => setForm((previous) => ({ ...previous, label: event.target.value }))}
         />
+        <SelectField
+          label={t('modules.fields.referent')}
+          hint={t('modules.referentHint')}
+          value={form.referentId ?? ''}
+          onChange={(event) => setForm((previous) => ({ ...previous, referentId: event.target.value || null }))}
+        >
+          <option value="">{t('modules.noReferent')}</option>
+          {referentCandidates.map((candidate) => (
+            <option key={candidate.id} value={candidate.id}>
+              {fullName(candidate)} — {t(`roles.${candidate.role}`)}
+            </option>
+          ))}
+        </SelectField>
       </div>
     </Modal>
   );
@@ -192,6 +209,7 @@ export function ModulesPage() {
   const { t } = useTranslation();
   const { data: modules, loading } = useModules();
   const { data: competencies } = useCompetencies();
+  const { data: referentCandidates, loading: referentsLoading } = useReferentCandidates();
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [editedModule, setEditedModule] = useState<TrainingModule | null | undefined>(undefined);
   const [moduleToDelete, setModuleToDelete] = useState<TrainingModule | null>(null);
@@ -218,7 +236,7 @@ export function ModulesPage() {
     updateCompetency(competency.id, { active: !competency.active }).catch(notifyError);
   };
 
-  if (loading) {
+  if (loading || referentsLoading) {
     return <PageLoader />;
   }
 
@@ -226,23 +244,37 @@ export function ModulesPage() {
     <>
       <PageHeader
         title={t('modules.title')}
-        description={t('modules.description')}
-        actions={
-          <Button icon={<Plus className="size-4" />} onClick={() => setEditedModule(null)}>
-            {t('modules.create')}
-          </Button>
-        }
       />
 
       {modules.length === 0 ? (
-        <Card>
-          <EmptyState icon={<ListChecks className="size-6" />} title={t('modules.empty')} />
-        </Card>
+        <div className="space-y-3">
+          <Card>
+            <EmptyState icon={<ListChecks className="size-6" />} title={t('modules.empty')} />
+          </Card>
+          <Button className="min-h-11 w-full lg:w-auto" icon={<Plus className="size-4" />} onClick={() => setEditedModule(null)}>
+            {t('modules.create')}
+          </Button>
+        </div>
       ) : (
         <div className="grid gap-6 lg:grid-cols-[18rem_1fr]">
           <div>
             <p className="mb-2 hidden text-xs text-slate-500 lg:block">{t('modules.dragHint')}</p>
-            <nav className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible" aria-label={t('modules.title')}>
+            <SelectField
+              label={t('modules.selectModule')}
+              className="mb-3 lg:hidden"
+              value={selectedModule?.id ?? ''}
+              onChange={(event) => setSelectedModuleId(event.target.value)}
+            >
+              {modules.map((trainingModule) => (
+                <option key={trainingModule.id} value={trainingModule.id}>
+                  {trainingModule.code} — {trainingModule.label}
+                </option>
+              ))}
+            </SelectField>
+            <nav
+              className="hidden gap-2 pb-1 lg:flex lg:flex-col lg:overflow-visible"
+              aria-label={t('modules.title')}
+            >
               {moduleSortable.orderedItems.map((trainingModule) => {
                 const isSelected = trainingModule.id === selectedModule?.id;
                 return (
@@ -278,6 +310,9 @@ export function ModulesPage() {
                 );
               })}
             </nav>
+            <Button className="mt-3 min-h-11 w-full" icon={<Plus className="size-4" />} onClick={() => setEditedModule(null)}>
+              {t('modules.create')}
+            </Button>
           </div>
 
           {selectedModule && (
@@ -289,22 +324,33 @@ export function ModulesPage() {
                     {selectedModule.label}
                   </span>
                 }
-                actions={
-                  <>
-                    <IconButton
-                      label={t('common.edit')}
-                      icon={<Pencil className="size-4" />}
-                      onClick={() => setEditedModule(selectedModule)}
-                    />
-                    <IconButton
-                      label={t('common.delete')}
-                      tone="danger"
-                      icon={<Trash2 className="size-4" />}
-                      onClick={() => setModuleToDelete(selectedModule)}
-                    />
-                  </>
-                }
               />
+              <div className="grid grid-cols-2 gap-2 border-b border-brand-100 p-3 sm:grid-cols-3">
+                <Button
+                  className="col-span-2 min-h-11 sm:col-span-1"
+                  variant="secondary"
+                  icon={<Plus className="size-4" />}
+                  onClick={() => setEditedCompetency(null)}
+                >
+                  {t('modules.addCompetency')}
+                </Button>
+                <Button
+                  className="min-h-11"
+                  variant="secondary"
+                  icon={<Pencil className="size-4" />}
+                  onClick={() => setEditedModule(selectedModule)}
+                >
+                  {t('common.edit')}
+                </Button>
+                <Button
+                  className="min-h-11"
+                  variant="danger"
+                  icon={<Trash2 className="size-4" />}
+                  onClick={() => setModuleToDelete(selectedModule)}
+                >
+                  {t('common.delete')}
+                </Button>
+              </div>
               {moduleCompetencies.length === 0 ? (
                 <EmptyState title={t('modules.noCompetencies')} />
               ) : (
@@ -314,54 +360,60 @@ export function ModulesPage() {
                       key={competency.id}
                       ref={competencySortable.itemRef(competency.id)}
                       className={clsx(
-                        'relative flex items-start gap-2 py-3 pr-4 pl-2 sm:pr-5',
+                        'relative flex flex-col gap-3 p-3 sm:flex-row sm:items-start sm:gap-2 sm:py-3 sm:pr-5 sm:pl-2',
                         competency.active ? 'bg-white' : 'bg-slate-50',
                         competencySortable.draggedId === competency.id && 'z-10 rounded-lg shadow-lg ring-2 ring-fire-400',
                       )}
                     >
-                      <DragHandle
-                        label={t('modules.dragCompetency', { code: competency.code })}
-                        {...competencySortable.handleProps(competency.id)}
-                      />
-                      <div className={clsx('min-w-0 flex-1', !competency.active && 'opacity-50')}>
-                        <p className="text-sm">
-                          <span className="mr-2 font-bold text-fire-700">{competency.code}</span>
-                          {competency.label}
-                        </p>
-                        {competency.criteria && <p className="mt-0.5 text-xs text-slate-500">{competency.criteria}</p>}
-                        {!competency.active && (
-                          <Badge tone="neutral" className="mt-1">
-                            {t('modules.hidden')}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex shrink-0 gap-1">
+                      <div className="flex min-w-0 items-start gap-2">
+                        <DragHandle
+                          className="size-11 sm:size-8"
+                          label={t('modules.dragCompetency', { code: competency.code })}
+                          {...competencySortable.handleProps(competency.id)}
+                        />
+                        <div className={clsx('min-w-0 flex-1', !competency.active && 'opacity-50')}>
+                          <p className="text-sm leading-6">
+                            <span className="mr-2 font-bold text-fire-700">{competency.code}</span>
+                            {competency.label}
+                          </p>
+                          {competency.criteria && <p className="mt-0.5 text-xs leading-5 text-slate-500">{competency.criteria}</p>}
+                          {!competency.active && (
+                            <Badge tone="neutral" className="mt-1">
+                              {t('modules.hidden')}
+                            </Badge>
+                          )}
+                        </div>
                         <IconButton
+                          className="size-11 shrink-0"
                           label={competency.active ? t('modules.hide') : t('modules.show')}
                           icon={competency.active ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                           onClick={() => handleToggleActive(competency)}
                         />
-                        <IconButton
-                          label={t('common.edit')}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0 sm:gap-1">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="min-h-11 sm:min-h-9"
                           icon={<Pencil className="size-4" />}
                           onClick={() => setEditedCompetency(competency)}
-                        />
-                        <IconButton
-                          label={t('common.delete')}
-                          tone="danger"
+                        >
+                          {t('common.edit')}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          className="min-h-11 sm:min-h-9"
                           icon={<Trash2 className="size-4" />}
                           onClick={() => setCompetencyToDelete(competency)}
-                        />
+                        >
+                          {t('common.delete')}
+                        </Button>
                       </div>
                     </li>
                   ))}
                 </ul>
               )}
-              <div className="border-t border-brand-100 p-4">
-                <Button variant="secondary" icon={<Plus className="size-4" />} onClick={() => setEditedCompetency(null)}>
-                  {t('modules.addCompetency')}
-                </Button>
-              </div>
             </Card>
           )}
         </div>
@@ -371,6 +423,7 @@ export function ModulesPage() {
         <ModuleFormModal
           key={editedModule?.id ?? 'new'}
           trainingModule={editedModule}
+          referentCandidates={referentCandidates}
           nextOrder={Math.max(0, ...modules.map((trainingModule) => trainingModule.order)) + 1}
           onSaved={setSelectedModuleId}
           onClose={() => setEditedModule(undefined)}

@@ -49,17 +49,24 @@ export function RegisterPage() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-brand-50">
-      <header className="flex items-center justify-between border-b-4 border-fire-600 bg-brand-800 px-4 py-3 sm:px-6">
-        <AppLogo inverted />
-        <LanguageSwitcher className="text-brand-100" />
+      <header className="flex h-16 items-center justify-between border-b border-brand-200 bg-white px-4 sm:px-8">
+        <AppLogo />
+        <LanguageSwitcher className="text-slate-600" />
       </header>
-      <div className="flex flex-1 items-center justify-center px-4 py-10">
-        <div className="w-full max-w-sm">
-          <div className="rounded-sm bg-white p-6 ring-1 ring-brand-200 sm:p-8">
-            <h1 className="border-l-4 border-brand-700 pl-3 text-xl font-bold text-brand-900">
+      <div className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12">
+        <div className="grid w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-brand-200/70 md:grid-cols-[0.72fr_1.28fr]">
+          <div className="relative hidden overflow-hidden bg-brand-800 p-9 text-white md:flex md:flex-col md:justify-between">
+            <div className="absolute -right-20 -bottom-20 size-64 rounded-full bg-fire-500/20" />
+            <div className="relative">
+              <h2 className="mt-6 text-3xl font-semibold leading-tight tracking-tight">{t('auth.registerTitle')}</h2>
+            </div>
+            <p className="relative text-sm leading-6 text-brand-100">{t('auth.registerHint')}</p>
+          </div>
+          <div className="p-6 sm:p-9">
+            <h1 className="text-2xl font-semibold tracking-tight text-brand-950">
               {t('auth.registerTitle')}
             </h1>
-            <p className="mt-1 text-sm text-slate-500">{t('auth.registerHint')}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-500">{t('auth.registerHint')}</p>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <TextField
@@ -107,7 +114,7 @@ export function RegisterPage() {
                 onChange={(event) => setPassword(event.target.value)}
               />
               {errorMessage && (
-                <p role="alert" className="rounded-lg bg-fire-50 px-3 py-2 text-sm text-fire-700">
+                <p role="alert"                 className="rounded-lg bg-fire-50 px-3 py-2.5 text-sm text-fire-700">
                   {errorMessage}
                 </p>
               )}
@@ -118,12 +125,11 @@ export function RegisterPage() {
 
             <p className="mt-4 text-center text-sm text-slate-600">
               {t('auth.hasAccount')}{' '}
-              <Link to="/login" className="font-medium text-brand-600 hover:text-brand-900 hover:underline">
+              <Link to="/login" className="font-medium text-brand-700 hover:text-brand-900">
                 {t('auth.signIn')}
               </Link>
             </p>
           </div>
-          <p className="mt-6 text-center text-xs text-slate-500">{t('app.footer')}</p>
         </div>
       </div>
     </div>

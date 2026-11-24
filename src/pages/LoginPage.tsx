@@ -59,7 +59,7 @@ export function LoginPage() {
   };
 
   const errorAlert = errorMessage && (
-    <p role="alert" className="rounded-lg bg-fire-50 px-3 py-2 text-sm text-fire-700">
+    <p role="alert"     className="rounded-lg bg-fire-50 px-3 py-2.5 text-sm text-fire-700">
       {errorMessage}
     </p>
   );
@@ -78,17 +78,28 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-brand-50">
-      <header className="flex items-center justify-between border-b-4 border-fire-600 bg-brand-800 px-4 py-3 sm:px-6">
-        <AppLogo inverted />
-        <LanguageSwitcher className="text-brand-100" />
+      <header className="flex h-16 items-center justify-between border-b border-brand-200 bg-white px-4 sm:px-8">
+        <AppLogo />
+        <LanguageSwitcher className="text-slate-600" />
       </header>
-      <div className="flex flex-1 items-center justify-center px-4 py-10">
-        <div className="w-full max-w-sm">
-          <div className="rounded-sm bg-white p-6 ring-1 ring-brand-200 sm:p-8">
+      <div className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12">
+        <div className="grid w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-brand-200/70 md:grid-cols-[0.85fr_1fr]">
+          <div className="relative hidden overflow-hidden bg-brand-800 p-10 text-white md:flex md:flex-col md:justify-between">
+            <div className="absolute -top-20 -right-20 size-64 rounded-full border-[34px] border-fire-500/20" />
+            <div className="absolute -bottom-24 -left-16 size-72 rounded-full bg-brand-500/15" />
+            <div className="relative">
+              <h2 className="mt-6 max-w-xs text-4xl font-semibold leading-tight tracking-tight">{t('app.name')}</h2>
+            </div>
+            <div className="relative flex items-center gap-3 text-sm text-brand-100">
+              <span className="size-2 rounded-full bg-fire-400" />
+              {t('auth.signInHint')}
+            </div>
+          </div>
+          <div className="p-6 sm:p-9">
             {mode === 'signIn' ? (
               <>
-                <h1 className="border-l-4 border-brand-700 pl-3 text-xl font-bold text-brand-900">{t('auth.welcome')}</h1>
-                <p className="mt-1 text-sm text-slate-500">{t('auth.signInHint')}</p>
+                <h1 className="text-2xl font-semibold tracking-tight text-brand-950">{t('auth.welcome')}</h1>
+                <p className="mt-2 text-sm leading-6 text-slate-500">{t('auth.signInHint')}</p>
 
                 <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                   {emailField}
@@ -108,22 +119,22 @@ export function LoginPage() {
                 <button
                   type="button"
                   onClick={() => switchMode('reset')}
-                  className="mt-4 w-full text-center text-sm text-brand-600 hover:text-brand-900 hover:underline"
+                  className="mt-4 w-full rounded-md py-2 text-center text-sm font-medium text-brand-700 transition-colors hover:bg-brand-50"
                 >
                   {t('auth.forgotPassword')}
                 </button>
                 <p className="mt-4 text-center text-sm text-slate-600">
                   {t('auth.noAccount')}{' '}
-                  <Link to="/register" className="font-medium text-brand-600 hover:text-brand-900 hover:underline">
+                  <Link to="/register" className="font-medium text-brand-700 hover:text-brand-900">
                     {t('auth.register')}
                   </Link>
                 </p>
               </>
             ) : (
               <>
-                <h1 className="border-l-4 border-brand-700 pl-3 text-xl font-bold text-brand-900">{t('auth.resetTitle')}</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-brand-950">{t('auth.resetTitle')}</h1>
                 {resetSentTo ? (
-                  <div role="status" className="mt-6 rounded-sm border-l-4 border-emerald-600 bg-emerald-50 p-4 text-sm text-emerald-800">
+                  <div role="status" className="mt-6 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-800">
                     <p className="flex items-center gap-2 font-semibold">
                       <MailCheck className="size-5" />
                       {t('auth.resetEmailSentTitle')}
@@ -145,7 +156,7 @@ export function LoginPage() {
                 <button
                   type="button"
                   onClick={() => switchMode('signIn')}
-                  className="mt-4 inline-flex w-full items-center justify-center gap-1 text-sm text-brand-600 hover:text-brand-900 hover:underline"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md py-2 text-sm font-medium text-brand-700 transition-colors hover:bg-brand-50"
                 >
                   <ArrowLeft className="size-4" />
                   {t('auth.backToSignIn')}
@@ -153,8 +164,8 @@ export function LoginPage() {
               </>
             )}
           </div>
-          <p className="mt-6 text-center text-xs text-slate-500">{t('app.footer')}</p>
         </div>
+        <p className="fixed bottom-4 left-1/2 hidden -translate-x-1/2 text-xs text-slate-500 md:block">{t('app.footer')}</p>
       </div>
     </div>
   );

@@ -33,10 +33,10 @@ export const deleteUserAccount = onCall({ region: 'europe-west1' }, async (reque
     }
   }
 
-  const groups = await db.collection('groups').where('referentId', '==', userId).get();
+  const modules = await db.collection('modules').where('referentId', '==', userId).get();
   const batch = db.batch();
   batch.delete(db.doc(`users/${userId}`));
-  groups.docs.forEach((group) => batch.update(group.ref, { referentId: null }));
+  modules.docs.forEach((trainingModule) => batch.update(trainingModule.ref, { referentId: null }));
   try {
     await batch.commit();
   } catch (error) {

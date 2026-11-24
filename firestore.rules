@@ -56,10 +56,10 @@ service cloud.firestore {
     function isValidSelfCreatedProfile() {
       let data = request.resource.data;
       return data.keys().hasAll([
-          'email', 'firstName', 'lastName', 'role', 'groupId', 'active', 'createdAt'
+          'email', 'firstName', 'lastName', 'role', 'moduleId', 'active', 'createdAt'
         ])
         && data.keys().hasOnly([
-          'email', 'firstName', 'lastName', 'role', 'groupId', 'active', 'createdAt'
+          'email', 'firstName', 'lastName', 'role', 'moduleId', 'active', 'createdAt'
         ])
         && data.email is string
         && data.email == request.auth.token.email
@@ -69,16 +69,16 @@ service cloud.firestore {
         && data.lastName is string
         && data.lastName.matches('.*\\S.*')
         && data.role in ['trainee', 'trainer']
-        && data.groupId == null
+        && data.moduleId == null
         && data.active == true
         && data.createdAt is number;
     }
 
-    // A trainee may read the profile of the referent trainer of their group.
+    // A trainee may read the profile of the referent assigned to their module.
     function isOwnReferent(userId) {
-      let groupId = get(ownProfilePath()).data.groupId;
-      return groupId != null
-        && get(/databases/$(database)/documents/groups/$(groupId)).data.referentId == userId;
+      let moduleId = get(ownProfilePath()).data.get('moduleId', null);
+      return moduleId != null
+        && get(/databases/$(database)/documents/modules/$(moduleId)).data.referentId == userId;
     }
 
     function changedKeys() {
@@ -108,11 +108,6 @@ service cloud.firestore {
       allow create: if isAdmin() || (isSelf(userId) && isValidSelfCreatedProfile());
       allow update: if isAdmin() || isValidSelfProfileUpdate(userId);
       allow delete: if isAdmin();
-    }
-
-    match /groups/{groupId} {
-      allow read: if isMember();
-      allow write: if isAdmin();
     }
 
     match /modules/{moduleId} {

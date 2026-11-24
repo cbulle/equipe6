@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { userEvaluationsQuery } from '@/services/evaluationService';
-import { groupDocRef, groupsQuery } from '@/services/groupService';
 import { userInterviewsQuery } from '@/services/interviewService';
 import { resourcesQuery } from '@/services/resourceService';
 import { sessionDocRef, sessionsQuery } from '@/services/sessionService';
@@ -10,7 +9,6 @@ import { internshipWishesDocRef } from '@/services/wishService';
 import type {
   Competency,
   Evaluation,
-  Group,
   InternshipWishes,
   Interview,
   Resource,
@@ -35,7 +33,7 @@ export function useTrainees() {
   return { ...state, data: useSortedUsers(state.data) };
 }
 
-/** Active trainers and administrators: anyone who can be the referent of a group. */
+/** Active trainers and administrators: anyone who can be the referent of a module. */
 export function useReferentCandidates() {
   const state = useCollectionData<UserProfile>(staffQuery());
   const staff = useSortedUsers(state.data);
@@ -44,11 +42,6 @@ export function useReferentCandidates() {
 
 export const useUser = (userId: string | null | undefined) =>
   useDocumentData<UserProfile>(userId ? userDocRef(userId) : null);
-
-export const useGroups = () => useCollectionData<Group>(groupsQuery());
-
-export const useGroup = (groupId: string | null | undefined) =>
-  useDocumentData<Group>(groupId ? groupDocRef(groupId) : null);
 
 export const useModules = () => useCollectionData<TrainingModule>(modulesQuery());
 

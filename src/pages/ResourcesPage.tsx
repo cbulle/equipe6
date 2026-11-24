@@ -151,7 +151,6 @@ export function ResourcesPage() {
     <>
       <PageHeader
         title={t('resources.title')}
-        description={t('resources.description')}
         actions={
           isStaff && (
             <Button icon={<Link2 className="size-4" />} onClick={() => setIsAddOpen(true)}>

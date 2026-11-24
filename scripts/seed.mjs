@@ -1,5 +1,5 @@
 /**
- * Seeds the Firestore referential (modules, competencies, training sessions, default group)
+ * Seeds the Firestore referential (modules, competencies and training sessions)
  * and creates the first administrator account. The role is stored in the `users` profile.
  * Works on the free Spark plan (the Admin SDK only needs a service account key).
  *
@@ -33,8 +33,6 @@ const db = getFirestore();
 
 const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? 'admin@spv.local';
 const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? 'Admin1234!';
-const DEFAULT_GROUP_ID = 'team-6';
-
 const MODULES = [
   {
     id: 'ps',
@@ -155,7 +153,7 @@ function slugify(value) {
     .replace(/(^-|-$)/g, '');
 }
 
-async function upsertAccount({ email, password, firstName, lastName, role, groupId = null }) {
+async function upsertAccount({ email, password, firstName, lastName, role }) {
   let user;
   try {
     user = await auth.getUserByEmail(email);
@@ -168,7 +166,7 @@ async function upsertAccount({ email, password, firstName, lastName, role, group
       firstName,
       lastName,
       role,
-      groupId,
+      moduleId: null,
       active: true,
       createdAt: Date.now(),
     },
@@ -208,32 +206,23 @@ async function seedReferential(adminUid) {
     );
   }
 
-  batch.set(
-    db.doc(`groups/${DEFAULT_GROUP_ID}`),
-    { label: 'Équipe 6', referentId: null, promoYear: 2026, active: true },
-    { merge: true },
-  );
-
   await batch.commit();
 }
 
 async function seedDemoAccounts() {
-  const trainerUid = await upsertAccount({
+  await upsertAccount({
     email: 'formateur@spv.local',
     password: 'Formateur1234!',
     firstName: 'Camille',
     lastName: 'Martin',
     role: 'trainer',
   });
-  await db.doc(`groups/${DEFAULT_GROUP_ID}`).set({ referentId: trainerUid }, { merge: true });
-
   await upsertAccount({
     email: 'spv@spv.local',
     password: 'Stagiaire1234!',
     firstName: 'Lucas',
     lastName: 'Bernard',
     role: 'trainee',
-    groupId: DEFAULT_GROUP_ID,
   });
   await upsertAccount({
     email: 'sansgroupe@spv.local',

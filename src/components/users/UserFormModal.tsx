@@ -2,9 +2,9 @@ import { KeyRound } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { referentGroupIdsOf } from '@/services/groupService';
+import { useModules } from '@/hooks/useAppData';
 import { createUserAccount, sendUserPasswordReset, updateUserProfile, type UserProfileInput } from '@/services/userService';
-import { USER_ROLES, type Group, type UserProfile, type UserRole } from '@/types/models';
+import { USER_ROLES, type UserProfile, type UserRole } from '@/types/models';
 import { notifyError } from '@/utils/errors';
 import { fullName } from '@/utils/names';
 import { Button } from '../ui/Button';
@@ -15,18 +15,18 @@ const MIN_PASSWORD_LENGTH = 8;
 
 interface UserFormModalProps {
   user: UserProfile | null;
-  groups: Group[];
   onClose: () => void;
 }
 
-export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
+export function UserFormModal({ user, onClose }: UserFormModalProps) {
   const { t } = useTranslation();
+  const { data: modules, loading: modulesLoading } = useModules();
   const [form, setForm] = useState<UserProfileInput>({
     email: user?.email ?? '',
     firstName: user?.firstName ?? '',
     lastName: user?.lastName ?? '',
     role: user?.role ?? 'trainee',
-    groupId: user?.groupId ?? null,
+    moduleId: user?.moduleId ?? null,
     active: user?.active ?? true,
   });
   const [password, setPassword] = useState('');
@@ -38,13 +38,10 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
   const handleSubmit = async () => {
     setSaving(true);
     try {
-      const input: UserProfileInput = {
-        ...form,
-        groupId: isTrainee ? form.groupId : null,
-      };
+      const input: UserProfileInput = { ...form, moduleId: isTrainee ? form.moduleId ?? null : null };
       if (user) {
         const { email: _email, ...profile } = input;
-        await updateUserProfile(user.id, profile, referentGroupIdsOf(user.id, groups));
+        await updateUserProfile(user.id, profile);
         toast.success(t('users.updated'));
       } else {
         await createUserAccount(input, password);
@@ -159,7 +156,6 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
             />
           )}
         </section>
-
         {isTrainee && (
           <section className="grid gap-4 sm:grid-cols-2">
             <h3 className="text-xs font-semibold tracking-wide text-slate-500 uppercase sm:col-span-2">
@@ -167,13 +163,14 @@ export function UserFormModal({ user, groups, onClose }: UserFormModalProps) {
             </h3>
             <SelectField
               label={t('users.fields.group')}
-              value={form.groupId ?? ''}
-              onChange={(event) => updateField('groupId', event.target.value || null)}
+              value={form.moduleId ?? ''}
+              disabled={modulesLoading}
+              onChange={(event) => updateField('moduleId', event.target.value || null)}
             >
-              <option value="">{t('groups.noGroup')}</option>
-              {groups.map((group) => (
-                <option key={group.id} value={group.id}>
-                  {group.label}
+              <option value="">{t('trainees.noGroup')}</option>
+              {modules.map((trainingModule) => (
+                <option key={trainingModule.id} value={trainingModule.id}>
+                  {trainingModule.code} — {trainingModule.label}
                 </option>
               ))}
             </SelectField>

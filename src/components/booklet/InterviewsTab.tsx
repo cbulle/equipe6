@@ -23,8 +23,6 @@ import { TextAreaField, TextField } from '../ui/FormFields';
 import { IconButton } from '../ui/IconButton';
 import { Modal } from '../ui/Modal';
 
-const MAX_INTERVIEWS_PER_YEAR = 3;
-
 interface InterviewFormModalProps {
   interview: Interview | null;
   onSubmit: (input: InterviewContentInput) => Promise<void>;
@@ -149,9 +147,6 @@ export function InterviewsTab({ trainee, interviews }: InterviewsTabProps) {
   const [editedInterview, setEditedInterview] = useState<Interview | null | undefined>(undefined);
   const [interviewToDelete, setInterviewToDelete] = useState<Interview | null>(null);
 
-  const currentSchoolYear = toSchoolYear(todayIsoDate());
-  const currentYearCount = interviews.filter((interview) => interview.schoolYear === currentSchoolYear).length;
-  const canCreate = isStaff && currentYearCount < MAX_INTERVIEWS_PER_YEAR;
   const isSelf = uid === trainee.id;
 
   const handleSubmit = async (input: InterviewContentInput) => {
@@ -178,12 +173,9 @@ export function InterviewsTab({ trainee, interviews }: InterviewsTabProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-slate-500">
-          {t('interviews.counter', { count: currentYearCount, max: MAX_INTERVIEWS_PER_YEAR, year: currentSchoolYear })}
-        </p>
+      <div className="flex justify-end">
         {isStaff && (
-          <Button icon={<Plus className="size-4" />} disabled={!canCreate} onClick={() => setEditedInterview(null)}>
+          <Button icon={<Plus className="size-4" />} onClick={() => setEditedInterview(null)}>
             {t('interviews.create')}
           </Button>
         )}

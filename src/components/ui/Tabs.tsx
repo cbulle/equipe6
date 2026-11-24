@@ -16,7 +16,7 @@ interface TabsProps<T extends string> {
 export function Tabs<T extends string>({ tabs, activeTab, onChange }: TabsProps<T>) {
   return (
     <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-      <div role="tablist" className="flex min-w-max gap-0.5 border-b border-brand-300">
+      <div role="tablist" className="flex min-w-max gap-1 rounded-xl bg-white/70 p-1 ring-1 ring-brand-200/60">
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;
           return (
@@ -27,10 +27,10 @@ export function Tabs<T extends string>({ tabs, activeTab, onChange }: TabsProps<
               aria-selected={isActive}
               onClick={() => onChange(tab.id)}
               className={clsx(
-                '-mb-px inline-flex items-center gap-2 rounded-t-sm border px-4 py-2 text-sm font-semibold transition-colors',
+                'inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all',
                 isActive
-                  ? 'border-brand-300 border-t-brand-700 border-b-brand-50 bg-brand-50 text-brand-900 shadow-[inset_0_2px_0_var(--color-brand-700)]'
-                  : 'border-transparent bg-brand-100/70 text-slate-600 hover:bg-brand-100 hover:text-brand-900',
+                  ? 'bg-brand-700 text-white shadow-sm'
+                  : 'text-slate-500 hover:bg-brand-50 hover:text-brand-800',
               )}
             >
               {tab.icon}
