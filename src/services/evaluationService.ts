@@ -6,6 +6,8 @@ import { COLLECTIONS } from './collections';
 export interface Validator {
   userId: string;
   name: string;
+  /** "NOM.P" label displayed on the validated box. */
+  shortName: string;
 }
 
 const evaluationsCollection = collection(db, COLLECTIONS.evaluations);
@@ -34,6 +36,7 @@ function buildEvaluation(
     level,
     validatedBy: validator.userId,
     validatedByName: validator.name,
+    validatedByShort: validator.shortName,
     validatedAt: Date.now(),
   };
 }
@@ -58,6 +61,7 @@ export function markModuleCompleted(userId: string, moduleId: string, validator:
     level: MODULE_COMPLETED,
     validatedBy: validator.userId,
     validatedByName: validator.name,
+    validatedByShort: validator.shortName,
     validatedAt: Date.now(),
   };
   return setDoc(doc(evaluationsCollection, moduleCompletionId(userId, moduleId)), completion);

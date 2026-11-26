@@ -83,6 +83,8 @@ export interface Evaluation {
   level: SkillLevel | typeof MODULE_COMPLETED;
   validatedBy: string;
   validatedByName: string;
+  /** "NOM.P" label shown under the ticked box; absent on older validations. */
+  validatedByShort?: string;
   validatedAt: number;
 }
 

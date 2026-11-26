@@ -14,7 +14,7 @@ import {
 } from '@/types/models';
 import { formatTimestamp } from '@/utils/dates';
 import { notifyError } from '@/utils/errors';
-import { fullName } from '@/utils/names';
+import { fullName, shortName, shortNameFromFull } from '@/utils/names';
 import { computeLevelProgress, groupCompetenciesByModule } from '@/utils/training';
 import { Badge } from '../ui/Badge';
 import { EmptyState, ProgressBar } from '../ui/Feedback';
@@ -47,6 +47,9 @@ function LevelCell({ level, evaluation, moduleCompletion, canToggle, onToggle }:
       })
     : t('skills.notValidated');
   const isValidated = Boolean(evaluation || moduleCompletion);
+  const validatorLabel = validation
+    ? (validation.validatedByShort ?? shortNameFromFull(validation.validatedByName))
+    : '';
 
   return (
     <button
@@ -57,7 +60,7 @@ function LevelCell({ level, evaluation, moduleCompletion, canToggle, onToggle }:
       aria-pressed={isValidated}
       aria-label={`${level} — ${tooltip}`}
       className={clsx(
-        'flex h-9 w-12 items-center justify-center gap-1 rounded-lg text-xs font-bold transition-colors',
+        'flex h-11 w-20 flex-col items-center justify-center rounded-lg px-1 text-xs font-bold transition-colors',
         isValidated
           ? 'bg-emerald-600 text-white'
           : 'bg-white text-slate-400 ring-1 ring-inset ring-brand-200',
@@ -65,8 +68,13 @@ function LevelCell({ level, evaluation, moduleCompletion, canToggle, onToggle }:
         !canToggle && 'cursor-default',
       )}
     >
-      {isValidated && <Check className="size-3.5" />}
-      {level}
+      <span className="flex items-center gap-1">
+        {isValidated && <Check className="size-3.5" />}
+        {level}
+      </span>
+      {validatorLabel && (
+        <span className="w-full truncate text-[10px] leading-tight font-medium opacity-90">{validatorLabel}</span>
+      )}
     </button>
   );
 }
@@ -94,7 +102,11 @@ export function SkillsTab({ trainee, modules, competencies, evaluations, complet
   const handleToggle = (competency: Competency, level: SkillLevel, evaluation: Evaluation | undefined) => {
     const write = evaluation
       ? revokeEvaluation(evaluation.id)
-      : validateLevel(trainee.id, competency, level, { userId: uid, name: fullName(profile) });
+      : validateLevel(trainee.id, competency, level, {
+          userId: uid,
+          name: fullName(profile),
+          shortName: shortName(profile),
+        });
     write.catch(notifyError);
   };
 

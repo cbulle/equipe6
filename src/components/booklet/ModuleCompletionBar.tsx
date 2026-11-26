@@ -7,7 +7,7 @@ import { markModuleCompleted, revokeEvaluation } from '@/services/evaluationServ
 import type { Evaluation, TrainingModule, UserProfile } from '@/types/models';
 import { formatTimestamp } from '@/utils/dates';
 import { notifyError } from '@/utils/errors';
-import { fullName } from '@/utils/names';
+import { fullName, shortName } from '@/utils/names';
 import { Button } from '../ui/Button';
 
 interface ModuleCompletionBarProps {
@@ -36,7 +36,11 @@ export function ModuleCompletionBar({ trainee, trainingModule, completion }: Mod
         await revokeEvaluation(completion.id);
         toast.success(t('moduleCompletion.reopened', { code: trainingModule.code }));
       } else {
-        await markModuleCompleted(trainee.id, trainingModule.id, { userId: uid, name: fullName(profile) });
+        await markModuleCompleted(trainee.id, trainingModule.id, {
+          userId: uid,
+          name: fullName(profile),
+          shortName: shortName(profile),
+        });
         toast.success(t('moduleCompletion.completed', { code: trainingModule.code }));
       }
     } catch (error) {
